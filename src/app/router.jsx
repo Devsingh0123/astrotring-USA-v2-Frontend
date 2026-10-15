@@ -5,6 +5,7 @@ import HoroscopesListingPage from "@/pages/HoroscopesListingPage"
 import DailyHoroscopePage from "@/pages/DailyHoroscopePage"
 import CalculatorsListingPage from "@/pages/CalculatorsListingPage"
 import FreeKundliPage from "@/pages/FreeKundliPage"
+import KundliDisplayPage from "@/pages/KundliDisplayPage"
 import OnboardingPage from "@/pages/OnboardingPage"
 import PlaceholderPage from "@/pages/PlaceholderPage"
 import NotFoundPage from "@/pages/NotFoundPage"
@@ -22,6 +23,14 @@ export const router = createBrowserRouter([
       {
         path: "onboarding",
         element: <OnboardingPage />,
+      },
+      {
+        path: "kundli",
+        element: <KundliDisplayPage />,
+      },
+      {
+        path: "chart",
+        element: <KundliDisplayPage />,
       },
       {
         path: "chat",

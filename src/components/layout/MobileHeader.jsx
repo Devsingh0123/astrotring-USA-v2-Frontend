@@ -13,6 +13,7 @@ import {
   Megaphone,
   User,
   LogOut,
+  Compass,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { logout } from "@/store/slices/authSlice"
@@ -126,6 +127,15 @@ export default function MobileHeader({ onOpenBindModal }) {
                 >
                   <Sparkles className="w-4 h-4 text-mlh-orrery" />
                   <span>Ask Astropedia</span>
+                </Link>
+
+                <Link
+                  to="/kundli"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full flex items-center gap-2.5 rounded-xl border border-mlh-amber/35 bg-[#1c1407] px-3.5 py-2.5 text-mlh-amber text-xs font-medium"
+                >
+                  <Compass className="w-4 h-4 text-mlh-amber" />
+                  <span>My Janam Kundli</span>
                 </Link>
               </div>
 

@@ -15,6 +15,7 @@ import {
   LogIn,
   LogOut,
   User,
+  Compass,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { logout } from "@/store/slices/authSlice"
@@ -31,7 +32,7 @@ const navItems = [
 export default function Sidebar({ onOpenBindModal, isCollapsed, onToggleCollapse }) {
   const [activeFilter, setActiveFilter] = useState("ALL")
   const dispatch = useDispatch()
-  const { isAuthenticated, user } = useSelector((state) => state.auth || {})
+  const { isAuthenticated, user, birthDetails } = useSelector((state) => state.auth || {})
 
   return (
     <aside
@@ -86,6 +87,16 @@ export default function Sidebar({ onOpenBindModal, isCollapsed, onToggleCollapse
           >
             <BookOpen className="w-4 h-4 text-mlh-orrery shrink-0" />
             {!isCollapsed && <span>Ask Astropedia</span>}
+          </Link>
+
+          {/* Dedicated My Janam Kundli Link */}
+          <Link
+            to="/kundli"
+            className={`w-full flex items-center gap-2.5 rounded-xl border border-mlh-amber/35 bg-[#1c1407]/80 hover:bg-[#2a1e0b] text-mlh-amber hover:text-amber-300 transition-all font-medium text-xs lg:text-sm ${isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"
+              }`}
+          >
+            <Compass className="w-4 h-4 text-mlh-amber shrink-0" />
+            {!isCollapsed && <span>My Janam Kundli</span>}
           </Link>
         </div>
 
