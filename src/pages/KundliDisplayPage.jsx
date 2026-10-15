@@ -236,7 +236,7 @@ export default function KundliDisplayPage() {
               <span className="hidden sm:inline">Print / PDF</span>
             </Button>
 
-            <Link to="/vaani">
+            <Link to="/?engine=vaani">
               <Button
                 size="sm"
                 className="h-9 px-4 rounded-xl bg-gradient-to-r from-mlh-amber to-amber-600 hover:from-amber-500 hover:to-amber-600 text-black font-semibold text-xs font-mono tracking-wider flex items-center gap-2 shadow-lg shadow-mlh-amber/20 cursor-pointer"

@@ -323,8 +323,8 @@ export default function FreeKundliPage() {
               </p>
 
               <Link
-                to="/vaani"
-                className="block w-full text-center py-2.5 rounded-full border border-mlh-plum-400/40 text-mlh-plum-300 hover:bg-mlh-plum-500/20 font-sans text-sm font-medium transition"
+                to="/?engine=vaani"
+                className="block w-full text-center py-2.5 rounded-full border border-mlh-plum-400/40 text-mlh-plum-300 hover:bg-mlh-plum-500/20 font-sans text-sm font-medium transition cursor-pointer"
               >
                 Ask Vaani
               </Link>

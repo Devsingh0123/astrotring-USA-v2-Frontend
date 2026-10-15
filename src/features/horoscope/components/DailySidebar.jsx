@@ -43,7 +43,7 @@ export default function DailySidebar({ sign, otherSigns }) {
         <p className="text-xs text-mlh-muted leading-relaxed">
           Ask Vaani for guidance computed from your full birth chart, not the Moon sign alone.
         </p>
-        <Link to="/chat" className="block pt-1">
+        <Link to="/?engine=vaani" className="block pt-1">
           <Button className="w-full bg-mlh-plum hover:bg-mlh-plum/90 text-white font-semibold text-xs rounded-xl h-10 shadow-sm cursor-pointer">
             Ask Vaani
           </Button>

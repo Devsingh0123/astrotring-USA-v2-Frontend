@@ -38,7 +38,7 @@ export default function AskVaaniPromptCard({
           </p>
         </div>
 
-        <Link to="/vaani">
+        <Link to="/?engine=vaani">
           <Button className="h-11 px-6 bg-gradient-to-r from-mlh-amber to-amber-600 hover:from-amber-500 hover:to-amber-600 text-black font-semibold text-xs font-mono uppercase tracking-wider rounded-xl shadow-lg shadow-mlh-amber/20 hover:shadow-mlh-amber/30 transition-all flex items-center gap-2 shrink-0 cursor-pointer">
             <MessageSquare className="w-4 h-4 text-black" />
             <span>Consult Vaani</span>
@@ -56,8 +56,8 @@ export default function AskVaaniPromptCard({
           {DEFAULT_PROMPTS.map((prompt, idx) => (
             <Link
               key={idx}
-              to={`/vaani?q=${encodeURIComponent(prompt)}`}
-              className="px-3 py-1.5 rounded-lg border border-mlh-border/80 bg-mlh-bg/60 hover:bg-mlh-surface hover:border-mlh-amber/50 text-xs text-mlh-text hover:text-mlh-text-hi transition-all text-left flex items-center gap-2 group"
+              to={`/?engine=vaani&q=${encodeURIComponent(prompt)}`}
+              className="px-3 py-1.5 rounded-lg border border-mlh-border/80 bg-mlh-bg/60 hover:bg-mlh-surface hover:border-mlh-amber/50 text-xs text-mlh-text hover:text-mlh-text-hi transition-all text-left flex items-center gap-2 group cursor-pointer"
             >
               <Sparkles className="w-3 h-3 text-mlh-amber/60 group-hover:text-mlh-amber shrink-0" />
               <span>{prompt}</span>

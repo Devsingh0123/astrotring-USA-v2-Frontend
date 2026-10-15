@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom"
+import { createBrowserRouter, Navigate, useLocation } from "react-router-dom"
 import RootLayout from "@/components/layout/RootLayout"
 import HomePage from "@/pages/HomePage"
 import HoroscopesListingPage from "@/pages/HoroscopesListingPage"
@@ -9,6 +9,15 @@ import KundliDisplayPage from "@/pages/KundliDisplayPage"
 import OnboardingPage from "@/pages/OnboardingPage"
 import PlaceholderPage from "@/pages/PlaceholderPage"
 import NotFoundPage from "@/pages/NotFoundPage"
+
+function VaaniRedirect() {
+  const location = useLocation()
+  const searchParams = new URLSearchParams(location.search)
+  if (!searchParams.get("engine")) {
+    searchParams.set("engine", "vaani")
+  }
+  return <Navigate to={`/?${searchParams.toString()}`} replace />
+}
 
 export const router = createBrowserRouter([
   {
@@ -34,11 +43,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "chat",
-        element: <PlaceholderPage title="Ask Vaani — AI Vedic Consultation" />,
+        element: <VaaniRedirect />,
       },
       {
         path: "vaani",
-        element: <PlaceholderPage title="Ask Vaani — AI Vedic Consultation" />,
+        element: <VaaniRedirect />,
       },
       {
         path: "calculators",

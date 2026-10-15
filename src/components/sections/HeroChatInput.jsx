@@ -17,8 +17,9 @@ const promptQuestions = [
 export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const engineParam = searchParams.get("engine")
+  const queryParam = searchParams.get("q")
 
-  const [query, setQuery] = useState("")
+  const [query, setQuery] = useState(queryParam || "")
   const [engine, setEngine] = useState(
     engineParam === "astropedia" ? "astropedia" : "vaani"
   )
@@ -26,16 +27,24 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
   const dispatch = useDispatch()
   const { isAuthenticated } = useSelector((state) => state.auth || {})
 
-  // Keep engine state in sync if URL query param changes
+  // Keep engine state and query state in sync if URL query param changes
   useEffect(() => {
     if (engineParam === "astropedia" || engineParam === "vaani") {
       setEngine(engineParam)
     }
   }, [engineParam])
 
+  useEffect(() => {
+    if (queryParam) {
+      setQuery(queryParam)
+    }
+  }, [queryParam])
+
   const handleSelectEngine = (newEngine) => {
     setEngine(newEngine)
-    setSearchParams({ engine: newEngine })
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set("engine", newEngine)
+    setSearchParams(nextParams)
   }
 
   const handleBuyQuestions = () => {
@@ -45,11 +54,14 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
     }
 
     const proceedWithBuy = () => {
-      navigate(`/chat?action=buy&engine=${engine}`)
+      const nextParams = new URLSearchParams(searchParams)
+      nextParams.set("action", "buy")
+      nextParams.set("engine", engine)
+      setSearchParams(nextParams)
     }
 
     if (isAuthenticated) {
-      // If logged in → skip the modal, proceed with the action directly
+      // If logged in → proceed directly
       proceedWithBuy()
     } else {
       // If not logged in → only then open the login modal
@@ -63,7 +75,18 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
 
   const handleSend = () => {
     if (!query.trim()) return
-    navigate(`/chat?q=${encodeURIComponent(query)}&engine=${engine}`)
+    if (!isAuthenticated) {
+      if (typeof onOpenBindModal === "function") {
+        onOpenBindModal()
+      } else {
+        dispatch(openAuthModal())
+      }
+      return
+    }
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set("engine", engine)
+    nextParams.set("q", query.trim())
+    setSearchParams(nextParams)
   }
 
   const handleKeyDown = (e) => {
@@ -75,7 +98,10 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
 
   const handlePromptClick = (question) => {
     setQuery(question)
-    navigate(`/chat?q=${encodeURIComponent(question)}&engine=${engine}`)
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set("engine", engine)
+    nextParams.set("q", question)
+    setSearchParams(nextParams)
   }
 
   return (
