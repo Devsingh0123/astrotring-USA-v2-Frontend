@@ -5,6 +5,7 @@ import HoroscopesListingPage from "@/pages/HoroscopesListingPage"
 import DailyHoroscopePage from "@/pages/DailyHoroscopePage"
 import CalculatorsListingPage from "@/pages/CalculatorsListingPage"
 import FreeKundliPage from "@/pages/FreeKundliPage"
+import OnboardingPage from "@/pages/OnboardingPage"
 import PlaceholderPage from "@/pages/PlaceholderPage"
 import NotFoundPage from "@/pages/NotFoundPage"
 
@@ -17,6 +18,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: "onboarding",
+        element: <OnboardingPage />,
       },
       {
         path: "chat",

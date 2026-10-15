@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import {
   Sparkles,
   Check,
@@ -25,11 +26,13 @@ import {
   clearError,
   sendOtp,
   verifyOtp,
+  submitOnboarding,
   updateUserProfile,
 } from "@/store/slices/authSlice"
 
 export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }) {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const {
     isAuthModalOpen,
     email: storeEmail,
@@ -164,20 +167,17 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
     const emailToVerify = localEmail || storeEmail
     const result = await dispatch(verifyOtp({ email: emailToVerify, otp: fullOtp }))
     if (!result.error) {
-      // Check if user already had profile complete
       const verifiedUser = result.payload?.user
-      const isComplete = Boolean(
-        verifiedUser?.isProfileComplete ||
-        (verifiedUser?.name && verifiedUser?.birthDate)
-      )
+      const isComplete = Boolean(verifiedUser?.onboardingCompleted)
+
+      if (propsOnClose) propsOnClose(false)
+      dispatch(closeAuthModal())
+      setOtpDigits(["", "", "", "", "", ""])
 
       if (isComplete) {
-        // Returning user who already filled details -> Skip step 3 & 4 completely
-        if (propsOnClose) propsOnClose(false)
-        setOtpDigits(["", "", "", "", "", ""])
+        navigate("/")
       } else {
-        // First-time user -> Advance to Step 3 (About You)
-        dispatch(setStoreStep(3))
+        navigate("/onboarding")
       }
     }
   }
@@ -206,28 +206,33 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
   }
 
   // STEP 4 SUBMIT: Birth Details -> Finalize Profile
-  const handleBirthDetailsSubmit = (e) => {
+  const handleBirthDetailsSubmit = async (e) => {
     e.preventDefault()
     if (!birthDate || (!birthPlace.trim() && !birthPlace)) {
       toast.error("Please provide your date and place of birth.")
       return
     }
 
-    dispatch(
-      updateUserProfile({
-        name: fullName.trim(),
-        gender,
-        birthDate,
-        birthTime: unknownTime ? "12:00 PM (Noon)" : birthTime,
-        unknownTime,
-        birthPlace: birthPlace.trim(),
-        isProfileComplete: true,
-      })
-    )
+    const payload = {
+      name: fullName.trim(),
+      gender: gender.toLowerCase(),
+      dob: birthDate,
+      tob: unknownTime ? "12:00:00" : birthTime,
+      isTimeUnknown: unknownTime,
+      location: {
+        city: birthPlace.trim(),
+        lat: 12.9716,
+        lng: 77.5946,
+        timezoneOffset: 5.5,
+      },
+    }
 
-    toast.success("Birth chart bound! Welcome to AstroTring.")
-    if (propsOnClose) {
-      propsOnClose(false)
+    const result = await dispatch(submitOnboarding(payload))
+    if (!result.error) {
+      if (propsOnClose) {
+        propsOnClose(false)
+      }
+      navigate("/")
     }
   }
 

@@ -40,16 +40,23 @@ apiClient.interceptors.response.use(
     const message = response?.data?.message;
 
     if (status === 401) {
-      // Clear expired auth session
-      localStorage.removeItem("astrotring_auth_token");
-      localStorage.removeItem("token");
-      localStorage.removeItem("astrotring_token");
-      localStorage.removeItem("astrotring_refresh_token");
-      localStorage.removeItem("astrotring_user");
+      const currentToken =
+        localStorage.getItem("astrotring_auth_token") ||
+        localStorage.getItem("token") ||
+        localStorage.getItem("astrotring_token");
 
-      // Dispatch event for UI state or auth slice to trigger login modal
-      window.dispatchEvent(new CustomEvent("astrotring:unauthorized"));
-      toast.error("Session expired. Please sign in again.");
+      if (currentToken && !currentToken.startsWith("mock_")) {
+        // Clear expired auth session
+        localStorage.removeItem("astrotring_auth_token");
+        localStorage.removeItem("token");
+        localStorage.removeItem("astrotring_token");
+        localStorage.removeItem("astrotring_refresh_token");
+        localStorage.removeItem("astrotring_user");
+
+        // Dispatch event for UI state or auth slice to trigger login modal
+        window.dispatchEvent(new CustomEvent("astrotring:unauthorized"));
+        toast.error("Session expired. Please sign in again.");
+      }
     } else if (status === 429) {
       toast.error(
         message || "Too many requests. Please slow down and try again shortly.",

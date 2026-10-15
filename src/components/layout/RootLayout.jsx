@@ -1,18 +1,48 @@
 import { useState, useEffect, useRef } from "react"
-import { Outlet, ScrollRestoration } from "react-router-dom"
+import { Outlet, ScrollRestoration, useNavigate, useLocation } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import Sidebar from "@/components/layout/Sidebar"
 import MobileHeader from "@/components/layout/MobileHeader"
 import AuthModal from "@/features/auth/AuthModal"
 import QuestionPacksModal from "@/components/common/QuestionPacksModal"
-import { openAuthModal, closeAuthModal } from "@/store/slices/authSlice"
+import { openAuthModal, closeAuthModal, fetchUserProfile } from "@/store/slices/authSlice"
 
 export default function RootLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
   const pendingActionRef = useRef(null)
   const dispatch = useDispatch()
-  const { isAuthenticated, isAuthModalOpen } = useSelector((state) => state.auth || {})
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { isAuthenticated, user, isAuthModalOpen } = useSelector((state) => state.auth || {})
+
+  // App load: Fetch user profile (/auth/me) if token exists in storage
+  useEffect(() => {
+    const token =
+      localStorage.getItem("astrotring_auth_token") ||
+      localStorage.getItem("token") ||
+      localStorage.getItem("astrotring_token")
+    if (token) {
+      dispatch(fetchUserProfile())
+    }
+  }, [dispatch])
+
+  // Force onboarding route if user is authenticated but onboarding is incomplete
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.onboardingCompleted === false) {
+        if (location.pathname !== "/onboarding") {
+          navigate("/onboarding", { replace: true })
+        }
+      } else if (user.onboardingCompleted === true && location.pathname === "/onboarding") {
+        navigate("/", { replace: true })
+      }
+    } else if (!isAuthenticated && location.pathname === "/onboarding") {
+      // Unauthenticated users attempting to access /onboarding are routed home with auth modal
+      navigate("/", { replace: true })
+      dispatch(openAuthModal())
+    }
+  }, [isAuthenticated, user, user?.onboardingCompleted, location.pathname, navigate, dispatch])
 
   const handleOpenAuth = (actionCallback) => {
     if (isAuthenticated) {
