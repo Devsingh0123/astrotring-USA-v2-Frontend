@@ -7,6 +7,9 @@ import CalculatorsListingPage from "@/pages/CalculatorsListingPage"
 import FreeKundliPage from "@/pages/FreeKundliPage"
 import KundliDisplayPage from "@/pages/KundliDisplayPage"
 import OnboardingPage from "@/pages/OnboardingPage"
+import ReportsListingPage from "@/pages/ReportsListingPage"
+import ReportDetailPage from "@/pages/ReportDetailPage"
+import InvoicesPage from "@/pages/InvoicesPage"
 import PlaceholderPage from "@/pages/PlaceholderPage"
 import NotFoundPage from "@/pages/NotFoundPage"
 
@@ -67,11 +70,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "reports",
-        element: <PlaceholderPage title="Vedic Deep Reports" />,
+        element: <ReportsListingPage />,
       },
       {
         path: "reports/:slug",
-        element: <PlaceholderPage title="Vedic Report Preview" />,
+        element: <ReportDetailPage />,
+      },
+      {
+        path: "invoices",
+        element: <InvoicesPage />,
       },
       {
         path: "horoscope",

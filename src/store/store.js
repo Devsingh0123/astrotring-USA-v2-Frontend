@@ -3,6 +3,8 @@ import authReducer from "@/store/slices/authSlice"
 import horoscopeReducer from "@/store/slices/horoscopeSlice"
 import calculatorReducer from "@/store/slices/calculatorSlice"
 
+import vaaniReducer from "@/store/slices/vaaniSlice"
+
 /**
  * AstroTring Redux Store Configuration
  * Feature slices are imported from "@/store/slices/"
@@ -19,7 +21,8 @@ export const store = configureStore({
     auth: authReducer,
     horoscope: horoscopeReducer,
     calculators: calculatorReducer,
-    // vaani: vaaniReducer,
+    vaani: vaaniReducer,
+    // user: userReducer,
     // user: userReducer,
     // reports: reportsReducer,
     // compatibility: compatibilityReducer,

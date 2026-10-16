@@ -466,6 +466,23 @@ export const authSlice = createSlice({
       state.step = 1
       state.email = ""
     },
+    updateUserBirthDetails: (state, action) => {
+      const details = action.payload
+      state.birthDetails = {
+        ...(state.birthDetails || {}),
+        ...details,
+      }
+      if (details.fullName && state.user) {
+        state.user.name = details.fullName
+      }
+      if (details.gender && state.user) {
+        state.user.gender = details.gender
+      }
+      localStorage.setItem("astrotring_birth_details", JSON.stringify(state.birthDetails))
+      if (state.user) {
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(state.user))
+      }
+    },
     logout: (state) => {
       state.user = null
       state.birthDetails = null
@@ -632,6 +649,7 @@ export const {
   updateOnboardingData,
   resetOnboardingData,
   updateUserProfile,
+  updateUserBirthDetails,
   logout,
 } = authSlice.actions
 

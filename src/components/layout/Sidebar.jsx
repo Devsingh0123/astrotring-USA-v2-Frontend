@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link, NavLink } from "react-router-dom"
+import { Link, NavLink, useLocation, useSearchParams } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import {
   Sparkles,
@@ -19,6 +19,8 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { logout } from "@/store/slices/authSlice"
+import { setActiveConversation, clearActiveConversation } from "@/store/slices/vaaniSlice"
+import UserProfileMenu from "@/features/user/components/UserProfileMenu"
 
 const navItems = [
   { label: "Horoscopes", path: "/horoscope", icon: Orbit },
@@ -29,10 +31,24 @@ const navItems = [
   { label: "In the News", path: "/news", icon: Megaphone },
 ]
 
-export default function Sidebar({ onOpenBindModal, isCollapsed, onToggleCollapse }) {
+export default function Sidebar({
+  onOpenBindModal,
+  onOpenBirthDetailsModal,
+  onOpenBuyQuestionsModal,
+  onOpenBuyReportsModal,
+  isCollapsed,
+  onToggleCollapse,
+}) {
   const [activeFilter, setActiveFilter] = useState("ALL")
   const dispatch = useDispatch()
   const { isAuthenticated, user, birthDetails } = useSelector((state) => state.auth || {})
+  const { conversations, activeConversationId } = useSelector((state) => state.vaani || {})
+  const [searchParams] = useSearchParams()
+  const location = useLocation()
+  const isHomePage = location.pathname === "/"
+  const currentEngine = searchParams.get("engine") || "vaani"
+  const isVaaniActive = isHomePage && currentEngine === "vaani"
+  const isAstropediaActive = isHomePage && currentEngine === "astropedia"
 
   return (
     <aside
@@ -73,27 +89,36 @@ export default function Sidebar({ onOpenBindModal, isCollapsed, onToggleCollapse
         <div className="space-y-2 pt-1">
           <Link
             to="/?engine=vaani"
-            className={`w-full flex items-center gap-2.5 rounded-xl border border-mlh-plum-800 bg-[#1f0b18]/70 hover:bg-[#2b0e21] text-mlh-plum-100 transition-all font-medium text-xs lg:text-sm ${isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"
-              }`}
+            onClick={() => dispatch(clearActiveConversation())}
+            className={`w-full flex items-center gap-2.5 rounded-xl border transition-all font-medium text-xs lg:text-sm ${
+              isVaaniActive
+                ? "border-mlh-plum bg-[#2b0e21] text-white shadow-[0_0_15px_rgba(179,43,110,0.3)] ring-1 ring-mlh-plum/40"
+                : "border-mlh-plum-800/40 bg-[#1f0b18]/50 hover:bg-[#2b0e21] text-mlh-plum-100"
+            } ${isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"}`}
           >
-            <Sparkles className="w-4 h-4 text-mlh-plum-300 shrink-0" />
+            <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
             {!isCollapsed && <span>Ask Vaani</span>}
           </Link>
 
           <Link
             to="/?engine=astropedia"
-            className={`w-full flex items-center gap-2.5 rounded-xl border border-mlh-orrery/30 bg-[#1c1206]/70 hover:bg-[#261908] text-mlh-orrery-hi transition-all font-medium text-xs lg:text-sm ${isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"
-              }`}
+            onClick={() => dispatch(clearActiveConversation())}
+            className={`w-full flex items-center gap-2.5 rounded-xl border transition-all font-medium text-xs lg:text-sm ${
+              isAstropediaActive
+                ? "border-blue-500 bg-[#0e1d3b] text-white shadow-[0_0_15px_rgba(24,119,252,0.3)] ring-1 ring-blue-500/40"
+                : "border-blue-500/30 bg-[#0a1426]/50 hover:bg-[#0e1d3b] text-blue-200"
+            } ${isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"}`}
           >
-            <BookOpen className="w-4 h-4 text-mlh-orrery shrink-0" />
+            <BookOpen className="w-4 h-4 text-blue-400 shrink-0" />
             {!isCollapsed && <span>Ask Astropedia</span>}
           </Link>
 
           {/* Dedicated My Janam Kundli Link */}
           <Link
             to="/kundli"
-            className={`w-full flex items-center gap-2.5 rounded-xl border border-mlh-amber/35 bg-[#1c1407]/80 hover:bg-[#2a1e0b] text-mlh-amber hover:text-amber-300 transition-all font-medium text-xs lg:text-sm ${isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"
-              }`}
+            className={`w-full flex items-center gap-2.5 rounded-xl border border-mlh-amber/35 bg-[#1c1407]/80 hover:bg-[#2a1e0b] text-mlh-amber hover:text-amber-300 transition-all font-medium text-xs lg:text-sm ${
+              isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"
+            }`}
           >
             <Compass className="w-4 h-4 text-mlh-amber shrink-0" />
             {!isCollapsed && <span>My Janam Kundli</span>}
@@ -109,10 +134,12 @@ export default function Sidebar({ onOpenBindModal, isCollapsed, onToggleCollapse
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-lg text-xs lg:text-sm font-medium transition-colors ${isCollapsed ? "justify-center p-2.5" : "px-3 py-2"
-                  } ${isActive
-                    ? "text-white bg-white/10"
-                    : "text-mlh-muted hover:text-white hover:bg-white/5"
+                  `flex items-center gap-3 rounded-lg text-xs lg:text-sm font-medium transition-colors ${
+                    isCollapsed ? "justify-center p-2.5" : "px-3 py-2"
+                  } ${
+                    isActive
+                      ? "text-white bg-white/10"
+                      : "text-mlh-muted hover:text-white hover:bg-white/5"
                   }`
                 }
               >
@@ -131,58 +158,69 @@ export default function Sidebar({ onOpenBindModal, isCollapsed, onToggleCollapse
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
-                  className={`px-2 py-1 rounded transition-colors cursor-pointer ${activeFilter === filter
+                  className={`px-2 py-1 rounded transition-colors cursor-pointer ${
+                    activeFilter === filter
                       ? "bg-white/15 text-white font-semibold"
                       : "text-mlh-faint hover:text-mlh-muted"
-                    }`}
+                  }`}
                 >
                   {filter}
                 </button>
               ))}
             </div>
 
-            <div className="py-6 px-1 text-xs text-mlh-faint font-sans">
-              Your readings will appear here.
-            </div>
+            {(() => {
+              const filtered = (conversations || []).filter((item) => {
+                if (activeFilter === "VAANI") return item.engine === "vaani"
+                if (activeFilter === "ASTROPEDIA") return item.engine === "astropedia"
+                return true
+              })
+
+              if (filtered.length === 0) {
+                return (
+                  <div className="py-6 px-1 text-xs text-mlh-faint font-sans">
+                    Your readings will appear here.
+                  </div>
+                )
+              }
+
+              return (
+                <div className="space-y-2.5 pt-1 max-h-[240px] overflow-y-auto no-scrollbar">
+                  {filtered.map((item, idx) => (
+                    <div key={item.id} className="space-y-1">
+                      <div className="flex items-center justify-between text-[10px] font-mono text-mlh-muted px-1">
+                        <span>TODAY</span>
+                        <span>{idx < 9 ? `0${idx + 1}` : idx + 1}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => dispatch(setActiveConversation(item.id))}
+                        className={`w-full text-left p-2 rounded-xl text-xs font-sans line-clamp-2 transition-all cursor-pointer ${
+                          activeConversationId === item.id
+                            ? "bg-mlh-plum/20 text-white border border-mlh-plum/50"
+                            : "text-white/70 hover:text-white hover:bg-white/5 border border-transparent"
+                        }`}
+                      >
+                        {item.question}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )
+            })()}
           </div>
         )}
       </div>
 
-      {/* Sticky Bottom Log In / Bound Chart Bar */}
+      {/* Sticky Bottom Log In / User Profile Popover */}
       <div className="p-3 border-t border-[#252637] bg-[#0c070a]">
         {isAuthenticated ? (
-          <div
-            className={`w-full flex items-center justify-between rounded-xl p-2.5 bg-white/5 border border-white/10 ${
-              isCollapsed ? "justify-center" : ""
-            }`}
-          >
-            <div className="flex items-center gap-2.5 overflow-hidden">
-              <div className="w-8 h-8 rounded-lg bg-mlh-plum/20 border border-mlh-plum/40 flex items-center justify-center text-mlh-plum-200 shrink-0">
-                <User className="w-4 h-4" />
-              </div>
-              {!isCollapsed && (
-                <div className="overflow-hidden">
-                  <div className="text-xs font-semibold text-white truncate">
-                    {user?.name || user?.email?.split("@")[0] || "Chart Bound"}
-                  </div>
-                  <div className="text-[10px] font-mono text-emerald-400 truncate max-w-[140px]">
-                    {user?.email || "VERIFIED"}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {!isCollapsed && (
-              <button
-                type="button"
-                onClick={() => dispatch(logout())}
-                title="Log out"
-                className="p-1.5 rounded-lg hover:bg-white/10 text-mlh-muted hover:text-rose-400 transition-colors cursor-pointer"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
+          <UserProfileMenu
+            isCollapsed={isCollapsed}
+            onOpenBirthDetailsModal={onOpenBirthDetailsModal}
+            onOpenBuyQuestionsModal={onOpenBuyQuestionsModal}
+            onOpenBuyReportsModal={onOpenBuyReportsModal}
+          />
         ) : (
           <button
             onClick={() => onOpenBindModal(true)}

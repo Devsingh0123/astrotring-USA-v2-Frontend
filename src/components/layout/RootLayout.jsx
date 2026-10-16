@@ -5,16 +5,24 @@ import Sidebar from "@/components/layout/Sidebar"
 import MobileHeader from "@/components/layout/MobileHeader"
 import AuthModal from "@/features/auth/AuthModal"
 import QuestionPacksModal from "@/components/common/QuestionPacksModal"
+import MyBirthDetailsModal from "@/features/user/components/MyBirthDetailsModal"
 import { openAuthModal, closeAuthModal, fetchUserProfile } from "@/store/slices/authSlice"
 
 export default function RootLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
+  const [buyModalOptions, setBuyModalOptions] = useState(null)
+  const [isBirthDetailsModalOpen, setIsBirthDetailsModalOpen] = useState(false)
   const pendingActionRef = useRef(null)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
   const { isAuthenticated, user, isAuthModalOpen } = useSelector((state) => state.auth || {})
+
+  const handleOpenBuyModal = (options) => {
+    setBuyModalOptions(options || null)
+    setIsBuyModalOpen(true)
+  }
 
   // App load: Fetch user profile (/auth/me) if token exists in storage
   useEffect(() => {
@@ -87,6 +95,9 @@ export default function RootLayout() {
           isCollapsed={isCollapsed}
           onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
           onOpenBindModal={handleOpenAuth}
+          onOpenBirthDetailsModal={() => setIsBirthDetailsModalOpen(true)}
+          onOpenBuyQuestionsModal={() => handleOpenBuyModal()}
+          onOpenBuyReportsModal={() => navigate("/reports")}
         />
       </div>
 
@@ -101,7 +112,8 @@ export default function RootLayout() {
             context={{
               onOpenBindModal: handleOpenAuth,
               onOpenAuthModal: handleOpenAuth,
-              onOpenBuyModal: () => setIsBuyModalOpen(true),
+              onOpenBuyModal: handleOpenBuyModal,
+              onOpenBirthDetailsModal: () => setIsBirthDetailsModalOpen(true),
             }}
           />
         </main>
@@ -113,11 +125,22 @@ export default function RootLayout() {
         onClose={() => dispatch(closeAuthModal())}
       />
 
-      {/* Global Question Packs 2-Step Purchase Modal */}
+      {/* Global Question Packs 2-Step Purchase Modal (Melooha Ref 10 & 16 + Razorpay) */}
       <QuestionPacksModal
         isOpen={isBuyModalOpen}
-        onClose={() => setIsBuyModalOpen(false)}
+        onClose={() => {
+          setIsBuyModalOpen(false)
+          setBuyModalOptions(null)
+        }}
         onOpenAuth={handleOpenAuth}
+        initialPromoCode={buyModalOptions?.promoCode}
+        initialPackId={buyModalOptions?.packId}
+      />
+
+      {/* My Birth Details Edit Modal (Melooha Ref 09) */}
+      <MyBirthDetailsModal
+        isOpen={isBirthDetailsModalOpen}
+        onClose={() => setIsBirthDetailsModalOpen(false)}
       />
     </div>
   )
