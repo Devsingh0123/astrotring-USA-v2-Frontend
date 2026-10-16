@@ -21,8 +21,12 @@ import {
   clearActiveConversation,
   updateConversationFeedback,
   startGenerating,
+  setThinkingStep,
+  stopGenerating,
 } from "@/store/slices/vaaniSlice"
+import { streamChatTurn, submitMessageFeedback } from "@/features/vaani/vaaniApi"
 import { generateAstrologyResponse } from "@/features/vaani/utils/astrologyEngine"
+import { toast } from "sonner"
 
 export default function VaaniChatConversation({ onOpenBuyModal }) {
   const dispatch = useDispatch()
@@ -73,40 +77,61 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
         return
       }
       dispatch(startGenerating("Reading your birth chart..."))
-      setTimeout(() => {
-        dispatch(startGenerating("Synthesizing your lagna and planetary strength..."))
-      }, 1200)
     } else {
       dispatch(startGenerating("Consulting classical Vedic texts..."))
-      setTimeout(() => {
-        dispatch(startGenerating("Searching Brihat Parasara Hora Sastra repository..."))
-      }, 1200)
     }
 
-    setTimeout(() => {
-      const generated = generateAstrologyResponse({
-        question: text,
-        engine: currentEngine,
-        user,
-        birthDetails,
-      })
+    // Call real backend SSE streaming endpoint
+    streamChatTurn({
+      engine: currentEngine,
+      query: text,
+      threadId: activeConv?.threadId,
+      chartId: birthDetails?.chartId,
+      onThinking: (step) => {
+        dispatch(setThinkingStep(step))
+      },
+      onDone: (data) => {
+        if (data?.reading) {
+          dispatch(
+            addConversation({
+              ...data.reading,
+              creditsRemaining: data.creditsRemaining,
+            })
+          )
+        }
+      },
+      onError: (err) => {
+        console.warn("Follow-up streaming error, using client fallback:", err)
+        if (err.message && err.message.includes("Birth details not found")) {
+          toast.error(err.message)
+          dispatch(stopGenerating())
+          return
+        }
 
-      const newConversationItem = {
-        id: `reading-${Date.now()}`,
-        engine: currentEngine,
-        question: text,
-        createdAt: new Date().toISOString(),
-        openingThought: generated.openingThought,
-        thinkingSteps: generated.thinkingSteps,
-        paragraphs: generated.paragraphs,
-        astrologyBehind: generated.astrologyBehind,
-        suggestedQuestions: generated.suggestedQuestions,
-        offer: generated.offer,
-        feedback: null,
-      }
+        const generated = generateAstrologyResponse({
+          question: text,
+          engine: currentEngine,
+          user,
+          birthDetails,
+        })
 
-      dispatch(addConversation(newConversationItem))
-    }, 2400)
+        const fallbackItem = {
+          id: `reading-${Date.now()}`,
+          engine: currentEngine,
+          question: text,
+          createdAt: new Date().toISOString(),
+          openingThought: generated.openingThought,
+          thinkingSteps: generated.thinkingSteps,
+          paragraphs: generated.paragraphs,
+          astrologyBehind: generated.astrologyBehind,
+          suggestedQuestions: generated.suggestedQuestions,
+          offer: generated.offer,
+          feedback: null,
+        }
+
+        dispatch(addConversation(fallbackItem))
+      },
+    })
   }
 
   const handleKeyDown = (e) => {
@@ -118,7 +143,10 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
 
   const handleFeedback = (feedbackType) => {
     if (activeConv) {
+      // 1. Optimistically update local feedback state
       dispatch(updateConversationFeedback({ id: activeConv.id, feedback: feedbackType }))
+      // 2. Submit to backend API endpoint PATCH /api/v1/chat/messages/:messageId/feedback
+      dispatch(submitMessageFeedback({ messageId: activeConv.id, feedback: feedbackType }))
     }
   }
 

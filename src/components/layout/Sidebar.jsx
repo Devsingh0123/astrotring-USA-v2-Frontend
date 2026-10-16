@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { logout } from "@/store/slices/authSlice"
 import { setActiveConversation, clearActiveConversation } from "@/store/slices/vaaniSlice"
+import { fetchUserThreads, fetchThreadById } from "@/features/vaani/vaaniApi"
 import UserProfileMenu from "@/features/user/components/UserProfileMenu"
 
 const navItems = [
@@ -42,13 +43,21 @@ export default function Sidebar({
   const [activeFilter, setActiveFilter] = useState("ALL")
   const dispatch = useDispatch()
   const { isAuthenticated, user, birthDetails } = useSelector((state) => state.auth || {})
-  const { conversations, activeConversationId } = useSelector((state) => state.vaani || {})
+  const { conversations = [], serverThreads = [], activeConversationId } =
+    useSelector((state) => state.vaani || {})
   const [searchParams] = useSearchParams()
   const location = useLocation()
+  const navigate = useNavigate()
   const isHomePage = location.pathname === "/"
   const currentEngine = searchParams.get("engine") || "vaani"
   const isVaaniActive = isHomePage && currentEngine === "vaani"
   const isAstropediaActive = isHomePage && currentEngine === "astropedia"
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchUserThreads())
+    }
+  }, [dispatch, isAuthenticated])
 
   return (
     <aside
@@ -170,7 +179,25 @@ export default function Sidebar({
             </div>
 
             {(() => {
-              const filtered = (conversations || []).filter((item) => {
+              // Combine active conversations and server threads
+              const allReadings = [...conversations]
+              serverThreads.forEach((th) => {
+                const alreadyPresent = allReadings.some(
+                  (c) => c.threadId === th.id || c.id === th.id
+                )
+                if (!alreadyPresent) {
+                  allReadings.push({
+                    id: th.id,
+                    threadId: th.id,
+                    question: th.title,
+                    engine: th.engine,
+                    createdAt: th.lastMessageAt || th.createdAt,
+                    isServerThread: true,
+                  })
+                }
+              })
+
+              const filtered = allReadings.filter((item) => {
                 if (activeFilter === "VAANI") return item.engine === "vaani"
                 if (activeFilter === "ASTROPEDIA") return item.engine === "astropedia"
                 return true
@@ -184,6 +211,17 @@ export default function Sidebar({
                 )
               }
 
+              const handleItemClick = (item) => {
+                if (item.isServerThread) {
+                  dispatch(fetchThreadById(item.id))
+                } else {
+                  dispatch(setActiveConversation(item.id))
+                }
+                if (location.pathname !== "/") {
+                  navigate(`/?engine=${item.engine || "vaani"}`)
+                }
+              }
+
               return (
                 <div className="space-y-2.5 pt-1 max-h-[240px] overflow-y-auto no-scrollbar">
                   {filtered.map((item, idx) => (
@@ -194,9 +232,10 @@ export default function Sidebar({
                       </div>
                       <button
                         type="button"
-                        onClick={() => dispatch(setActiveConversation(item.id))}
+                        onClick={() => handleItemClick(item)}
                         className={`w-full text-left p-2 rounded-xl text-xs font-sans line-clamp-2 transition-all cursor-pointer ${
-                          activeConversationId === item.id
+                          activeConversationId === item.id ||
+                          activeConversationId === item.threadId
                             ? "bg-mlh-plum/20 text-white border border-mlh-plum/50"
                             : "text-white/70 hover:text-white hover:bg-white/5 border border-transparent"
                         }`}

@@ -6,7 +6,8 @@ import { Sparkles, BookOpen, ArrowUp, Lock } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { openAuthModal } from "@/store/slices/authSlice"
-import { startGenerating, addConversation } from "@/store/slices/vaaniSlice"
+import { startGenerating, setThinkingStep, stopGenerating, addConversation } from "@/store/slices/vaaniSlice"
+import { streamChatTurn } from "@/features/vaani/vaaniApi"
 import { generateAstrologyResponse } from "@/features/vaani/utils/astrologyEngine"
 import { toast } from "sonner"
 
@@ -98,41 +99,66 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
       }
 
       dispatch(startGenerating("Reading your birth chart..."))
-      setTimeout(() => {
-        dispatch(startGenerating("Synthesizing your lagna and planetary strength..."))
-      }, 1200)
     } else {
       // ASTROPEDIA: Universal Vedic Encyclopedia is 100% Free & Unlimited
       dispatch(startGenerating("Consulting classical Vedic texts..."))
-      setTimeout(() => {
-        dispatch(startGenerating("Searching Brihat Parasara Hora Sastra repository..."))
-      }, 1200)
     }
 
-    setTimeout(() => {
-      const generated = generateAstrologyResponse({
-        question: text,
-        engine,
-        user,
-        birthDetails,
-      })
+    // Call real backend SSE streaming endpoint
+    streamChatTurn({
+      engine,
+      query: text,
+      chartId: birthDetails?.chartId,
+      onThinking: (step) => {
+        dispatch(setThinkingStep(step))
+      },
+      onDone: (data) => {
+        if (data?.reading) {
+          dispatch(
+            addConversation({
+              ...data.reading,
+              creditsRemaining: data.creditsRemaining,
+            })
+          )
+        }
+      },
+      onError: (err) => {
+        console.warn("Backend chat stream error, using client fallback:", err)
+        // If 400 error about missing birth details, notify user
+        if (err.message && err.message.includes("Birth details not found")) {
+          toast.error(err.message)
+          dispatch(stopGenerating())
+          if (typeof onOpenBindModal === "function") {
+            onOpenBindModal()
+          }
+          return
+        }
 
-      const newConversationItem = {
-        id: `reading-${Date.now()}`,
-        engine,
-        question: text,
-        createdAt: new Date().toISOString(),
-        openingThought: generated.openingThought,
-        thinkingSteps: generated.thinkingSteps,
-        paragraphs: generated.paragraphs,
-        astrologyBehind: generated.astrologyBehind,
-        suggestedQuestions: generated.suggestedQuestions,
-        offer: generated.offer,
-        feedback: null,
-      }
+        // Resilient fallback to client Vedic engine if backend is offline or encountered issue
+        const generated = generateAstrologyResponse({
+          question: text,
+          engine,
+          user,
+          birthDetails,
+        })
 
-      dispatch(addConversation(newConversationItem))
-    }, 2400)
+        const fallbackItem = {
+          id: `reading-${Date.now()}`,
+          engine,
+          question: text,
+          createdAt: new Date().toISOString(),
+          openingThought: generated.openingThought,
+          thinkingSteps: generated.thinkingSteps,
+          paragraphs: generated.paragraphs,
+          astrologyBehind: generated.astrologyBehind,
+          suggestedQuestions: generated.suggestedQuestions,
+          offer: generated.offer,
+          feedback: null,
+        }
+
+        dispatch(addConversation(fallbackItem))
+      },
+    })
   }
 
   const handleKeyDown = (e) => {
