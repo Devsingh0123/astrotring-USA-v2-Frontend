@@ -9,7 +9,6 @@ export { default as DailySidebar } from "./components/DailySidebar";
 // Data
 export { signsData, elementGrouping } from "./horoscopeData";
 
-// Slice & API
+// Slice (which re-exports fetchSignForecast)
 export * from "./horoscopeSlice";
-export * from "./horoscopeApi";
 export { default } from "./horoscopeSlice";

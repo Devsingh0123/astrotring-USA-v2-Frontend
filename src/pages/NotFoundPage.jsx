@@ -1,8 +1,12 @@
-import { Link } from "react-router-dom"
+import { Link, useRouteError } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Compass } from "lucide-react"
 
 export default function NotFoundPage() {
+  const error = useRouteError()
+  if (error) {
+    console.error("Caught route error:", error)
+  }
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 space-y-4">
       <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground">

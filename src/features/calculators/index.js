@@ -1,5 +1,4 @@
 export * from "./calculatorSlice";
-export * from "./calculatorApi";
 export { default } from "./calculatorSlice";
 
 // Components
