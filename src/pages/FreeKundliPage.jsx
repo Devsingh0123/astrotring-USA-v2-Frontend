@@ -15,7 +15,7 @@ import DashaTimeline from "@/features/calculators/components/DashaTimeline";
 import CalculatorFaqSection from "@/features/calculators/components/CalculatorFaqSection";
 import RelatedCalculatorsGrid from "@/features/calculators/components/RelatedCalculatorsGrid";
 
-import { calculateKundli } from "@/store/slices/calculatorSlice";
+import { calculateKundli } from "@/features/calculators";
 
 export default function FreeKundliPage() {
   const dispatch = useDispatch();

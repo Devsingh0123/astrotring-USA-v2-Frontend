@@ -17,12 +17,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import { apiClient } from "@/store/api-client"
+import { apiClient } from "@/lib/api-client"
 import {
   submitOnboarding,
   setOnboardingStep,
   updateOnboardingData,
-} from "@/store/slices/authSlice"
+} from "@/features/auth/authSlice"
 
 export default function OnboardingPage() {
   const dispatch = useDispatch()

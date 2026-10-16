@@ -5,10 +5,9 @@ import { motion } from "framer-motion"
 import { Sparkles, BookOpen, ArrowUp, Lock } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { openAuthModal } from "@/store/slices/authSlice"
-import { startGenerating, setThinkingStep, stopGenerating, addConversation } from "@/store/slices/vaaniSlice"
+import { openAuthModal } from "@/features/auth/authSlice"
+import { startGenerating, setThinkingStep, stopGenerating, addConversation } from "@/features/vaani/vaaniSlice"
 import { streamChatTurn } from "@/features/vaani/vaaniApi"
-import { generateAstrologyResponse } from "@/features/vaani/utils/astrologyEngine"
 import { toast } from "sonner"
 
 // Exact Melooha 4 Prompts for Personal Vaani (Ref 07-authenticated-dashboard-clean.yml)
@@ -123,40 +122,11 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
         }
       },
       onError: (err) => {
-        console.warn("Backend chat stream error, using client fallback:", err)
-        // If 400 error about missing birth details, notify user
-        if (err.message && err.message.includes("Birth details not found")) {
-          toast.error(err.message)
-          dispatch(stopGenerating())
-          if (typeof onOpenBindModal === "function") {
-            onOpenBindModal()
-          }
-          return
+        toast.error(err.message || "Failed to consult astrology engine. Please try again.")
+        dispatch(stopGenerating())
+        if (err.message && err.message.includes("Birth details not found") && typeof onOpenBindModal === "function") {
+          onOpenBindModal()
         }
-
-        // Resilient fallback to client Vedic engine if backend is offline or encountered issue
-        const generated = generateAstrologyResponse({
-          question: text,
-          engine,
-          user,
-          birthDetails,
-        })
-
-        const fallbackItem = {
-          id: `reading-${Date.now()}`,
-          engine,
-          question: text,
-          createdAt: new Date().toISOString(),
-          openingThought: generated.openingThought,
-          thinkingSteps: generated.thinkingSteps,
-          paragraphs: generated.paragraphs,
-          astrologyBehind: generated.astrologyBehind,
-          suggestedQuestions: generated.suggestedQuestions,
-          offer: generated.offer,
-          feedback: null,
-        }
-
-        dispatch(addConversation(fallbackItem))
       },
     })
   }

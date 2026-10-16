@@ -8,8 +8,6 @@ import Footer from "@/components/layout/Footer"
 import {
   setTimeframe,
   setSearchQuery,
-} from "@/store/slices/horoscopeSlice"
-import {
   ElementGroupSection,
   elementGrouping,
   signsData,

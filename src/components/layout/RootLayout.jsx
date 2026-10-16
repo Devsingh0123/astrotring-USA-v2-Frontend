@@ -6,7 +6,7 @@ import MobileHeader from "@/components/layout/MobileHeader"
 import AuthModal from "@/features/auth/AuthModal"
 import QuestionPacksModal from "@/components/common/QuestionPacksModal"
 import MyBirthDetailsModal from "@/features/user/components/MyBirthDetailsModal"
-import { openAuthModal, closeAuthModal, fetchUserProfile } from "@/store/slices/authSlice"
+import { openAuthModal, closeAuthModal, fetchUserProfile } from "@/features/auth"
 
 export default function RootLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false)

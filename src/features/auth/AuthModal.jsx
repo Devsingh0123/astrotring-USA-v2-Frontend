@@ -28,7 +28,7 @@ import {
   verifyOtp,
   submitOnboarding,
   updateUserProfile,
-} from "@/store/slices/authSlice"
+} from "./authSlice"
 
 export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }) {
   const dispatch = useDispatch()

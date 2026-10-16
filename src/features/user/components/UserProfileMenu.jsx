@@ -17,7 +17,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
-import { logout } from "@/store/slices/authSlice"
+import { logout } from "@/features/auth"
 
 export default function UserProfileMenu({
   onOpenBirthDetailsModal,

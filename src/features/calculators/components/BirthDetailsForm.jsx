@@ -11,7 +11,7 @@ import {
 import {
   searchLocations,
   clearLocationSuggestions,
-} from "@/store/slices/calculatorSlice";
+} from "../calculatorSlice";
 
 export default function BirthDetailsForm({
   onSubmit,

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { REPORT_PACKAGES } from "@/features/reports/reportsData"
-import { addReportQuota } from "@/store/slices/vaaniSlice"
+import { addReportQuota } from "@/features/vaani"
 import RazorpayCheckoutModal from "@/components/common/RazorpayCheckoutModal"
 
 export default function ReportPacksModal({ isOpen, onClose, onSelectPackage }) {

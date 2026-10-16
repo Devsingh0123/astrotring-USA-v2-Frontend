@@ -1,31 +1,27 @@
-import { configureStore } from "@reduxjs/toolkit"
-import authReducer from "@/store/slices/authSlice"
-import horoscopeReducer from "@/store/slices/horoscopeSlice"
-import calculatorReducer from "@/store/slices/calculatorSlice"
-
-import vaaniReducer from "@/store/slices/vaaniSlice"
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "@/features/auth/authSlice";
+import vaaniReducer from "@/features/vaani/vaaniSlice";
+import calculatorReducer from "@/features/calculators/calculatorSlice";
+import horoscopeReducer from "@/features/horoscope/horoscopeSlice";
+import reportsReducer from "@/features/reports/reportsSlice";
 
 /**
- * AstroTring Redux Store Configuration
- * Feature slices are imported from "@/store/slices/"
+ * AstroTring Independent Global Redux Store Configuration
+ * Assembles all modular feature slices from their respective feature directories:
+ * - @/features/auth/authSlice
+ * - @/features/vaani/vaaniSlice
+ * - @/features/calculators/calculatorSlice
+ * - @/features/horoscope/horoscopeSlice
+ * - @/features/reports/reportsSlice
  */
-
-// Initial root state reducer placeholder until feature slices are mounted
-const initialRootReducer = (state = { ready: true }, _action) => {
-  return state
-}
-
 export const store = configureStore({
   reducer: {
-    app: initialRootReducer,
+    app: (state = { ready: true }) => state,
     auth: authReducer,
-    horoscope: horoscopeReducer,
-    calculators: calculatorReducer,
     vaani: vaaniReducer,
-    // user: userReducer,
-    // user: userReducer,
-    // reports: reportsReducer,
-    // compatibility: compatibilityReducer,
+    calculators: calculatorReducer,
+    horoscope: horoscopeReducer,
+    reports: reportsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

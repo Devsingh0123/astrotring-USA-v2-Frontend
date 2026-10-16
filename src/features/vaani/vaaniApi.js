@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { apiClient } from "@/store/api-client"
+import { apiClient } from "@/lib/api-client"
 import { toast } from "sonner"
 
 const BASE_URL =

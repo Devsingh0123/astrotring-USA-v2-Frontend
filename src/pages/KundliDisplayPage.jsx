@@ -29,8 +29,8 @@ import HouseAnalysis from "@/features/calculators/components/HouseAnalysis";
 import DashaTimeline from "@/features/calculators/components/DashaTimeline";
 import AskVaaniPromptCard from "@/features/calculators/components/AskVaaniPromptCard";
 
-import { fetchUserChart } from "@/store/slices/calculatorSlice";
-import { openAuthModal } from "@/store/slices/authSlice";
+import { fetchUserChart } from "@/features/calculators";
+import { openAuthModal } from "@/features/auth";
 
 // Sanskrit & elemental lookup for 12 Signs
 const ZODIAC_METADATA = {

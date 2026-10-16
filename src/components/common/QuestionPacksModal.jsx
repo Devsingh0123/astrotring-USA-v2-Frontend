@@ -13,8 +13,8 @@ import {
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { openAuthModal } from "@/store/slices/authSlice"
-import { addQuestionQuota } from "@/store/slices/vaaniSlice"
+import { openAuthModal } from "@/features/auth"
+import { addQuestionQuota } from "@/features/vaani"
 import RazorpayCheckoutModal from "@/components/common/RazorpayCheckoutModal"
 
 // Melooha Question Packages (INR) matching Authenticated Screenshots 10 & 16

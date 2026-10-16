@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "sonner";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://api.astrotring.com/api/v1";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -45,7 +45,7 @@ apiClient.interceptors.response.use(
         localStorage.getItem("token") ||
         localStorage.getItem("astrotring_token");
 
-      if (currentToken && !currentToken.startsWith("mock_")) {
+      if (currentToken) {
         // Clear expired auth session
         localStorage.removeItem("astrotring_auth_token");
         localStorage.removeItem("token");

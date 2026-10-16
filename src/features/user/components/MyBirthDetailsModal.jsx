@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { updateUserBirthDetails } from "@/store/slices/authSlice"
-import { apiClient } from "@/store/api-client"
+import { updateUserBirthDetails } from "@/features/auth/authSlice"
+import { apiClient } from "@/lib/api-client"
 
 export default function MyBirthDetailsModal({ isOpen, onClose }) {
   const dispatch = useDispatch()

@@ -23,9 +23,8 @@ import {
   startGenerating,
   setThinkingStep,
   stopGenerating,
-} from "@/store/slices/vaaniSlice"
+} from "../vaaniSlice"
 import { streamChatTurn, submitMessageFeedback } from "@/features/vaani/vaaniApi"
-import { generateAstrologyResponse } from "@/features/vaani/utils/astrologyEngine"
 import { toast } from "sonner"
 
 export default function VaaniChatConversation({ onOpenBuyModal }) {
@@ -101,35 +100,8 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
         }
       },
       onError: (err) => {
-        console.warn("Follow-up streaming error, using client fallback:", err)
-        if (err.message && err.message.includes("Birth details not found")) {
-          toast.error(err.message)
-          dispatch(stopGenerating())
-          return
-        }
-
-        const generated = generateAstrologyResponse({
-          question: text,
-          engine: currentEngine,
-          user,
-          birthDetails,
-        })
-
-        const fallbackItem = {
-          id: `reading-${Date.now()}`,
-          engine: currentEngine,
-          question: text,
-          createdAt: new Date().toISOString(),
-          openingThought: generated.openingThought,
-          thinkingSteps: generated.thinkingSteps,
-          paragraphs: generated.paragraphs,
-          astrologyBehind: generated.astrologyBehind,
-          suggestedQuestions: generated.suggestedQuestions,
-          offer: generated.offer,
-          feedback: null,
-        }
-
-        dispatch(addConversation(fallbackItem))
+        toast.error(err.message || "Failed to consult astrology engine. Please try again.")
+        dispatch(stopGenerating())
       },
     })
   }

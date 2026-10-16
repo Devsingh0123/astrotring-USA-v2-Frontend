@@ -1,4 +1,7 @@
-export { store, default } from "./store"
-export { apiClient } from "./api-client"
-export * from "./slices/authSlice"
-export * from "./slices/horoscopeSlice"
+export { store, default } from "./store";
+export { apiClient } from "@/lib/api-client";
+export * from "@/features/auth/authSlice";
+export * from "@/features/horoscope/horoscopeSlice";
+export * from "@/features/calculators/calculatorSlice";
+export * from "@/features/vaani/vaaniSlice";
+export * from "@/features/reports/reportsSlice";

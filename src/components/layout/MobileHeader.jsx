@@ -16,7 +16,7 @@ import {
   Compass,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { logout } from "@/store/slices/authSlice"
+import { logout } from "@/features/auth"
 
 const mobileNavLinks = [
   { label: "Horoscopes", path: "/horoscope", icon: Orbit },

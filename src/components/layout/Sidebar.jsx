@@ -18,8 +18,8 @@ import {
   Compass,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { logout } from "@/store/slices/authSlice"
-import { setActiveConversation, clearActiveConversation } from "@/store/slices/vaaniSlice"
+import { logout } from "@/features/auth"
+import { setActiveConversation, clearActiveConversation } from "@/features/vaani"
 import { fetchUserThreads, fetchThreadById } from "@/features/vaani/vaaniApi"
 import UserProfileMenu from "@/features/user/components/UserProfileMenu"
 
