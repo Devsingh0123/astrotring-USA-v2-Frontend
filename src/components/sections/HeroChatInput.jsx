@@ -10,20 +10,20 @@ import { startGenerating, setThinkingStep, stopGenerating, addConversation } fro
 import { streamChatTurn } from "@/features/vaani/vaaniApi"
 import { toast } from "sonner"
 
-// Exact Melooha 4 Prompts for Personal Vaani (Ref 07-authenticated-dashboard-clean.yml)
+// Exact Melooha 4 Prompts for Personal Vaani
 const VAANI_PROMPTS = [
-  "What does my chart say about higher studies?",
+  "What is Saturn doing to my chart right now?",
+  "Which gemstone suits my chart, if any?",
   "What is my lagna and what does it say about me?",
-  "What does my chart say about my career direction?",
-  "Is this a good year for me to buy property?",
+  "Which yogas are present in my chart?",
 ]
 
-// Authentic Vedic Encyclopedia Prompts for Astropedia
+// Exact Melooha 4 Prompts for Astropedia
 const ASTROPEDIA_PROMPTS = [
-  "What is the difference between Lagna and Moon Sign?",
-  "How does Sade Sati affect a person's life?",
-  "What causes Mangal Dosha and its cancellations?",
-  "How do Vimshottari Mahadasha cycles work?",
+  "What is Kaal Sarp dosha and how seriously should it be taken?",
+  "What does Moon in 7th house mean for marriage and public life?",
+  "What is a muhurta and how is an auspicious time chosen?",
+  "What does the twelfth house govern in Vedic astrology?",
 ]
 
 export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
@@ -43,6 +43,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
   useEffect(() => {
     if (engineParam === "astropedia" || engineParam === "vaani") {
       setEngine(engineParam)
+      setQuery("")
     }
   }, [engineParam])
 
@@ -146,17 +147,17 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
   const activePrompts = engine === "astropedia" ? ASTROPEDIA_PROMPTS : VAANI_PROMPTS
   const inputPlaceholder =
     engine === "astropedia"
-      ? "Ask any question about Vedic astrology, planetary yogas, doshas, or rituals…"
+      ? "Search any Vedic astrology topic…"
       : "Ask about your career, marriage, or the timing of a decision…"
 
   return (
-    <div className="w-full flex flex-col items-center justify-center relative z-10 px-4 py-8 sm:py-16">
+    <div className="w-full max-w-[760px] flex flex-col items-center justify-center relative z-10 mx-auto">
       {/* Central Heading matching Melooha */}
       <motion.h1
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="font-serif font-normal text-white text-[25px] sm:text-[31px] lg:text-[36px] tracking-[-0.015em] leading-[1.1] text-center mb-8"
+        className="font-serif font-normal text-white text-[28px] sm:text-[36px] tracking-[-0.015em] leading-[1.1] text-center mb-6 sm:mb-7"
       >
         What do you want to know?
       </motion.h1>
@@ -166,10 +167,10 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1, duration: 0.4 }}
-        className={`w-full max-w-[700px] rounded-2xl border bg-[#12131c]/92 backdrop-blur-md p-4 sm:p-5 shadow-[0_22px_60px_rgba(0,0,0,0.55)] space-y-4 transition-all ${
+        className={`w-full rounded-[22px] border bg-[#12131c]/92 backdrop-blur-[7px] p-4 sm:p-5 shadow-[0_22px_60px_rgba(0,0,0,0.55)] space-y-4 transition-all ${
           engine === "astropedia"
-            ? "border-blue-500/40 focus-within:border-blue-400 shadow-[0_0_48px_rgba(24,119,252,0.25)]"
-            : "border-[#2e3045] focus-within:border-mlh-plum shadow-[0_0_48px_rgba(129,23,86,0.35)]"
+            ? "border-amber-500/45 focus-within:border-amber-500/85 shadow-[0_22px_60px_rgba(0,0,0,.55),0_0_48px_rgba(223,129,7,.34),inset_0_1px_0_rgba(255,255,255,.08)]"
+            : "border-mlh-plum-400/45 focus-within:border-mlh-plum-400/85 shadow-[0_22px_60px_rgba(0,0,0,.55),0_0_48px_rgba(129,23,86,.34),inset_0_1px_0_rgba(255,255,255,.08)]"
         }`}
       >
         {/* Multi-line Query Textarea */}
@@ -210,7 +211,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
               onClick={() => handleSelectEngine("astropedia")}
               className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
                 engine === "astropedia"
-                  ? "bg-[#1877fc] text-white shadow-xs"
+                  ? "bg-gradient-to-r from-[#feb371] to-[#df8107] text-[#0f090c] font-semibold shadow-xs"
                   : "text-mlh-muted hover:text-white"
               }`}
             >
@@ -266,8 +267,8 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
                 </button>
               )
             ) : (
-              <div className="flex items-center gap-1.5 text-xs font-mono text-blue-400 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full">
-                <BookOpen className="w-3.5 h-3.5 text-blue-400" />
+              <div className="flex items-center gap-1.5 text-xs font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+                <BookOpen className="w-3.5 h-3.5 text-amber-400" />
                 <span>Free knowledge · Unlimited</span>
               </div>
             )}
@@ -278,10 +279,10 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
               disabled={!query.trim() || isGenerating}
               onClick={() => executeQuestion(query)}
               aria-label="Send question"
-              className={`w-10 h-10 rounded-full text-white shrink-0 shadow-md cursor-pointer disabled:opacity-40 transition-all ${
+              className={`w-10 h-10 rounded-full shrink-0 shadow-md cursor-pointer disabled:opacity-40 transition-all ${
                 engine === "astropedia"
-                  ? "bg-blue-600 hover:bg-blue-500 shadow-blue-500/30"
-                  : "bg-gradient-to-br from-mlh-plum-500 to-mlh-plum hover:from-mlh-plum hover:to-mlh-plum-800 shadow-[0_0_24px_rgba(129,23,86,0.6)]"
+                  ? "bg-[linear-gradient(160deg,#feb371,#df8107_62%,#b45309)] text-[#0f090c] hover:brightness-110 shadow-[0_0_24px_rgba(223,129,7,0.6)]"
+                  : "bg-gradient-to-br from-mlh-plum-500 to-mlh-plum hover:from-mlh-plum hover:to-mlh-plum-800 text-white shadow-[0_0_24px_rgba(129,23,86,0.6)]"
               }`}
             >
               <ArrowUp className="w-5 h-5 stroke-[2.5]" />
@@ -291,7 +292,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
       </motion.div>
 
       {/* 4 Example Prompt Cards */}
-      <div className="w-full max-w-[700px] grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+      <div className="w-full max-w-[760px] grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-5 sm:mt-6">
         {activePrompts.map((question, idx) => (
           <motion.div
             key={question}
@@ -300,9 +301,13 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
             transition={{ delay: 0.15 + idx * 0.05, duration: 0.3 }}
             whileHover={{ y: -2 }}
             onClick={() => handlePromptClick(question)}
-            className="p-4 sm:p-5 rounded-2xl border border-[#252637] bg-[#12131c]/85 hover:bg-[#1c1d29] hover:border-white/30 transition-all cursor-pointer group shadow-sm flex items-center justify-between gap-3"
+            className={`p-3.5 sm:p-4 rounded-[14px] border text-left backdrop-blur-[3px] transition-all cursor-pointer group shadow-[0_4px_16px_rgba(0,0,0,0.3)] flex items-center justify-between gap-3 ${
+              engine === "astropedia"
+                ? "border-amber-500/25 bg-amber-500/[.03] hover:border-amber-500/50 hover:bg-amber-500/[.08]"
+                : "border-white/12 bg-white/[.02] hover:border-mlh-plum-400/50 hover:bg-mlh-plum-500/[.08]"
+            }`}
           >
-            <p className="text-xs sm:text-[13.5px] font-sans font-medium text-white/90 group-hover:text-white leading-relaxed">
+            <p className="text-[13px] sm:text-[14.5px] font-sans font-medium text-white/85 group-hover:text-white leading-snug">
               {question}
             </p>
           </motion.div>

@@ -30,8 +30,7 @@ const initialConversations = loadStoredConversations();
 
 const initialState = {
   conversations: initialConversations,
-  activeConversationId:
-    initialConversations.length > 0 ? initialConversations[0].id : null,
+  activeConversationId: null,
   activeThreadId: null,
   serverThreads: [],
   isGenerating: false,

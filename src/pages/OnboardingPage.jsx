@@ -214,9 +214,11 @@ export default function OnboardingPage() {
           <div className="space-y-6 relative z-10">
             {/* Brand Logo & Name */}
             <div className="flex items-center gap-2.5">
-              <span className="w-9 h-9 rounded-full bg-[#b32b6e] flex items-center justify-center text-white shadow-lg shadow-[#b32b6e]/30">
-                <Sparkles className="w-4 h-4 text-amber-300" />
-              </span>
+              <img
+                src="/logo-192.jpg"
+                alt="AstroTring"
+                className="w-9 h-9 rounded-full object-cover shrink-0 border border-white/10 shadow-lg shadow-purple-900/30"
+              />
               <div>
                 <span className="font-serif font-bold text-xl tracking-tight text-white block">
                   AstroTring

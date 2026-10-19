@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Link, NavLink, useLocation, useSearchParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, NavLink, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import {
   Sparkles,
@@ -24,6 +24,7 @@ import { fetchUserThreads, fetchThreadById } from "@/features/vaani/vaaniApi"
 import UserProfileMenu from "@/features/user/components/UserProfileMenu"
 
 const navItems = [
+  { label: "My Kundli", path: "/kundli", icon: Compass },
   { label: "Horoscopes", path: "/horoscope", icon: Orbit },
   { label: "Blogs", path: "/blogs", icon: Newspaper },
   { label: "Calculators", path: "/calculators", icon: Calculator },
@@ -50,8 +51,14 @@ export default function Sidebar({
   const navigate = useNavigate()
   const isHomePage = location.pathname === "/"
   const currentEngine = searchParams.get("engine") || "vaani"
-  const isVaaniActive = isHomePage && currentEngine === "vaani"
-  const isAstropediaActive = isHomePage && currentEngine === "astropedia"
+  const isVaaniActive = isHomePage && !activeConversationId && currentEngine === "vaani"
+  const isAstropediaActive = isHomePage && !activeConversationId && currentEngine === "astropedia"
+
+  const handleEngineClick = (e, targetEngine) => {
+    e?.preventDefault()
+    dispatch(clearActiveConversation())
+    navigate(`/?engine=${targetEngine}`)
+  }
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -69,9 +76,11 @@ export default function Sidebar({
         {/* Brand & Collapse Header */}
         <div className="flex items-center justify-between pb-1 px-1">
           <Link to="/" className="flex items-center gap-2.5 overflow-hidden group">
-            <span className="w-8 h-8 rounded-full bg-mlh-plum flex items-center justify-center text-mlh-plum-100 shadow-sm shrink-0 border border-mlh-plum-400/30 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-4 h-4 text-amber-300" />
-            </span>
+            <img
+              src="/logo-192.jpg"
+              alt="AstroTring"
+              className="w-8 h-8 rounded-full object-cover shrink-0 border border-white/10 shadow-sm group-hover:scale-105 transition-transform"
+            />
             {!isCollapsed && (
               <span className="font-serif font-bold text-lg tracking-tight text-white whitespace-nowrap">
                 AstroTring
@@ -94,43 +103,44 @@ export default function Sidebar({
           </Button>
         </div>
 
-        {/* Engine Quick Action Pills */}
-        <div className="space-y-2 pt-1">
+        {/* Engine Quick Action Cards matching Melooha mlh-vaani-card & mlh-pedia-card */}
+        <div className="space-y-1.5 pt-1">
           <Link
             to="/?engine=vaani"
-            onClick={() => dispatch(clearActiveConversation())}
-            className={`w-full flex items-center gap-2.5 rounded-xl border transition-all font-medium text-xs lg:text-sm ${
+            onClick={(e) => handleEngineClick(e, "vaani")}
+            className={`-mx-1 flex items-center gap-3 rounded-[14px] p-1 text-left transition-all duration-200 ${
               isVaaniActive
-                ? "border-mlh-plum bg-[#2b0e21] text-white shadow-[0_0_15px_rgba(179,43,110,0.3)] ring-1 ring-mlh-plum/40"
-                : "border-mlh-plum-800/40 bg-[#1f0b18]/50 hover:bg-[#2b0e21] text-mlh-plum-100"
-            } ${isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"}`}
+                ? "bg-mlh-plum-500/25 border border-mlh-plum-400/70 text-white shadow-[0_0_22px_rgba(154,69,120,0.36)]"
+                : "bg-mlh-plum-500/10 border border-mlh-plum-400/25 text-mlh-plum-300 hover:bg-mlh-plum-500/20 hover:border-mlh-plum-400/50 hover:text-white"
+            } ${isCollapsed ? "justify-center" : ""}`}
           >
-            <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
-            {!isCollapsed && <span>Ask Vaani</span>}
+            <span className="grid h-[36px] w-[40px] flex-none place-items-center">
+              <Sparkles className={`w-4 h-4 ${isVaaniActive ? "text-amber-300" : "text-mlh-plum-300"}`} />
+            </span>
+            {!isCollapsed && (
+              <span className="font-sans text-[15px] sm:text-[16px] leading-tight font-medium">
+                Ask Vaani
+              </span>
+            )}
           </Link>
 
           <Link
             to="/?engine=astropedia"
-            onClick={() => dispatch(clearActiveConversation())}
-            className={`w-full flex items-center gap-2.5 rounded-xl border transition-all font-medium text-xs lg:text-sm ${
+            onClick={(e) => handleEngineClick(e, "astropedia")}
+            className={`-mx-1 flex items-center gap-3 rounded-[14px] p-1 text-left transition-all duration-200 ${
               isAstropediaActive
-                ? "border-blue-500 bg-[#0e1d3b] text-white shadow-[0_0_15px_rgba(24,119,252,0.3)] ring-1 ring-blue-500/40"
-                : "border-blue-500/30 bg-[#0a1426]/50 hover:bg-[#0e1d3b] text-blue-200"
-            } ${isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"}`}
+                ? "bg-amber-500/22 border border-amber-400/60 text-amber-300 shadow-[0_0_22px_rgba(223,129,7,0.26)]"
+                : "bg-amber-500/10 border border-amber-500/25 text-amber-200/80 hover:bg-amber-500/20 hover:border-amber-400/50 hover:text-white"
+            } ${isCollapsed ? "justify-center" : ""}`}
           >
-            <BookOpen className="w-4 h-4 text-blue-400 shrink-0" />
-            {!isCollapsed && <span>Ask Astropedia</span>}
-          </Link>
-
-          {/* Dedicated My Janam Kundli Link */}
-          <Link
-            to="/kundli"
-            className={`w-full flex items-center gap-2.5 rounded-xl border border-mlh-amber/35 bg-[#1c1407]/80 hover:bg-[#2a1e0b] text-mlh-amber hover:text-amber-300 transition-all font-medium text-xs lg:text-sm ${
-              isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"
-            }`}
-          >
-            <Compass className="w-4 h-4 text-mlh-amber shrink-0" />
-            {!isCollapsed && <span>My Janam Kundli</span>}
+            <span className="grid h-[36px] w-[40px] flex-none place-items-center">
+              <BookOpen className={`w-4 h-4 ${isAstropediaActive ? "text-amber-300" : "text-amber-400/80"}`} />
+            </span>
+            {!isCollapsed && (
+              <span className="font-sans text-[15px] sm:text-[16px] leading-tight font-medium">
+                Ask Astropedia
+              </span>
+            )}
           </Link>
         </div>
 
@@ -233,14 +243,25 @@ export default function Sidebar({
                       <button
                         type="button"
                         onClick={() => handleItemClick(item)}
-                        className={`w-full text-left p-2 rounded-xl text-xs font-sans line-clamp-2 transition-all cursor-pointer ${
+                        className={`w-full text-left p-2 rounded-xl text-xs font-sans transition-all cursor-pointer flex items-start gap-2 ${
                           activeConversationId === item.id ||
                           activeConversationId === item.threadId
-                            ? "bg-mlh-plum/20 text-white border border-mlh-plum/50"
+                            ? item.engine === "astropedia"
+                              ? "bg-amber-500/15 text-white border border-amber-500/40"
+                              : "bg-mlh-plum/20 text-white border border-mlh-plum/50"
                             : "text-white/70 hover:text-white hover:bg-white/5 border border-transparent"
                         }`}
                       >
-                        {item.question}
+                        <span className="flex-none pt-0.5">
+                          {item.engine === "astropedia" ? (
+                            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                          ) : (
+                            <Sparkles className="w-3.5 h-3.5 text-mlh-plum-300" />
+                          )}
+                        </span>
+                        <span className="line-clamp-2 leading-snug flex-1">
+                          {item.question}
+                        </span>
                       </button>
                     </div>
                   ))}

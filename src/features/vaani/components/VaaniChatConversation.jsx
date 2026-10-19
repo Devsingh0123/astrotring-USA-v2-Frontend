@@ -1,21 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { motion, AnimatePresence } from "framer-motion"
-import {
-  Sparkles,
-  BookOpen,
-  ArrowUp,
-  ChevronDown,
-  ChevronUp,
-  ThumbsUp,
-  ThumbsDown,
-  ArrowRight,
-  Clock,
-  PlusCircle,
-  Tag,
-} from "lucide-react"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
+import { Sparkles, BookOpen, ArrowUp, ChevronDown, ThumbsUp, ThumbsDown, Plus } from "lucide-react"
 import {
   addConversation,
   clearActiveConversation,
@@ -24,23 +9,87 @@ import {
   setThinkingStep,
   stopGenerating,
 } from "../vaaniSlice"
-import { streamChatTurn, submitMessageFeedback } from "@/features/vaani/vaaniApi"
+import { streamChatTurn, submitMessageFeedback } from "../vaaniApi"
 import { toast } from "sonner"
+
+// Formats seconds into MM:SS left
+function formatCountdown(secs) {
+  const m = Math.floor(secs / 60)
+  const s = secs % 60
+  return `${m < 10 ? "0" : ""}${m}:${s < 10 ? "0" : ""}${s} left`
+}
+
+// Renders markdown bolding and bullet points faithfully
+function renderParagraph(text, isVaani) {
+  if (!text) return null
+  const lines = text.split("\n")
+  return (
+    <div className="space-y-2">
+      {lines.map((line, lIdx) => {
+        const trimmed = line.trim()
+        if (trimmed.startsWith("•") || trimmed.startsWith("-")) {
+          const bulletContent = trimmed.replace(/^[•\-]\s*/, "")
+          const match = bulletContent.match(/^\*\*(.*?)\*\*(.*)/)
+          if (match) {
+            return (
+              <div key={lIdx} className="flex items-start gap-2 pl-1">
+                <span className={`text-[13px] pt-1 leading-none ${isVaani ? "text-mlh-plum-300" : "text-amber-400"}`}>
+                  •
+                </span>
+                <p className="flex-1">
+                  <span className={`font-semibold ${isVaani ? "text-mlh-plum-100" : "text-amber-200"}`}>
+                    {match[1]}
+                  </span>
+                  <span className="text-white/85">{match[2]}</span>
+                </p>
+              </div>
+            )
+          }
+          return (
+            <div key={lIdx} className="flex items-start gap-2 pl-1">
+              <span className={`text-[13px] pt-1 leading-none ${isVaani ? "text-mlh-plum-300" : "text-amber-400"}`}>
+                •
+              </span>
+              <p className="flex-1 text-white/85">{bulletContent}</p>
+            </div>
+          )
+        }
+
+        const parts = line.split(/(\*\*.*?\*\*)/g)
+        return (
+          <p key={lIdx}>
+            {parts.map((part, pIdx) => {
+              if (part.startsWith("**") && part.endsWith("**")) {
+                return (
+                  <strong key={pIdx} className="font-semibold text-white">
+                    {part.slice(2, -2)}
+                  </strong>
+                )
+              }
+              return part
+            })}
+          </p>
+        )
+      })}
+    </div>
+  )
+}
 
 export default function VaaniChatConversation({ onOpenBuyModal }) {
   const dispatch = useDispatch()
   const { conversations, activeConversationId, isGenerating, thinkingStep, questionQuota } =
     useSelector((state) => state.vaani || {})
-  const { user, birthDetails } = useSelector((state) => state.auth || {})
+  const { birthDetails } = useSelector((state) => state.auth || {})
 
   const activeConv = conversations.find((c) => c.id === activeConversationId) || conversations[0]
 
   const [followUpQuery, setFollowUpQuery] = useState("")
-  const [expandedAstrology, setExpandedAstrology] = useState(true)
-  const [countdownSeconds, setCountdownSeconds] = useState(582) // 09:42 initial
-  const messagesEndRef = useRef(null)
+  const [inFlightQuery, setInFlightQuery] = useState("")
+  const [expandedAstrology, setExpandedAstrology] = useState(false)
+  const [countdownSeconds, setCountdownSeconds] = useState(582)
+  const scrollAreaRef = useRef(null)
 
-  // Countdown timer for the in-chat promo card
+  // Countdown timer for promotional offer banner
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdownSeconds((prev) => (prev > 0 ? prev - 1 : 0))
@@ -48,23 +97,18 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
     return () => clearInterval(timer)
   }, [])
 
-  const formatCountdown = (secs) => {
-    const m = Math.floor(secs / 60)
-    const s = secs % 60
-    return `${m < 10 ? "0" : ""}${m}:${s < 10 ? "0" : ""}${s} left`
-  }
-
-  // Scroll to bottom when conversation updates or generates
+  // Auto-scroll inside message list when reading updates or generates
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
     }
-  }, [activeConv, isGenerating])
+  }, [activeConv, isGenerating, thinkingStep])
 
   const handleSendFollowUp = (queryToSend) => {
     const text = (queryToSend || followUpQuery).trim()
     if (!text || isGenerating) return
 
+    setInFlightQuery(text)
     setFollowUpQuery("")
     const currentEngine = activeConv?.engine || "vaani"
 
@@ -90,6 +134,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
         dispatch(setThinkingStep(step))
       },
       onDone: (data) => {
+        setInFlightQuery("")
         if (data?.reading) {
           dispatch(
             addConversation({
@@ -100,6 +145,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
         }
       },
       onError: (err) => {
+        setInFlightQuery("")
         toast.error(err.message || "Failed to consult astrology engine. Please try again.")
         dispatch(stopGenerating())
       },
@@ -115,378 +161,387 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
 
   const handleFeedback = (feedbackType) => {
     if (activeConv) {
-      // 1. Optimistically update local feedback state
       dispatch(updateConversationFeedback({ id: activeConv.id, feedback: feedbackType }))
-      // 2. Submit to backend API endpoint PATCH /api/v1/chat/messages/:messageId/feedback
       dispatch(submitMessageFeedback({ messageId: activeConv.id, feedback: feedbackType }))
     }
   }
 
-  if (!activeConv && !isGenerating) {
+  if (!activeConv && !isGenerating && !inFlightQuery) {
     return null
   }
 
   const isVaani = (activeConv?.engine || "vaani") === "vaani"
 
   return (
-    <div className="w-full flex-1 flex flex-col items-center justify-start min-h-screen px-4 py-4 sm:py-8 relative z-10 pb-36">
-      {/* Top Header Bar & Breadcrumb */}
-      <div className="w-full max-w-[760px] flex items-center justify-between py-3 mb-4 border-b border-[#252637]/70 text-xs text-mlh-muted font-sans">
-        <div className="flex items-center gap-2">
+    <div className="flex h-full w-full flex-col overflow-hidden px-4 sm:px-8 lg:px-10">
+      {/* Melooha Monospace Breadcrumb Header */}
+      <div className="text-white/40 mlh-in relative z-10 flex flex-none items-center justify-between pt-4 font-mono text-[9px] sm:text-[10px] tracking-[0.22em] uppercase">
+        <div className="flex items-center gap-1.5">
           <span>AstroTring</span>
           <span>/</span>
-          <span className="text-white font-medium flex items-center gap-1.5">
-            {isVaani ? (
-              <>
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                Ask Vaani
-              </>
-            ) : (
-              <>
-                <BookOpen className="w-3.5 h-3.5 text-mlh-orrery" />
-                Ask Astropedia
-              </>
-            )}
+          <span className={isVaani ? "text-mlh-plum-300/85" : "text-amber-400/90"}>
+            {isVaani ? "Ask Vaani" : "Ask Astropedia"}
           </span>
         </div>
 
         <button
           type="button"
           onClick={() => dispatch(clearActiveConversation())}
-          className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-white/90 hover:text-white transition-colors cursor-pointer text-xs font-mono"
+          className="flex items-center gap-1 text-[9px] font-mono tracking-wider text-mlh-muted hover:text-white transition-colors cursor-pointer"
         >
-          <PlusCircle className="w-3.5 h-3.5" />
+          <Plus className="w-3 h-3" />
           <span>New Reading</span>
         </button>
       </div>
 
-      {/* Main Conversation Container */}
-      <div className="w-full max-w-[760px] space-y-6">
-        {/* User Question Bubble */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-[#2e3045] bg-[#12131c]/80 p-4 sm:p-5 backdrop-blur-md space-y-2 shadow-xs"
+      {/* Main Conversation Container (Scrollable message area) */}
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center pt-3.5">
+        <div
+          ref={scrollAreaRef}
+          className="flex w-full max-w-[900px] flex-1 flex-col gap-[30px] overflow-x-hidden overflow-y-auto pr-1 pb-2 mlh-thin-scroll"
         >
-          <div className="text-xs font-mono font-semibold tracking-wider text-mlh-muted uppercase">
-            You
+          {/* User Question Speech Bubble (Aligned to the Right) */}
+          <div className="animate-mlh-rise flex max-w-[700px] flex-col items-end self-end">
+            <span className="text-white/35 mb-2.5 font-mono text-[9.5px] tracking-[0.2em] uppercase">
+              You
+            </span>
+            <div
+              className={`rounded-[18px_18px_4px_18px] border px-[18px] py-3 font-sans text-[15.5px] sm:text-[18px] leading-[1.4] text-pretty shadow-[0_10px_30px_rgba(0,0,0,.35)] ${
+                isVaani
+                  ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#811756]/25 to-[#4d0e34]/15 text-white/95"
+                  : "border-amber-500/35 bg-gradient-to-br from-[#df8107]/25 to-[#92400e]/15 text-white/95"
+              }`}
+            >
+              {activeConv?.question || inFlightQuery}
+            </div>
           </div>
-          <p className="text-sm sm:text-base text-white/95 leading-relaxed font-sans font-medium whitespace-pre-wrap">
-            {activeConv?.question}
-          </p>
-        </motion.div>
 
-        {/* AI Astrologer Response Bubble */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="rounded-2xl border border-[#2e3045] bg-[#12131c]/95 p-5 sm:p-7 backdrop-blur-md space-y-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#252637]">
-            <div className="flex items-center gap-2">
+          {/* Engine Reading Bubble (Open consult scroll with Left Accent Border) */}
+          <div
+            className={`animate-mlh-rise max-w-[840px] border-l pl-4 sm:pl-[22px] ${
+              isVaani ? "border-mlh-plum-400/28" : "border-amber-500/30"
+            }`}
+          >
+            {/* Engine Header */}
+            <div className="mb-2.5 flex items-center gap-2.5">
               <span
-                className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                aria-hidden="true"
+                className={`relative grid h-[26px] w-[26px] flex-none place-items-center rounded-[9px] border ${
                   isVaani
-                    ? "bg-mlh-plum/20 border border-mlh-plum/40 text-amber-300"
-                    : "bg-blue-500/20 border border-blue-500/40 text-blue-400"
+                    ? "border-mlh-plum-400/45 text-mlh-plum-300 shadow-[0_0_14px_rgba(154,69,120,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(154,69,120,0.42),rgba(154,69,120,0.08))]"
+                    : "border-amber-500/45 text-amber-300 shadow-[0_0_14px_rgba(223,129,7,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(223,129,7,0.42),rgba(223,129,7,0.08))]"
                 }`}
               >
                 {isVaani ? (
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <Sparkles className="w-3.5 h-3.5 text-mlh-plum-300" />
                 ) : (
-                  <BookOpen className="w-3.5 h-3.5" />
+                  <BookOpen className="w-3.5 h-3.5 text-amber-300" />
                 )}
               </span>
-              <span className="text-xs sm:text-[13px] font-sans font-semibold text-white/90 tracking-wide">
-                {isVaani
-                  ? "Vaani · reading from your birth chart"
-                  : "Astropedia · Universal Vedic Astrology Encyclopedia"}
-              </span>
-            </div>
-          </div>
-
-          {/* Progressive Thought / Thinking Indicator */}
-          {isGenerating ? (
-            <div className="p-4 rounded-xl bg-mlh-plum-950/40 border border-mlh-plum-800/40 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-mono text-mlh-plum-200 animate-pulse">
-                <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" />
-                <span>{thinkingStep || "Consulting cosmic calculations..."}</span>
-              </div>
-            </div>
-          ) : (
-            <>
-              {/* Opening Thought Note */}
-              {activeConv?.openingThought && (
-                <div className="p-3.5 rounded-xl bg-[#1b1522] border border-mlh-plum-800/30 text-xs sm:text-[13px] text-mlh-plum-100 font-sans italic leading-relaxed">
-                  {activeConv.openingThought}
-                </div>
-              )}
-
-              {/* Status stream pills */}
-              {activeConv?.thinkingSteps && activeConv.thinkingSteps.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {activeConv.thinkingSteps.map((step, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2.5 py-1 rounded-full text-[11px] font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-800/30 flex items-center gap-1.5"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                      {step}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* Main Reading Paragraphs */}
-              <div className="space-y-4 text-sm sm:text-[15px] text-white/90 font-sans leading-[1.7] tracking-[0.01em]">
-                {activeConv?.paragraphs?.map((p, idx) => (
-                  <p key={idx}>{p}</p>
-                ))}
-              </div>
-
-              {/* In-Chat Promotional Offer Card (Only shown for Vaani when offer is available) */}
-              {isVaani && activeConv?.offer && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-[#2a1728] via-[#1b1122] to-[#140b19] p-5 sm:p-6 space-y-3 relative overflow-hidden shadow-lg"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-md text-[10.5px] font-mono font-bold tracking-wider bg-amber-400 text-black uppercase">
-                      OFFER
-                    </span>
-                    <span className="flex items-center gap-1 text-xs font-mono text-amber-300 font-medium">
-                      <Clock className="w-3.5 h-3.5" />
-                      {formatCountdown(countdownSeconds)}
-                    </span>
-                  </div>
-
-                  <h3 className="font-serif text-lg sm:text-xl font-medium text-white tracking-tight">
-                    {activeConv.offer.title}
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-white/80 font-sans leading-relaxed">
-                    {activeConv.offer.description}
-                  </p>
-
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-400/30 bg-black/40 text-xs font-mono text-amber-200">
-                      <Tag className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Code {activeConv.offer.promoCode}</span>
-                    </div>
-
-                    <Button
-                      type="button"
-                      onClick={() =>
-                        onOpenBuyModal &&
-                        onOpenBuyModal({ promoCode: activeConv.offer.promoCode })
-                      }
-                      className="px-5 py-2 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-black font-semibold text-xs tracking-wider uppercase transition-all shadow-md cursor-pointer"
-                    >
-                      Buy Now · {activeConv.offer.discountedPrice}
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* The Astrology Behind This (Collapsible Citations) */}
-              {activeConv?.astrologyBehind && activeConv.astrologyBehind.length > 0 && (
-                <div className="pt-2 border-t border-[#252637]">
-                  <button
-                    type="button"
-                    onClick={() => setExpandedAstrology(!expandedAstrology)}
-                    className="w-full flex items-center justify-between py-2.5 text-xs sm:text-sm font-medium text-amber-300 hover:text-amber-200 transition-colors cursor-pointer"
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className={isVaani ? "text-amber-400" : "text-blue-400"}>✦</span>
-                      <span>
-                        {isVaani ? "The astrology behind this" : "Classical references & principles"}
-                      </span>
-                    </span>
-                    {expandedAstrology ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-
-                  <AnimatePresence>
-                    {expandedAstrology && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="overflow-hidden space-y-3 pt-2"
-                      >
-                        <div className="text-xs font-mono text-mlh-muted uppercase tracking-wider">
-                          {isVaani ? "What I read from your chart" : "Citations from classical Vedic treatises"}
-                        </div>
-                        <ul className="space-y-2 text-xs sm:text-[13px] text-white/80 font-sans leading-relaxed">
-                          {activeConv.astrologyBehind.map((rule, idx) => (
-                            <li
-                              key={idx}
-                              className="p-2.5 rounded-xl bg-white/5 border border-white/5"
-                            >
-                              {rule}
-                            </li>
-                          ))}
-                        </ul>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              )}
-
-              {/* Was This Useful? (Feedback) */}
-              <div className="flex items-center justify-between pt-4 border-t border-[#252637] text-xs font-sans">
-                <span className="text-mlh-muted">Was this useful?</span>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleFeedback("yes")}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors cursor-pointer ${
-                      activeConv?.feedback === "yes"
-                        ? "bg-emerald-950/60 border-emerald-500 text-emerald-300"
-                        : "border-[#2e3045] bg-[#12131c] text-mlh-muted hover:text-white"
-                    }`}
-                  >
-                    <ThumbsUp className="w-3.5 h-3.5" />
-                    <span>Yes</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleFeedback("no")}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors cursor-pointer ${
-                      activeConv?.feedback === "no"
-                        ? "bg-rose-950/60 border-rose-500 text-rose-300"
-                        : "border-[#2e3045] bg-[#12131c] text-mlh-muted hover:text-white"
-                    }`}
-                  >
-                    <ThumbsDown className="w-3.5 h-3.5" />
-                    <span>No</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Ask Next Suggestion Chips */}
-              {activeConv?.suggestedQuestions && activeConv.suggestedQuestions.length > 0 && (
-                <div className="pt-4 border-t border-[#252637] space-y-3">
-                  <div className="text-xs font-mono text-mlh-muted uppercase tracking-wider">
-                    Ask next
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {activeConv.suggestedQuestions.map((q, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => handleSendFollowUp(q)}
-                        className="p-3 rounded-xl border border-[#252637] bg-[#1a1b26]/70 hover:bg-[#252737] hover:border-mlh-plum/50 text-left transition-all cursor-pointer group flex items-center justify-between gap-2"
-                      >
-                        <span className="text-xs sm:text-[13px] text-white/85 group-hover:text-white font-medium">
-                          {q}
-                        </span>
-                        <ArrowRight className="w-3.5 h-3.5 text-mlh-plum-300 shrink-0 group-hover:translate-x-0.5 transition-transform" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          <div ref={messagesEndRef} />
-        </motion.div>
-      </div>
-
-      {/* Floating Sticky Bottom Follow-Up Input Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 p-4 bg-gradient-to-t from-[#0c070a] via-[#0c070a]/95 to-transparent pointer-events-none flex justify-center">
-        <div className="w-full max-w-[760px] pointer-events-auto space-y-2">
-          <div className="rounded-2xl border border-[#2e3045] bg-[#12131c]/95 backdrop-blur-xl p-3 sm:p-4 shadow-[0_12px_40px_rgba(0,0,0,0.8)] space-y-2.5 hover:border-mlh-plum/50 focus-within:border-mlh-plum transition-all">
-            <div className="flex items-start gap-2.5">
-              <span className={`mt-1 select-none ${isVaani ? "text-amber-400" : "text-blue-400"}`}>
-                {isVaani ? "✦" : "📖"}
-              </span>
-              <Textarea
-                value={followUpQuery}
-                onChange={(e) => setFollowUpQuery(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={
-                  isVaani
-                    ? "Ask a follow-up: a date you are weighing, a decision, a what-if…"
-                    : "Ask an encyclopedia follow-up: planetary aspects, Sanskrit yogas, remedies…"
-                }
-                className="border-0 shadow-none focus-visible:ring-0 bg-transparent text-white placeholder:text-mlh-muted text-xs sm:text-sm resize-none min-h-[46px] p-0 leading-relaxed font-sans"
-              />
-            </div>
-
-            <div className="flex items-center justify-between pt-1 border-t border-[#252637]/60">
-              {/* Question Balance Indicator / Free Knowledge Badge */}
-              {isVaani ? (
-                <div
-                  className={`flex items-center gap-2 pl-3 pr-1 py-1 rounded-full text-xs transition-all shadow-xs ${
-                    questionQuota > 0
-                      ? "bg-[#18101e]/90 border border-[#3d2449]"
-                      : "bg-[#231206]/90 border border-amber-900/60"
-                  }`}
-                >
-                  <span
-                    className={`text-xs font-sans tracking-wide ${
-                      questionQuota > 0 ? "text-neutral-300" : "text-amber-200/90"
-                    }`}
-                  >
-                    <strong
-                      className={`font-mono font-semibold ${
-                        questionQuota > 0 ? "text-white" : "text-amber-300"
-                      }`}
-                    >
-                      {questionQuota}
-                    </strong>{" "}
-                    {questionQuota === 1 ? "question" : "questions"} left
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onOpenBuyModal &&
-                      onOpenBuyModal({ promoCode: "QUICKGOLD", packId: "pack_gold_12" })
-                    }
-                    className={`px-3 py-1 rounded-full text-xs font-medium tracking-wide transition-all duration-150 cursor-pointer shadow-xs active:scale-95 ${
-                      questionQuota > 0
-                        ? "bg-[#82184d] hover:bg-[#9d1c5d] text-white border border-[#c43282]/30 hover:border-[#e04599]/50 shadow-[0_2px_8px_rgba(130,24,77,0.35)]"
-                        : "bg-gradient-to-r from-[#92400e] to-[#b45309] hover:from-[#a14710] hover:to-[#c65d0b] text-amber-100 border border-amber-500/30 shadow-[0_2px_8px_rgba(180,83,9,0.35)]"
-                    }`}
-                  >
-                    Buy more
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1.5 text-xs font-mono text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-0.5 rounded-full">
-                  <BookOpen className="w-3 h-3 text-blue-400" />
-                  <span>Free knowledge · Unlimited</span>
-                </div>
-              )}
-
-              {/* Send Button */}
-              <Button
-                type="button"
-                size="icon"
-                disabled={!followUpQuery.trim() || isGenerating}
-                onClick={() => handleSendFollowUp()}
-                aria-label="Send question"
-                className={`w-8 h-8 rounded-full text-white shrink-0 shadow-md cursor-pointer disabled:opacity-40 transition-all ${
-                  isVaani
-                    ? "bg-gradient-to-br from-mlh-plum-500 to-mlh-plum hover:from-mlh-plum hover:to-mlh-plum-800"
-                    : "bg-blue-600 hover:bg-blue-500 shadow-blue-500/30"
+              <span
+                className={`font-mono text-[9px] tracking-[0.2em] uppercase sm:text-[9.5px] ${
+                  isVaani ? "text-mlh-plum-300/85" : "text-amber-400/90"
                 }`}
               >
-                <ArrowUp className="w-4 h-4 stroke-[2.5]" />
-              </Button>
+                {isVaani
+                  ? "Vaani · reading from your birth chart"
+                  : "Vaani · Astropedia"}
+              </span>
+            </div>
+
+            {/* Content Body */}
+            <div className="min-w-0 flex-1">
+              {isGenerating ? (
+                <div className="py-4 space-y-3">
+                  <div
+                    className={`flex items-center gap-2.5 font-mono text-xs sm:text-[13px] tracking-wide animate-pulse ${
+                      isVaani ? "text-mlh-plum-200" : "text-amber-200"
+                    }`}
+                  >
+                    <Sparkles className="w-4 h-4 animate-spin text-amber-300 shrink-0" />
+                    <span>
+                      {thinkingStep ||
+                        (isVaani
+                          ? "Reading your birth chart..."
+                          : "Consulting classical Vedic texts...")}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {/* Opening Thought Note */}
+                  {activeConv?.openingThought && (
+                    <p className="mb-4 text-white/86 font-sans text-[17px] leading-[1.6] sm:text-[20px]">
+                      {activeConv.openingThought}
+                    </p>
+                  )}
+
+                  {/* Reading Paragraphs */}
+                  <div className="text-white/86 font-sans text-[17px] leading-[1.6] text-pretty sm:text-[20px]">
+                    {activeConv?.paragraphs?.map((p, idx) => (
+                      <div key={idx} className="mb-4 last:mb-0">
+                        {renderParagraph(p, isVaani)}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Promotional Offer Banner (Melooha Ref 15 exact structure) */}
+                  {isVaani && (activeConv?.offer || questionQuota <= 0) && (
+                    <div className="border-amber-500/20 bg-gradient-to-b from-[#24131b]/60 to-[#120a10]/80 relative mt-4 overflow-hidden rounded-[16px] border p-4 sm:p-5 shadow-lg">
+                      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                        <div className="text-amber-300/85 flex items-center gap-2 font-mono text-[9px] tracking-[0.22em] uppercase">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                          Offer
+                        </div>
+                        <span className="border-amber-500/35 bg-amber-500/12 text-amber-300 rounded-md border px-2 py-[2px] font-mono text-[9px] tracking-[0.14em] whitespace-nowrap uppercase">
+                          {countdownSeconds > 0 ? formatCountdown(countdownSeconds) : "Offer ended"}
+                        </span>
+                      </div>
+
+                      <h3 className="text-white mt-2.5 font-serif text-[21px] leading-[1.15] sm:text-[24px]">
+                        {activeConv?.offer?.title || "Get 12 questions at 67% discount"}
+                      </h3>
+                      <p className="text-white/70 mt-1.5 max-w-[62ch] text-[13px] leading-snug sm:text-[13.5px]">
+                        {activeConv?.offer?.description ||
+                          "Your question balance is ZERO. Buy 12 questions at 67% off. Promo code: QUICKGOLD"}
+                      </p>
+
+                      <div className="border-amber-500/15 mt-3.5 border-t pt-3.5">
+                        <div className="flex flex-wrap items-center gap-x-5 gap-y-3 justify-between">
+                          <div className="text-white/40 font-mono text-[9px] tracking-[0.16em] uppercase">
+                            Code {activeConv?.offer?.promoCode || "QUICKGOLD"}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onOpenBuyModal &&
+                              onOpenBuyModal({
+                                promoCode: activeConv?.offer?.promoCode || "QUICKGOLD",
+                                packId: "pack_gold_12",
+                              })
+                            }
+                            className="from-[#feb371] to-[#df8107] text-[#0f090c] shrink-0 rounded-full bg-gradient-to-b px-5 py-2.5 text-[13.5px] font-semibold shadow-[0_0_26px_rgba(223,129,7,.26)] transition-all duration-200 hover:shadow-[0_0_34px_rgba(223,129,7,.42)] hover:brightness-110 cursor-pointer"
+                          >
+                            Buy Now
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* The Astrology Behind This (Collapsible Citations Drawer) */}
+                  {activeConv?.astrologyBehind && activeConv.astrologyBehind.length > 0 && (
+                    <div className="mt-4">
+                      <div className="flex flex-wrap gap-2.5">
+                        <button
+                          type="button"
+                          aria-expanded={expandedAstrology}
+                          onClick={() => setExpandedAstrology(!expandedAstrology)}
+                          className={`flex cursor-pointer items-center gap-2.5 rounded-full border px-4 py-2 font-sans text-[15px] sm:text-[16px] transition-[color,background-color,border-color] duration-200 ${
+                            isVaani
+                              ? "border-mlh-plum-400/28 bg-mlh-plum-500/8 text-white/75 hover:border-mlh-plum-400/52 hover:text-white"
+                              : "border-amber-500/28 bg-amber-500/8 text-white/75 hover:border-amber-500/52 hover:text-white"
+                          }`}
+                        >
+                          <span
+                            aria-hidden="true"
+                            className={`text-[12px] leading-none ${
+                              isVaani ? "text-mlh-plum-300" : "text-amber-400"
+                            }`}
+                          >
+                            ✦
+                          </span>
+                          <span>
+                            {isVaani ? "The astrology behind this" : "Classical references & citations"}
+                          </span>
+                          <ChevronDown
+                            className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                              expandedAstrology ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+                      </div>
+
+                      {expandedAstrology && (
+                        <div
+                          className={`mt-3 overflow-hidden rounded-2xl border p-5 sm:px-[22px] ${
+                            isVaani
+                              ? "border-mlh-plum-400/22 bg-mlh-plum-500/6"
+                              : "border-amber-500/22 bg-amber-500/6"
+                          }`}
+                        >
+                          <div
+                            className={`font-mono text-[9.5px] tracking-[0.22em] uppercase ${
+                              isVaani ? "text-mlh-plum-300/85" : "text-amber-400/85"
+                            }`}
+                          >
+                            {isVaani ? "What I read from your chart" : "Citations & Classical Treatises"}
+                          </div>
+                          <div className="mt-3.5 text-white/80 font-sans text-[15px] sm:text-[17px] leading-relaxed whitespace-pre-wrap">
+                            {activeConv.astrologyBehind.join("\n")}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Feedback Buttons (Melooha Ref 15 exact structure) */}
+                  <div className="mt-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-white/45 mr-1 font-mono text-[9px] tracking-[0.2em] uppercase">
+                        Was this useful
+                      </span>
+                      <button
+                        type="button"
+                        aria-label="Yes"
+                        onClick={() => handleFeedback("yes")}
+                        className={`grid h-[30px] w-[30px] cursor-pointer place-items-center rounded-lg border transition-colors ${
+                          activeConv?.feedback === "yes"
+                            ? "border-emerald-500/80 bg-emerald-500/20 text-emerald-300"
+                            : isVaani
+                            ? "border-mlh-plum-400/40 bg-mlh-plum-500/8 text-white/65 hover:border-mlh-plum-400/70 hover:text-white"
+                            : "border-amber-500/40 bg-amber-500/8 text-white/65 hover:border-amber-500/70 hover:text-white"
+                        }`}
+                      >
+                        <ThumbsUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="No"
+                        onClick={() => handleFeedback("no")}
+                        className={`grid h-[30px] w-[30px] cursor-pointer place-items-center rounded-lg border transition-colors ${
+                          activeConv?.feedback === "no"
+                            ? "border-rose-500/80 bg-rose-500/20 text-rose-300"
+                            : isVaani
+                            ? "border-mlh-plum-400/40 bg-mlh-plum-500/8 text-white/65 hover:border-mlh-plum-400/70 hover:text-white"
+                            : "border-amber-500/40 bg-amber-500/8 text-white/65 hover:border-amber-500/70 hover:text-white"
+                        }`}
+                      >
+                        <ThumbsDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Ask Next / Keep Exploring Suggestions Grid */}
+                  {activeConv?.suggestedQuestions && activeConv.suggestedQuestions.length > 0 && (
+                    <div
+                      className={`mt-[22px] border-t pt-[18px] ${
+                        isVaani ? "border-mlh-plum-400/18" : "border-amber-500/20"
+                      }`}
+                    >
+                      <div
+                        className={`font-mono text-[9.5px] tracking-[0.22em] uppercase ${
+                          isVaani ? "text-mlh-plum-300/85" : "text-amber-400/85"
+                        }`}
+                      >
+                        {isVaani ? "Ask next" : "Keep exploring"}
+                      </div>
+                      <div className="mt-3.5 grid gap-2.5 sm:grid-cols-2">
+                        {activeConv.suggestedQuestions.map((q, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => handleSendFollowUp(q)}
+                            className={`group flex cursor-pointer items-center gap-2.5 rounded-full border px-4 py-2.5 text-left font-sans text-[15px] sm:text-[16px] transition-[color,background-color,border-color,transform,box-shadow] duration-200 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,.35)] ${
+                              isVaani
+                                ? "border-white/15 bg-mlh-plum-500/[.05] text-white/75 hover:border-mlh-plum-400/60 hover:bg-mlh-plum-500/14 hover:text-white"
+                                : "border-white/15 bg-amber-500/[.05] text-white/75 hover:border-amber-500/60 hover:bg-amber-500/14 hover:text-white"
+                            }`}
+                          >
+                            <span className="flex-1">{q}</span>
+                            <span
+                              aria-hidden="true"
+                              className={`ml-auto pl-1 font-mono text-[11px] transition-transform duration-200 group-hover:translate-x-0.5 ${
+                                isVaani ? "text-mlh-plum-300/70" : "text-amber-300/70"
+                              }`}
+                            >
+                              →
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
+        </div>
 
-          <div className="text-center text-[10.5px] font-mono text-mlh-faint">
-            Enter to send · Shift + Enter for a new line
+        {/* Pinned Bottom Follow-Up Composer (Melooha exact structure) */}
+        <div className="w-full max-w-[900px] flex-none pt-4 pb-4 sm:pb-5">
+          <div>
+            <div
+              className={`relative overflow-hidden rounded-[22px] border transition-[border-color,box-shadow] duration-300 ${
+                isVaani
+                  ? "border-mlh-plum-400/40 focus-within:border-mlh-plum-400/80 shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_34px_rgba(129,23,86,.32),inset_0_1px_0_rgba(255,255,255,.05)] focus-within:shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_44px_rgba(129,23,86,.5),inset_0_1px_0_rgba(255,255,255,.06)] bg-[linear-gradient(rgba(129,23,86,0.1),rgba(15,9,12,0.94))]"
+                  : "border-amber-500/40 focus-within:border-amber-500/80 shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_34px_rgba(223,129,7,.24),inset_0_1px_0_rgba(255,255,255,.05)] focus-within:shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_44px_rgba(223,129,7,.45),inset_0_1px_0_rgba(255,255,255,.06)] bg-[linear-gradient(rgba(223,129,7,0.1),rgba(15,9,12,0.94))]"
+              }`}
+            >
+              <div className="relative flex gap-3.5 px-4 pt-4 sm:px-5 sm:pt-[18px]">
+                <span
+                  aria-hidden="true"
+                  className={`shrink-0 pt-1 text-[16px] leading-none ${
+                    isVaani ? "text-mlh-plum-300/85 animate-pulse" : "text-amber-400/85 animate-pulse"
+                  }`}
+                >
+                  ✦
+                </span>
+                <textarea
+                  rows={2}
+                  value={followUpQuery}
+                  onChange={(e) => setFollowUpQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={
+                    isVaani
+                      ? "Ask a follow-up: a date you are weighing, a decision, a what-if…"
+                      : "Search another topic: a term, a yoga, a doṣa…"
+                  }
+                  className="text-white placeholder:text-white/45 min-h-[60px] min-w-0 flex-1 resize-none bg-transparent font-sans text-[17px] leading-[1.5] outline-none disabled:cursor-not-allowed disabled:opacity-60 sm:text-[20px] caret-amber-400"
+                  style={{ height: "60px" }}
+                />
+              </div>
+
+              <div className="relative flex flex-wrap items-center gap-3 px-3 pt-3 pb-3 sm:gap-3.5 sm:px-3.5 sm:pt-3 sm:pb-3.5 sm:pl-5">
+                <div className="ml-auto flex items-center gap-2.5 sm:gap-3">
+                  {isVaani && (
+                    <div className="flex items-stretch overflow-hidden rounded-full border font-mono text-[10.5px] font-medium tracking-[0.14em] whitespace-nowrap uppercase border-amber-500/50 bg-amber-500/12 text-amber-300">
+                      <span className="px-3.5 py-[7px]">
+                        <span>{questionQuota}</span> {questionQuota === 1 ? "question" : "questions"} left
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onOpenBuyModal &&
+                          onOpenBuyModal({ promoCode: "QUICKGOLD", packId: "pack_gold_12" })
+                        }
+                        className="cursor-pointer border-l px-3.5 py-[7px] transition-colors duration-200 border-amber-500/40 bg-amber-500/20 text-amber-200 hover:bg-amber-500/32"
+                      >
+                        Buy more
+                      </button>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    disabled={!followUpQuery.trim() || isGenerating}
+                    onClick={() => handleSendFollowUp()}
+                    aria-label="Send question"
+                    className={`grid h-11 w-11 flex-none place-items-center rounded-full transition-all duration-200 sm:h-[46px] sm:w-[46px] cursor-pointer disabled:opacity-40 ${
+                      isVaani
+                        ? "text-white bg-[linear-gradient(160deg,#9a4578,#811756_62%,#6b0f47)] shadow-[0_0_24px_rgba(129,23,86,.6)] hover:shadow-[0_0_40px_rgba(129,23,86,1)] hover:-translate-y-0.5"
+                        : "text-[#0f090c] bg-[linear-gradient(160deg,#feb371,#df8107_62%,#b45309)] shadow-[0_0_24px_rgba(223,129,7,.6)] hover:shadow-[0_0_40px_rgba(223,129,7,1)] hover:-translate-y-0.5"
+                    }`}
+                  >
+                    <ArrowUp className="w-[19px] h-[19px] stroke-[2.5]" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-white/25 mt-2.5 text-center font-mono text-[9px] tracking-[0.18em] uppercase">
+              Enter to send · Shift + Enter for a new line
+            </div>
           </div>
         </div>
       </div>

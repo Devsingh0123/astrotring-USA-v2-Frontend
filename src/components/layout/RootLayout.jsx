@@ -86,7 +86,7 @@ export default function RootLayout() {
   }, [dispatch])
 
   return (
-    <div className="min-h-screen bg-[#0f090c] text-foreground flex flex-col md:flex-row font-sans selection:bg-mlh-plum/30 selection:text-white">
+    <div className="h-screen w-full overflow-hidden bg-[#0f090c] text-foreground flex flex-col md:flex-row font-sans selection:bg-mlh-plum/30 selection:text-white">
       <ScrollRestoration />
 
       {/* Desktop Collapsible Left Sidebar */}
@@ -102,12 +102,12 @@ export default function RootLayout() {
       </div>
 
       {/* Main Viewport Container */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen bg-[#0f090c] relative">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-[#0f090c] relative">
         {/* Mobile Top Header */}
         <MobileHeader onOpenBindModal={handleOpenAuth} />
 
         {/* Dynamic Page Outlet */}
-        <main className="flex-1 flex flex-col relative">
+        <main className="flex-1 flex flex-col min-h-0 relative overflow-y-auto">
           <Outlet
             context={{
               onOpenBindModal: handleOpenAuth,

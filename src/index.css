@@ -240,3 +240,43 @@
   background: linear-gradient(160deg, #aa4e85, #8f1a60);
   box-shadow: 0px 0px 34px 0px rgba(129, 23, 86, 0.65);
 }
+
+/* Melooha Smooth Fade-Rise Micro-animation */
+@keyframes mlh-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-mlh-rise {
+  animation: mlh-rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Melooha Custom Delicate Scrollbar */
+.mlh-thin-scroll {
+  scrollbar-color: rgba(179, 116, 154, 0.35) transparent;
+  scrollbar-width: thin;
+}
+
+.mlh-thin-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.mlh-thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mlh-thin-scroll::-webkit-scrollbar-thumb {
+  background: rgba(179, 116, 154, 0.3);
+  border-radius: 9999px;
+}
+
+.mlh-thin-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(179, 116, 154, 0.55);
+}
+

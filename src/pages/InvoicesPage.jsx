@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dialog"
 import Footer from "@/components/layout/Footer"
 import { toast } from "sonner"
+import { fetchUserInvoices } from "@/features/billing"
 
 export default function InvoicesPage() {
   const context = useOutletContext() || {}
@@ -38,27 +39,45 @@ export default function InvoicesPage() {
   const [selectedInvoice, setSelectedInvoice] = useState(null)
   const [filterType, setFilterType] = useState("all") // "all" | "questions" | "report"
 
-  // Load invoices from localStorage
-  const loadInvoices = () => {
-    try {
-      const stored = localStorage.getItem("astrotring_invoices")
-      if (stored) {
-        setInvoices(JSON.parse(stored))
-      } else {
-        setInvoices([])
-      }
-    } catch (e) {
-      console.error("Failed to load invoices from localStorage:", e)
-      setInvoices([])
-    }
-  }
-
   useEffect(() => {
+    const loadInvoices = async () => {
+      // 1. Initial load from localStorage for fast render
+      try {
+        const stored = localStorage.getItem("astrotring_invoices")
+        if (stored) {
+          setInvoices(JSON.parse(stored))
+        }
+      } catch (e) {
+        console.error("Failed to load local invoices:", e)
+      }
+
+      // 2. Fetch authenticated user invoices from backend
+      if (user?.id) {
+        try {
+          const res = await fetchUserInvoices()
+          const serverInvoices = res?.data || res?.invoices
+          if (Array.isArray(serverInvoices) && serverInvoices.length > 0) {
+            setInvoices(serverInvoices)
+            localStorage.setItem("astrotring_invoices", JSON.stringify(serverInvoices))
+          }
+        } catch {
+          // Keep existing local invoices on error
+        }
+      }
+    }
+
     loadInvoices()
-    const handleStorageChange = () => loadInvoices()
+    const handleStorageChange = () => {
+      try {
+        const stored = localStorage.getItem("astrotring_invoices")
+        if (stored) setInvoices(JSON.parse(stored))
+      } catch (e) {
+        console.error(e)
+      }
+    }
     window.addEventListener("storage", handleStorageChange)
     return () => window.removeEventListener("storage", handleStorageChange)
-  }, [])
+  }, [user?.id])
 
   const filteredInvoices = invoices.filter((inv) => {
     if (filterType === "all") return true
@@ -351,18 +370,32 @@ export default function InvoicesPage() {
             <div className="p-6 sm:p-10 space-y-6 text-xs text-neutral-800 leading-relaxed max-h-[85vh] overflow-y-auto">
               {/* Top Row: Seller Header & Invoice Label */}
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-neutral-300 pb-6">
-                <div>
-                  <h2 className="text-xl font-bold font-serif text-neutral-900 tracking-tight">
-                    Astroverse Technologies Private Limited
-                  </h2>
-                  <div className="text-[11px] text-neutral-600 mt-1 font-sans space-y-0.5">
-                    <div>4th Floor, Astroverse Tower, Barakhamba Road, Connaught Place</div>
-                    <div>New Delhi, Delhi 110001, India</div>
-                    <div className="font-mono pt-1">
-                      <span className="font-semibold text-neutral-800">GSTIN: </span>07AABCA1234F1Z5
+                <div className="flex items-start gap-3.5">
+                  <img
+                    src="/logo-192.jpg"
+                    alt="Astrotring"
+                    className="w-12 h-12 rounded-xl object-cover border border-neutral-200 shrink-0 shadow-xs"
+                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-bold font-serif text-neutral-900 tracking-tight">
+                        VELTEX SERVICES PRIVATE LIMITED
+                      </h2>
+                      <span className="text-[10px] font-mono bg-neutral-100 text-neutral-700 px-1.5 py-0.5 rounded border border-neutral-300">
+                        Astrotring
+                      </span>
                     </div>
-                    <div className="font-mono">
-                      <span className="font-semibold text-neutral-800">CIN: </span>U74999DL2024PTC123456
+                    <div className="text-[11px] text-neutral-600 mt-1 font-sans space-y-0.5">
+                      <div>711, Plot A09, ITL Towers, Netaji Subhash Place, Pitampura</div>
+                      <div>North West Delhi, Delhi 110034, India</div>
+                      <div className="font-mono pt-1">
+                        <span className="font-semibold text-neutral-800">GSTIN: </span>07AAGCK6574Q1ZO
+                        <span className="mx-2 text-neutral-400">·</span>
+                        <span className="font-semibold text-neutral-800">PAN: </span>AAGCK6574Q
+                      </div>
+                      <div className="font-mono">
+                        <span className="font-semibold text-neutral-800">CIN: </span>U72900DL2017PTC319827
+                      </div>
                     </div>
                   </div>
                 </div>

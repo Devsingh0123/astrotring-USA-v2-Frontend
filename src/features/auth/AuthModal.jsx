@@ -251,9 +251,11 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
             <div className="space-y-6 relative z-10">
               {/* Logo */}
               <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-full bg-[#b32b6e] flex items-center justify-center text-white shadow-md">
-                  <Sparkles className="w-4 h-4 text-amber-300" />
-                </span>
+                <img
+                  src="/logo-192.jpg"
+                  alt="AstroTring"
+                  className="w-8 h-8 rounded-full object-cover shrink-0 border border-white/10 shadow-md"
+                />
                 <span className="font-serif font-bold text-xl tracking-tight text-white">
                   AstroTring
                 </span>

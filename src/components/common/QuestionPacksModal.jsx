@@ -14,8 +14,13 @@ import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { openAuthModal } from "@/features/auth"
-import { addQuestionQuota } from "@/features/vaani"
-import RazorpayCheckoutModal from "@/components/common/RazorpayCheckoutModal"
+import { addQuestionQuota, setQuestionQuota } from "@/features/vaani"
+import {
+  createRazorpayOrder,
+  verifyRazorpayPayment,
+  recordPaymentFailure,
+} from "@/features/billing/billingApi"
+import { openRazorpayCheckout } from "@/lib/razorpay"
 
 // Melooha Question Packages (INR) matching Authenticated Screenshots 10 & 16
 export const QUESTION_PACKAGES = [
@@ -123,7 +128,7 @@ export default function QuestionPacksModal({
   const [promoInput, setPromoInput] = useState("")
   const [isPromoInputVisible, setIsPromoInputVisible] = useState(false)
   const [isCouponsModalOpen, setIsCouponsModalOpen] = useState(false)
-  const [isRazorpayOpen, setIsRazorpayOpen] = useState(false)
+  const [isInitiating, setIsInitiating] = useState(false)
 
   // Sync initial props when opened
   useEffect(() => {
@@ -151,7 +156,6 @@ export default function QuestionPacksModal({
     setIsStateDropdownOpen(false)
     setIsPromoInputVisible(false)
     setIsCouponsModalOpen(false)
-    setIsRazorpayOpen(false)
     onClose()
   }
 
@@ -186,7 +190,7 @@ export default function QuestionPacksModal({
     toast.info("Coupon code removed.")
   }
 
-  const handleProceedToRazorpay = () => {
+  const handleProceedToRazorpay = async () => {
     if (!isAuthenticated) {
       if (onOpenAuth) {
         onOpenAuth(() => {
@@ -198,51 +202,128 @@ export default function QuestionPacksModal({
       return
     }
 
-    setIsRazorpayOpen(true)
-  }
+    setIsInitiating(true)
 
-  const handleRazorpaySuccess = (paymentResponse) => {
-    // 1. Credit questions to Redux state immediately
-    dispatch(addQuestionQuota(selectedPack.questions))
-
-    // 2. Persist invoice to localStorage for Feature 5
     try {
-      const existingInvoices = JSON.parse(
-        localStorage.getItem("astrotring_invoices") || "[]"
-      )
-
-      const newInvoice = {
-        id: "INV-" + Date.now().toString().slice(-6),
-        paymentId: paymentResponse.razorpay_payment_id,
-        orderId: paymentResponse.razorpay_order_id,
-        date: new Date().toISOString(),
+      // 1. Create order on backend (returns orderId, keyId, amountSubunits, etc.)
+      const orderRes = await createRazorpayOrder({
+        packId: selectedPack.id,
         itemType: "questions",
-        itemTitle: `${selectedPack.name} Pack (${selectedPack.questions} questions)`,
-        subtotal: selectedPack.originalPrice,
-        discount: discount,
-        couponCode: appliedPromo || "NONE",
-        taxAmount: Math.round((finalPrice * 18) / 118), // 18% GST included
-        total: finalPrice,
+        currency: "INR",
+        couponCode: appliedPromo || undefined,
         billingState: billingState,
-        status: "PAID",
-        method: "Razorpay Standard",
-        userName: user?.name || "Suraj Kumar",
-        userEmail: user?.email || "suraj@astrotring.com",
+      })
+
+      const backendKeyId = orderRes.keyId || orderRes.data?.keyId
+      const backendOrderId = orderRes.orderId || orderRes.data?.orderId
+      const amountSubunits = orderRes.amountSubunits || orderRes.data?.amountSubunits
+      const finalAmount = orderRes.amount || orderRes.data?.amount || finalPrice
+
+      if (!backendKeyId) {
+        throw new Error("Razorpay Key ID was not returned by the backend order response.")
       }
 
-      localStorage.setItem(
-        "astrotring_invoices",
-        JSON.stringify([newInvoice, ...existingInvoices])
-      )
-    } catch (e) {
-      console.error("Failed to save invoice record:", e)
-    }
+      // 2. Open official Razorpay modal using credentials directly from backend
+      openRazorpayCheckout({
+        keyId: backendKeyId,
+        orderId: backendOrderId,
+        amountSubunits: amountSubunits,
+        amount: finalAmount,
+        currency: orderRes.currency || orderRes.data?.currency || "INR",
+        name: "AstroTring",
+        description: `${selectedPack.name} Pack (${selectedPack.questions} questions)`,
+        user: {
+          name: user?.name,
+          email: user?.email,
+          phone: user?.phone,
+        },
+        onSuccess: async (paymentResponse) => {
+          try {
+            // 3. Verify signature with real backend & fulfill quota
+            const verifyRes = await verifyRazorpayPayment({
+              razorpay_order_id: paymentResponse.razorpay_order_id,
+              razorpay_payment_id: paymentResponse.razorpay_payment_id,
+              razorpay_signature: paymentResponse.razorpay_signature,
+              method: "standard",
+            })
 
-    toast.success(
-      `Payment of ₹${finalPrice.toLocaleString("en-IN")} successful! ${selectedPack.questions} questions added to your account.`
-    )
-    handleModalClose()
+            const creditsRemaining = verifyRes.data?.creditsRemaining
+            if (typeof creditsRemaining === "number") {
+              dispatch(setQuestionQuota(creditsRemaining))
+            } else {
+              dispatch(addQuestionQuota(selectedPack.questions))
+            }
+
+            // Save local invoice copy
+            try {
+              const existingInvoices = JSON.parse(
+                localStorage.getItem("astrotring_invoices") || "[]"
+              )
+              const inv = verifyRes.data?.invoice || {
+                id: "INV-" + Date.now().toString().slice(-6),
+                paymentId: paymentResponse.razorpay_payment_id,
+                orderId: paymentResponse.razorpay_order_id,
+                date: new Date().toISOString(),
+                itemType: "questions",
+                itemTitle: `${selectedPack.name} Pack (${selectedPack.questions} questions)`,
+                subtotal: selectedPack.originalPrice,
+                discount: discount,
+                couponCode: appliedPromo || "NONE",
+                taxAmount: Math.round((finalPrice * 18) / 118),
+                total: finalPrice,
+                billingState: billingState,
+                status: "PAID",
+                method: "Razorpay Standard",
+                userName: user?.name || "Customer",
+                userEmail: user?.email || "",
+              }
+              localStorage.setItem("astrotring_invoices", JSON.stringify([inv, ...existingInvoices]))
+            } catch (e) {
+              console.warn("Failed to save local invoice:", e)
+            }
+
+            toast.success(
+              `Payment successful! ${selectedPack.questions} questions added to your account.`
+            )
+            handleModalClose()
+          } catch (verifyErr) {
+            console.error("Signature verification failed:", verifyErr)
+            toast.error(
+              verifyErr?.response?.data?.message ||
+                "Payment was successful, but server verification failed. Please contact support."
+            )
+          }
+        },
+        onFailure: (err) => {
+          recordPaymentFailure({
+            razorpay_order_id: backendOrderId,
+            status: "failed",
+            reason: err?.description || err?.message || "Payment failed",
+          })
+          toast.error(err?.description || "Payment failed. Please try again.")
+        },
+        onDismiss: () => {
+          recordPaymentFailure({
+            razorpay_order_id: backendOrderId,
+            status: "cancelled",
+            reason: "User closed checkout modal",
+          })
+          toast.info("Payment window dismissed.")
+        },
+      })
+    } catch (orderErr) {
+      console.error("Failed to create Razorpay order:", orderErr)
+      toast.error(
+        orderErr?.response?.data?.message ||
+          orderErr?.message ||
+          "Could not initialize checkout. Please check connection and try again."
+      )
+    } finally {
+      setIsInitiating(false)
+    }
   }
+
+
 
   return (
     <>
@@ -597,11 +678,18 @@ export default function QuestionPacksModal({
                   <div className="mt-8 space-y-2.5">
                     <Button
                       type="button"
+                      disabled={isInitiating}
                       onClick={handleProceedToRazorpay}
-                      className="w-full bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white py-4 rounded-full font-medium shadow-lg shadow-[#b32b6e]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-base cursor-pointer"
+                      className="w-full bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white py-4 rounded-full font-medium shadow-lg shadow-[#b32b6e]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-base cursor-pointer disabled:opacity-60"
                     >
-                      <span>Proceed to Pay</span>
-                      <span className="text-lg">→</span>
+                      {isInitiating ? (
+                        <span>Connecting to Gateway...</span>
+                      ) : (
+                        <>
+                          <span>Proceed to Pay</span>
+                          <span className="text-lg">→</span>
+                        </>
+                      )}
                     </Button>
 
                     <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 pt-1">
@@ -667,18 +755,6 @@ export default function QuestionPacksModal({
         </DialogContent>
       </Dialog>
 
-      {/* Official Razorpay Standard Checkout Gateway Modal */}
-      <RazorpayCheckoutModal
-        isOpen={isRazorpayOpen}
-        onClose={() => setIsRazorpayOpen(false)}
-        orderData={{
-          amount: finalPrice,
-          pack: selectedPack,
-          promo: appliedPromo,
-          billingState: billingState,
-        }}
-        onSuccess={handleRazorpaySuccess}
-      />
     </>
   )
 }

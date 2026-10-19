@@ -46,9 +46,11 @@ export default function MobileHeader({ onOpenBindModal }) {
         </Button>
 
         <Link to="/" className="flex items-center gap-2">
-          <span className="w-7 h-7 rounded-full bg-mlh-plum flex items-center justify-center text-mlh-plum-100 shadow-sm border border-mlh-plum-400/30">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-          </span>
+          <img
+            src="/logo-192.jpg"
+            alt="AstroTring"
+            className="w-7 h-7 rounded-full object-cover shrink-0 border border-white/10 shadow-sm"
+          />
           <span className="font-serif font-bold text-base tracking-tight text-white">
             AstroTring
           </span>
@@ -93,9 +95,11 @@ export default function MobileHeader({ onOpenBindModal }) {
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-[#252637]">
                 <div className="flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-full bg-mlh-plum flex items-center justify-center text-mlh-plum-100">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                  </span>
+                  <img
+                    src="/logo-192.jpg"
+                    alt="AstroTring"
+                    className="w-7 h-7 rounded-full object-cover shrink-0 border border-white/10"
+                  />
                   <span className="font-serif font-bold text-base text-white">
                     AstroTring
                   </span>
