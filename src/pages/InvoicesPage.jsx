@@ -223,7 +223,7 @@ export default function InvoicesPage() {
                 No purchases yet
               </h3>
               <p className="text-xs sm:text-sm text-white/50 max-w-md mx-auto font-sans leading-relaxed">
-                Question packs, report credits and Artha Sutram will be listed here the moment you buy one.
+                Question packs and report credits will be listed here the moment you buy one.
               </p>
             </div>
 

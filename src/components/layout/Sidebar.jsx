@@ -8,8 +8,6 @@ import {
   Newspaper,
   Calculator,
   FileText,
-  Coins,
-  Megaphone,
   PanelLeftClose,
   PanelLeftOpen,
   LogIn,
@@ -29,8 +27,6 @@ const navItems = [
   { label: "Blogs", path: "/blogs", icon: Newspaper },
   { label: "Calculators", path: "/calculators", icon: Calculator },
   { label: "Reports", path: "/reports", icon: FileText },
-  { label: "Artha Sutram", path: "/reports/artha-sutram", icon: Coins },
-  { label: "In the News", path: "/news", icon: Megaphone },
 ]
 
 export default function Sidebar({
