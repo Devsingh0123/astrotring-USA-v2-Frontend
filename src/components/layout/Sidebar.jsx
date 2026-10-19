@@ -16,7 +16,7 @@ import {
   Compass,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { logout } from "@/features/auth"
+import { logout, openAuthModal } from "@/features/auth"
 import { setActiveConversation, clearActiveConversation } from "@/features/vaani"
 import { fetchUserThreads, fetchThreadById } from "@/features/vaani/vaaniApi"
 import UserProfileMenu from "@/features/user/components/UserProfileMenu"
@@ -144,10 +144,30 @@ export default function Sidebar({
         <nav className="space-y-1 pt-1">
           {navItems.map((item) => {
             const Icon = item.icon
+            const handleItemClick = (e) => {
+              if (item.path === "/kundli") {
+                if (!isAuthenticated) {
+                  e.preventDefault()
+                  if (typeof onOpenBindModal === "function") {
+                    onOpenBindModal()
+                  } else {
+                    dispatch(openAuthModal())
+                  }
+                  return
+                }
+                if (user?.onboardingCompleted === false || (!birthDetails && !user?.hasBirthDetails)) {
+                  e.preventDefault()
+                  navigate("/onboarding")
+                  return
+                }
+              }
+            }
+
             return (
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={handleItemClick}
                 className={({ isActive }) =>
                   `flex items-center gap-3 rounded-lg text-xs lg:text-sm font-medium transition-colors ${
                     isCollapsed ? "justify-center p-2.5" : "px-3 py-2"

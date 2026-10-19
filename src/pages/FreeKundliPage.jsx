@@ -148,12 +148,12 @@ export default function FreeKundliPage() {
                       Ascendant (Lagna)
                     </span>
                     <span className="text-base font-serif font-semibold text-white block">
-                      {summary.ascendantSign || "Aries"}
+                      {summary.ascendantSign || "—"}
                     </span>
                     <span className="text-[10px] font-mono text-mlh-muted">
-                      {summary.ascendantDegree
+                      {summary.ascendantDegree !== undefined
                         ? `${Number(summary.ascendantDegree % 30).toFixed(2)}°`
-                        : "0.00°"}
+                        : "—"}
                     </span>
                   </div>
 
@@ -162,12 +162,12 @@ export default function FreeKundliPage() {
                       Moon Sign (Rashi)
                     </span>
                     <span className="text-base font-serif font-semibold text-white block">
-                      {summary.moonSign || "Virgo"}
+                      {summary.moonSign || "—"}
                     </span>
                     <span className="text-[10px] font-mono text-mlh-muted">
-                      {summary.moonDegree
+                      {summary.moonDegree !== undefined
                         ? `${Number(summary.moonDegree % 30).toFixed(2)}°`
-                        : "0.00°"}
+                        : "—"}
                     </span>
                   </div>
 
@@ -176,10 +176,10 @@ export default function FreeKundliPage() {
                       Nakshatra
                     </span>
                     <span className="text-base font-serif font-semibold text-white block truncate">
-                      {summary.nakshatra || "Hasta"}
+                      {summary.nakshatra || "—"}
                     </span>
                     <span className="text-[10px] font-mono text-mlh-plum-300">
-                      Pada {summary.pada || "3"} ({summary.nakshatraLord || "Moon"})
+                      {summary.pada ? `Pada ${summary.pada}` : "—"}{summary.nakshatraLord ? ` (${summary.nakshatraLord})` : ""}
                     </span>
                   </div>
 
@@ -188,7 +188,7 @@ export default function FreeKundliPage() {
                       Sun Sign
                     </span>
                     <span className="text-base font-serif font-semibold text-white block">
-                      {summary.sunSign || "Aries"}
+                      {summary.sunSign || "—"}
                     </span>
                     <span className="text-[10px] font-mono text-mlh-muted">
                       Nirayana Solar

@@ -73,50 +73,32 @@ export default function KundliDisplayPage() {
   const isLoading = userKundliStatus === "loading";
   const hasFailed = userKundliStatus === "failed";
 
-  // Attempt to load user chart upon mount or when birthDetails become available
+  // Load authentic user chart upon mount or when birthDetails become available
   useEffect(() => {
-    if (!userKundli && (birthDetails || user)) {
+    if (!birthDetails) {
+      navigate("/onboarding", { replace: true });
+      return;
+    }
+    if (!userKundli && userKundliStatus !== "loading") {
       dispatch(
         fetchUserChart({
-          chartId: birthDetails?.chartId,
-          birthDetails: birthDetails || {
-            fullName: user?.name || "Alex Mercer",
-            dateOfBirth: "1995-04-14",
-            timeOfBirth: "07:30",
-            birthCity: "San Francisco, CA, USA",
-            latitude: 37.7749,
-            longitude: -122.4194,
-            timezone: -7,
-            chartSummary: {
-              ascendantSign: "Aries",
-              moonSign: "Virgo",
-              sunSign: "Aries",
-              nakshatra: "Hasta",
-              pada: 3,
-            },
-          },
+          chartId: birthDetails.chartId,
+          birthDetails: birthDetails,
         })
       );
     }
-  }, [dispatch, userKundli, birthDetails, user]);
+  }, [dispatch, userKundli, userKundliStatus, birthDetails, navigate]);
 
   const handlePrint = () => {
     window.print();
   };
 
   const handleRefresh = () => {
+    if (!birthDetails) return;
     dispatch(
       fetchUserChart({
-        chartId: birthDetails?.chartId,
-        birthDetails: birthDetails || {
-          fullName: user?.name || "Alex Mercer",
-          dateOfBirth: "1995-04-14",
-          timeOfBirth: "07:30",
-          birthCity: "San Francisco, CA, USA",
-          latitude: 37.7749,
-          longitude: -122.4194,
-          timezone: -7,
-        },
+        chartId: birthDetails.chartId,
+        birthDetails: birthDetails,
       })
     );
   };
@@ -149,43 +131,44 @@ export default function KundliDisplayPage() {
   const activeChartData = getActiveChart();
   const summary = userKundli?.summary || birthDetails?.chartSummary || {};
 
-  const ascSign = summary.ascendantSign || "Aries";
-  const moonSign = summary.moonSign || "Virgo";
-  const sunSign = summary.sunSign || "Aries";
-  const nakshatra = summary.nakshatra || "Hasta";
-  const pada = summary.pada || 3;
+  const ascSign = summary.ascendantSign || "—";
+  const moonSign = summary.moonSign || "—";
+  const sunSign = summary.sunSign || "—";
+  const nakshatra = summary.nakshatra || "—";
+  const pada = summary.pada || "—";
 
-  const ascMeta = ZODIAC_METADATA[ascSign.toLowerCase()] || {
-    sanskrit: "Mesha",
-    lord: "Mars",
-    element: "Fire",
+  const ascMeta = ZODIAC_METADATA[ascSign?.toLowerCase()] || {
+    sanskrit: "—",
+    lord: "—",
+    element: "—",
   };
-  const moonMeta = ZODIAC_METADATA[moonSign.toLowerCase()] || {
-    sanskrit: "Kanya",
-    lord: "Mercury",
-    element: "Earth",
+  const moonMeta = ZODIAC_METADATA[moonSign?.toLowerCase()] || {
+    sanskrit: "—",
+    lord: "—",
+    element: "—",
   };
-  const sunMeta = ZODIAC_METADATA[sunSign.toLowerCase()] || {
-    sanskrit: "Mesha",
-    lord: "Mars",
-    element: "Fire",
+  const sunMeta = ZODIAC_METADATA[sunSign?.toLowerCase()] || {
+    sanskrit: "—",
+    lord: "—",
+    element: "—",
   };
 
-  // Person details from chart or session
+  // Person details from real birthDetails or chart
   const displayName =
-    userKundli?.name ||
     birthDetails?.fullName ||
+    userKundli?.name ||
     user?.name ||
     user?.email?.split("@")[0] ||
-    "Alex Mercer";
+    "User";
   const displayDob =
-    userKundli?.dob || birthDetails?.dateOfBirth || "1995-04-14";
-  const displayTob =
-    userKundli?.tob || birthDetails?.timeOfBirth || "07:30";
+    birthDetails?.dateOfBirth || userKundli?.dob || "—";
+  const displayTob = birthDetails?.isTimeUnknown
+    ? "Time Unknown"
+    : (birthDetails?.timeOfBirth || userKundli?.tob || "—");
   const displayCity =
-    userKundli?.city ||
     birthDetails?.birthCity ||
-    "San Francisco, CA, USA";
+    userKundli?.city ||
+    "—";
 
   return (
     <div className="min-h-screen bg-mlh-bg text-mlh-text pb-28">
@@ -410,11 +393,16 @@ export default function KundliDisplayPage() {
         </div>
 
         {/* ================= 4. LOADING SKELETON ================= */}
-        {isLoading && (
+        {(isLoading || (!userKundli && !hasFailed)) && (
           <div className="p-8 rounded-3xl border border-mlh-border/60 bg-mlh-surface/40 space-y-6">
             <div className="flex items-center gap-3">
-              <Skeleton className="w-6 h-6 rounded-full bg-mlh-surface-hi" />
-              <Skeleton className="h-6 w-48 bg-mlh-surface-hi rounded-md" />
+              <div className="w-5 h-5 border-2 border-mlh-amber border-t-transparent rounded-full animate-spin" />
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-48 bg-mlh-surface-hi rounded-md" />
+                <p className="text-xs text-mlh-muted font-mono">
+                  Calculating planetary positions via Swiss Ephemeris...
+                </p>
+              </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center justify-center">
               <Skeleton className="h-[420px] w-full max-w-[460px] mx-auto rounded-3xl bg-mlh-surface-hi" />
@@ -423,8 +411,43 @@ export default function KundliDisplayPage() {
           </div>
         )}
 
+        {/* ================= ERROR STATE ================= */}
+        {hasFailed && !userKundli && !isLoading && (
+          <div className="p-8 sm:p-12 rounded-3xl border border-rose-500/30 bg-rose-950/10 backdrop-blur-xl text-center space-y-5">
+            <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <div className="space-y-2 max-w-md mx-auto">
+              <h3 className="text-xl font-heading font-medium text-white">
+                Unable to Calculate Kundli
+              </h3>
+              <p className="text-xs sm:text-sm text-mlh-muted font-sans">
+                {userKundliError ||
+                  "We encountered an issue calculating your high-precision Vedic birth chart. Please verify your birth details or try refreshing."}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <Button
+                onClick={handleRefresh}
+                className="h-10 px-5 rounded-xl bg-mlh-amber hover:bg-amber-500 text-black font-semibold text-xs font-mono tracking-wider flex items-center gap-2 cursor-pointer"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Retry Calculation</span>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate("/onboarding")}
+                className="h-10 px-5 rounded-xl border-mlh-border bg-mlh-surface/60 hover:bg-mlh-surface text-xs font-mono text-mlh-text hover:text-white flex items-center gap-2 cursor-pointer"
+              >
+                <User className="w-3.5 h-3.5 text-mlh-amber" />
+                <span>Update Birth Details</span>
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* ================= 5. CHART VISUALIZATION & DATA SECTION ================= */}
-        {!isLoading && (
+        {!isLoading && userKundli && (
           <div className="space-y-8">
             {/* Varga Divisional Selector Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl border border-mlh-border/80 bg-mlh-surface/80 backdrop-blur-md">

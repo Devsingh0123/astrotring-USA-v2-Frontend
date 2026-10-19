@@ -10,6 +10,7 @@ import OnboardingPage from "@/pages/OnboardingPage"
 import ReportsListingPage from "@/pages/ReportsListingPage"
 import ReportDetailPage from "@/pages/ReportDetailPage"
 import InvoicesPage from "@/pages/InvoicesPage"
+import ProtectedRoute from "@/components/common/ProtectedRoute"
 import PlaceholderPage from "@/pages/PlaceholderPage"
 import NotFoundPage from "@/pages/NotFoundPage"
 
@@ -38,11 +39,19 @@ export const router = createBrowserRouter([
       },
       {
         path: "kundli",
-        element: <KundliDisplayPage />,
+        element: (
+          <ProtectedRoute>
+            <KundliDisplayPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "chart",
-        element: <KundliDisplayPage />,
+        element: (
+          <ProtectedRoute>
+            <KundliDisplayPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "chat",

@@ -119,21 +119,30 @@ export const fetchUserChart = createAsyncThunk(
 
       // 2. If chartId missing or failed, compute via /vedic/horoscope
       if (birthDetails) {
+        const lat = birthDetails.latitude ?? birthDetails.lat ?? birthDetails.location?.lat;
+        const lng = birthDetails.longitude ?? birthDetails.lng ?? birthDetails.location?.lng;
+        const city = birthDetails.birthCity || birthDetails.city || birthDetails.location?.city;
+
+        if (lat === undefined || lng === undefined) {
+          throw new Error("Birth location coordinates missing. Please complete your profile.");
+        }
+
         const payload = {
           name: birthDetails.fullName || birthDetails.name || "User",
           gender: birthDetails.gender || "female",
           dob: birthDetails.dateOfBirth || birthDetails.dob,
-          tob: birthDetails.timeOfBirth || birthDetails.tob || "12:00",
+          tob: birthDetails.isTimeUnknown ? "12:00:00" : (birthDetails.timeOfBirth || birthDetails.tob || "12:00"),
           isTimeUnknown: Boolean(birthDetails.isTimeUnknown),
           location: {
-            city:
-              birthDetails.birthCity ||
-              birthDetails.city ||
-              "San Francisco, CA, USA",
-            lat: birthDetails.latitude ?? birthDetails.lat ?? 37.7749,
-            lng: birthDetails.longitude ?? birthDetails.lng ?? -122.4194,
-            timezoneOffset:
-              birthDetails.timezone ?? birthDetails.timezoneOffset ?? -7,
+            city: city || "Location",
+            lat: Number(lat),
+            lng: Number(lng),
+            timezoneOffset: Number(
+              birthDetails.timezone ??
+              birthDetails.timezoneOffset ??
+              birthDetails.location?.timezoneOffset ??
+              5.5
+            ),
           },
         };
 

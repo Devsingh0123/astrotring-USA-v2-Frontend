@@ -4,13 +4,13 @@ import { Badge } from "@/components/ui/badge";
 
 export default function DashaTimeline({ dashas = {}, summary = {} }) {
   // If backend returns graha_dashas / vimsottari
-  const majorDasha = dashas?.current_mahadasha || dashas?.major || "Jupiter";
-  const subDasha = dashas?.current_antardasha || dashas?.sub || "Saturn";
-  const pratyantar = dashas?.current_pratyantar || dashas?.sub_sub || "Mercury";
+  const majorDasha = dashas?.current_mahadasha || dashas?.major || "—";
+  const subDasha = dashas?.current_antardasha || dashas?.sub || "—";
+  const pratyantar = dashas?.current_pratyantar || dashas?.sub_sub || "—";
 
-  const nakshatra = summary?.nakshatra || "Hasta";
-  const nakshatraLord = summary?.nakshatraLord || "Moon";
-  const balanceAtBirth = dashas?.balance_at_birth || `${nakshatraLord} Dasha`;
+  const nakshatra = summary?.nakshatra || "—";
+  const nakshatraLord = summary?.nakshatraLord || "—";
+  const balanceAtBirth = dashas?.balance_at_birth || (summary?.nakshatraLord ? `${summary.nakshatraLord} Dasha` : "—");
 
   return (
     <div className="rounded-2xl border border-mlh-border/80 bg-mlh-surface/80 backdrop-blur-md p-5 sm:p-6 shadow-xl shadow-black/20">

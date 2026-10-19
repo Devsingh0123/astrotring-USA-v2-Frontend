@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import {
   Menu,
@@ -14,7 +14,7 @@ import {
   Compass,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { logout } from "@/features/auth"
+import { logout, openAuthModal } from "@/features/auth"
 
 const mobileNavLinks = [
   { label: "Horoscopes", path: "/horoscope", icon: Orbit },
@@ -26,7 +26,8 @@ const mobileNavLinks = [
 export default function MobileHeader({ onOpenBindModal }) {
   const [isOpen, setIsOpen] = useState(false)
   const dispatch = useDispatch()
-  const { isAuthenticated, user } = useSelector((state) => state.auth || {})
+  const navigate = useNavigate()
+  const { isAuthenticated, user, birthDetails } = useSelector((state) => state.auth || {})
 
   return (
     <>
@@ -131,7 +132,22 @@ export default function MobileHeader({ onOpenBindModal }) {
 
                 <Link
                   to="/kundli"
-                  onClick={() => setIsOpen(false)}
+                  onClick={(e) => {
+                    setIsOpen(false)
+                    if (!isAuthenticated) {
+                      e.preventDefault()
+                      if (typeof onOpenBindModal === "function") {
+                        onOpenBindModal()
+                      } else {
+                        dispatch(openAuthModal())
+                      }
+                      return
+                    }
+                    if (user?.onboardingCompleted === false || (!birthDetails && !user?.hasBirthDetails)) {
+                      e.preventDefault()
+                      navigate("/onboarding")
+                    }
+                  }}
                   className="w-full flex items-center gap-2.5 rounded-xl border border-mlh-amber/35 bg-[#1c1407] px-3.5 py-2.5 text-mlh-amber text-xs font-medium"
                 >
                   <Compass className="w-4 h-4 text-mlh-amber" />

@@ -25,25 +25,22 @@ export default function DashboardKundliCard() {
     isAuthenticated && (user?.onboardingCompleted || birthDetails);
   if (!hasOnboarded) return null;
 
-  const summary =
-    userKundli?.summary || birthDetails?.chartSummary || {
-      ascendantSign: "Aries",
-      moonSign: "Virgo",
-      sunSign: "Aries",
-      nakshatra: "Hasta",
-      pada: 3,
-    };
+  const summary = userKundli?.summary || birthDetails?.chartSummary || {};
 
   const name =
-    userKundli?.name ||
     birthDetails?.fullName ||
+    userKundli?.name ||
     user?.name ||
     user?.email?.split("@")[0] ||
-    "Alex Mercer";
-  const dob = userKundli?.dob || birthDetails?.dateOfBirth || "1995-04-14";
-  const tob = userKundli?.tob || birthDetails?.timeOfBirth || "07:30";
+    "My";
+  const dob = birthDetails?.dateOfBirth || userKundli?.dob || "—";
+  const tob = birthDetails?.isTimeUnknown
+    ? "Time Unknown"
+    : (birthDetails?.timeOfBirth || userKundli?.tob || "—");
   const city =
-    userKundli?.city || birthDetails?.birthCity || "San Francisco, CA, USA";
+    birthDetails?.birthCity ||
+    userKundli?.city ||
+    "—";
 
   return (
     <motion.div
@@ -106,7 +103,7 @@ export default function DashboardKundliCard() {
             Lagna (Ascendant)
           </span>
           <span className="text-sm font-serif font-semibold text-white block truncate">
-            {summary.ascendantSign || "Aries"}
+            {summary.ascendantSign || "—"}
           </span>
           <span className="text-[10px] font-mono text-mlh-faint">
             Dharma Trikona
@@ -119,7 +116,7 @@ export default function DashboardKundliCard() {
             Moon (Rashi)
           </span>
           <span className="text-sm font-serif font-semibold text-white block truncate">
-            {summary.moonSign || "Virgo"}
+            {summary.moonSign || "—"}
           </span>
           <span className="text-[10px] font-mono text-mlh-faint">
             Janma Rashi
@@ -132,10 +129,10 @@ export default function DashboardKundliCard() {
             Nakshatra
           </span>
           <span className="text-sm font-serif font-semibold text-white block truncate">
-            {summary.nakshatra || "Hasta"}
+            {summary.nakshatra || "—"}
           </span>
           <span className="text-[10px] font-mono text-emerald-400">
-            Pada {summary.pada || 3}
+            {summary.pada ? `Pada ${summary.pada}` : "—"}
           </span>
         </div>
 
@@ -145,7 +142,7 @@ export default function DashboardKundliCard() {
             Sun Sign
           </span>
           <span className="text-sm font-serif font-semibold text-white block truncate">
-            {summary.sunSign || "Aries"}
+            {summary.sunSign || "—"}
           </span>
           <span className="text-[10px] font-mono text-mlh-faint">
             Nirayana Solar

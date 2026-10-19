@@ -41,14 +41,16 @@ export default function UserProfileMenu({
   const initial = (displayName[0] || "S").toUpperCase()
 
   // Format bound coordinates badge
-  const dobFormatted = birthDetails?.dateOfBirth || birthDetails?.dob || "20 Jan 2000"
-  const tobFormatted = birthDetails?.timeOfBirth
-    ? birthDetails.timeOfBirth.slice(0, 5)
-    : "12:01 AM"
+  const dobFormatted = birthDetails?.dateOfBirth || birthDetails?.dob
+  const tobFormatted = birthDetails?.isTimeUnknown
+    ? "Time Unknown"
+    : (birthDetails?.timeOfBirth ? birthDetails.timeOfBirth.slice(0, 5) : "")
   const placeFormatted =
-    birthDetails?.birthCity || birthDetails?.city || birthDetails?.place || "Delhi"
+    birthDetails?.birthCity || birthDetails?.city || birthDetails?.place
 
-  const boundBadge = `☀ ${dobFormatted} · ${tobFormatted} · ${placeFormatted}`
+  const boundBadge = birthDetails && (dobFormatted || placeFormatted)
+    ? `☀ ${dobFormatted || "—"} · ${tobFormatted || "—"} · ${placeFormatted || "—"}`
+    : "☀ No birth details set"
 
   const handleSignOut = () => {
     setOpen(false)
