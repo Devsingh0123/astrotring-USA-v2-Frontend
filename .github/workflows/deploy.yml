@@ -1,4 +1,4 @@
-name: Deploy Frontend to cPanel
+name: Deploy Frontend
 
 on:
   push:
