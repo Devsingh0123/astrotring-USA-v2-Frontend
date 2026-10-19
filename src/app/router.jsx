@@ -2,7 +2,7 @@ import { createBrowserRouter, Navigate, useLocation } from "react-router-dom"
 import RootLayout from "@/components/layout/RootLayout"
 import HomePage from "@/pages/HomePage"
 import HoroscopesListingPage from "@/pages/HoroscopesListingPage"
-import DailyHoroscopePage from "@/pages/DailyHoroscopePage"
+import HoroscopeDetailPage from "@/pages/HoroscopeDetailPage"
 import CalculatorsListingPage from "@/pages/CalculatorsListingPage"
 import FreeKundliPage from "@/pages/FreeKundliPage"
 import KundliDisplayPage from "@/pages/KundliDisplayPage"
@@ -98,20 +98,20 @@ export const router = createBrowserRouter([
         element: <HoroscopesListingPage />,
       },
       {
-        path: "horoscopes/:sign/daily",
-        element: <DailyHoroscopePage />,
+        path: "horoscopes/:sign/:timeframe",
+        element: <HoroscopeDetailPage />,
       },
       {
-        path: "horoscope/:sign/daily",
-        element: <DailyHoroscopePage />,
+        path: "horoscope/:sign/:timeframe",
+        element: <HoroscopeDetailPage />,
       },
       {
         path: "horoscopes/:sign",
-        element: <DailyHoroscopePage />,
+        element: <HoroscopeDetailPage />,
       },
       {
         path: "horoscope/:sign",
-        element: <DailyHoroscopePage />,
+        element: <HoroscopeDetailPage />,
       },
       {
         path: "compatibility",

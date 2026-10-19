@@ -26,7 +26,7 @@ export default function ElementGroupSection({ group, timeframe }) {
       {/* 3 Rashi Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {group.signsList.map((sign) => (
-          <RashiCard key={sign.slug} sign={sign} timeframe={timeframe} />
+          <RashiCard key={sign.slug || sign.id} sign={sign} timeframe={timeframe} />
         ))}
       </div>
     </div>

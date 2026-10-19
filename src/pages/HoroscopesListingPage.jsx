@@ -1,9 +1,10 @@
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { useOutletContext, Link } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { Search, Moon, ArrowRight, Sparkles } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Helmet } from "react-helmet-async"
 import Footer from "@/components/layout/Footer"
 import {
   setTimeframe,
@@ -11,31 +12,47 @@ import {
   ElementGroupSection,
   elementGrouping,
   signsData,
+  fetchHoroscopeSigns,
 } from "@/features/horoscope"
 
 export default function HoroscopesListingPage() {
   const dispatch = useDispatch()
-  const { timeframe, searchQuery } = useSelector((state) => state.horoscope || {})
+  const { timeframe, searchQuery, signs, signsLoading } = useSelector(
+    (state) => state.horoscope || {}
+  )
   const { onOpenAuthModal, onOpenBindModal } = useOutletContext() || {}
 
   const handleOpenAuth = onOpenAuthModal || onOpenBindModal
 
+  // Sync signs with live backend on mount
+  useEffect(() => {
+    dispatch(fetchHoroscopeSigns())
+  }, [dispatch])
+
   // Filter signs by user query across Latin, Vedic, or Element
   const filteredGroups = useMemo(() => {
     const q = (searchQuery || "").trim().toLowerCase()
+    const allSigns = signs || signsData
+
     return elementGrouping
       .map((group) => {
         const matchingSigns = group.signs
-          .map((slug) => signsData[slug])
+          .map((slug) => allSigns[slug])
           .filter(Boolean)
           .filter((sign) => {
             if (!q) return true
+            const latin = (sign.latin || sign.name || "").toLowerCase()
+            const vedic = (sign.vedic || sign.sanskrit || "").toLowerCase()
+            const ruler = (sign.ruler || "").toLowerCase()
+            const element = (sign.element || "").toLowerCase()
+            const sanskritElement = (sign.sanskritElement || "").toLowerCase()
+
             return (
-              sign.latin.toLowerCase().includes(q) ||
-              sign.vedic.toLowerCase().includes(q) ||
-              sign.ruler.toLowerCase().includes(q) ||
-              sign.element.toLowerCase().includes(q) ||
-              sign.sanskritElement.toLowerCase().includes(q)
+              latin.includes(q) ||
+              vedic.includes(q) ||
+              ruler.includes(q) ||
+              element.includes(q) ||
+              sanskritElement.includes(q)
             )
           })
 
@@ -45,10 +62,18 @@ export default function HoroscopesListingPage() {
         }
       })
       .filter((group) => group.signsList.length > 0)
-  }, [searchQuery])
+  }, [searchQuery, signs])
 
   return (
     <div className="min-h-full flex flex-col bg-[#0f090c] text-foreground">
+      <Helmet>
+        <title>Vedic Horoscopes by Moon Sign (Rashi) | AstroTring</title>
+        <meta
+          name="description"
+          content="Explore daily, monthly and yearly Vedic horoscopes computed through authentic Nirayana astronomy and live Gochara planetary transits across all 12 Rashis."
+        />
+      </Helmet>
+
       <div className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-12 space-y-10">
         {/* Top Breadcrumb */}
         <nav className="flex items-center gap-2 text-[11px] font-mono tracking-widest text-mlh-muted uppercase">
@@ -66,7 +91,7 @@ export default function HoroscopesListingPage() {
           </h1>
           <p className="text-sm md:text-base text-mlh-muted leading-relaxed font-sans">
             Daily, monthly and yearly readings by Rashi, the Moon&apos;s placement at birth, computed
-            through authentic Vedic astronomy.
+            through authentic Vedic astronomy and live Gochara planetary transits.
           </p>
         </div>
 
@@ -114,7 +139,7 @@ export default function HoroscopesListingPage() {
             </div>
             <p className="text-xs sm:text-sm text-mlh-muted leading-relaxed">
               <span className="font-semibold text-white">AstroTring reads by your Rashi</span>, where the
-              Moon sat at your birth, not your Western Sun sign.
+              Moon sat at your birth, calculated via Swiss Ephemeris Nirayana planetary coordinates.
             </p>
           </div>
           <Button
@@ -132,7 +157,7 @@ export default function HoroscopesListingPage() {
         <div className="space-y-12 pt-2">
           {filteredGroups.map((group) => (
             <ElementGroupSection
-              key={group.name}
+              key={group.element || group.name}
               group={group}
               timeframe={timeframe}
             />
