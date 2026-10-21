@@ -85,10 +85,6 @@ export const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
-    setAccessToken: (state, action) => {
-      state.token = action.payload;
-      state.isAuthenticated = true;
-    },
     setOnboardingStep: (state, action) => {
       state.onboardingStep = action.payload;
     },
@@ -319,7 +315,6 @@ export const {
   resetOnboardingData,
   updateUserProfile,
   updateUserBirthDetails,
-  setAccessToken,
   logout,
 } = authSlice.actions;
 

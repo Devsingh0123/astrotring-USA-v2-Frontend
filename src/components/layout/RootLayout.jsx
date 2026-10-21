@@ -6,7 +6,7 @@ import MobileHeader from "@/components/layout/MobileHeader"
 import AuthModal from "@/features/auth/AuthModal"
 import QuestionPacksModal from "@/components/common/QuestionPacksModal"
 import MyBirthDetailsModal from "@/features/user/components/MyBirthDetailsModal"
-import { openAuthModal, closeAuthModal, fetchUserProfile, setAccessToken } from "@/features/auth/authSlice"
+import { openAuthModal, closeAuthModal, fetchUserProfile } from "@/features/auth/authSlice"
 
 export default function RootLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -79,16 +79,9 @@ export default function RootLayout() {
     const handleUnauthorized = () => {
       dispatch(openAuthModal())
     }
-    const handleTokenRefreshed = (event) => {
-      if (event.detail?.accessToken) {
-        dispatch(setAccessToken(event.detail.accessToken))
-      }
-    }
     window.addEventListener("astrotring:unauthorized", handleUnauthorized)
-    window.addEventListener("astrotring:token_refreshed", handleTokenRefreshed)
     return () => {
       window.removeEventListener("astrotring:unauthorized", handleUnauthorized)
-      window.removeEventListener("astrotring:token_refreshed", handleTokenRefreshed)
     }
   }, [dispatch])
 
