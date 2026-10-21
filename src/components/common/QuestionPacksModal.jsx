@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import {
   ArrowLeft,
@@ -8,107 +8,24 @@ import {
   ChevronDown,
   Sparkles,
   Tag,
-  ShieldCheck,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 import { openAuthModal } from "@/features/auth"
 import { addQuestionQuota, setQuestionQuota } from "@/features/vaani"
 import {
+  fetchBillingCatalog,
+  validateCoupon,
   createRazorpayOrder,
   verifyRazorpayPayment,
   recordPaymentFailure,
 } from "@/features/billing/billingApi"
 import { openRazorpayCheckout } from "@/lib/razorpay"
-
-// Melooha Question Packages (INR) matching Authenticated Screenshots 10 & 16
-export const QUESTION_PACKAGES = [
-  {
-    id: "pack_silver_7",
-    name: "Silver",
-    questions: 7,
-    originalPrice: 1399,
-    offerPrice: 699,
-    unitPrice: 100,
-    promoCode: "ASKMAX",
-    discountAmount: 700,
-    badge: null,
-  },
-  {
-    id: "pack_gold_12",
-    name: "Gold",
-    questions: 12,
-    originalPrice: 2399,
-    offerPrice: 799,
-    unitPrice: 67,
-    promoCode: "QUICKGOLD",
-    alternatePromo: "GOLDNOW",
-    discountAmount: 1600,
-    badge: "POPULAR",
-  },
-  {
-    id: "pack_diamond_20",
-    name: "Diamond",
-    questions: 20,
-    originalPrice: 3999,
-    offerPrice: 1199,
-    unitPrice: 60,
-    promoCode: "ASKMAX",
-    discountAmount: 2800,
-    badge: "BEST VALUE",
-  },
-]
-
-// All Indian States & UTs for GST invoice (Delhi default per user Suraj Kumar)
-export const INDIAN_GST_STATES = [
-  "Delhi",
-  "Maharashtra",
-  "Karnataka",
-  "Uttar Pradesh",
-  "Gujarat",
-  "Tamil Nadu",
-  "Telangana",
-  "Rajasthan",
-  "West Bengal",
-  "Haryana",
-  "Punjab",
-  "Kerala",
-  "Madhya Pradesh",
-  "Bihar",
-  "Andhra Pradesh",
-  "Odisha",
-  "Assam",
-  "Jharkhand",
-  "Chhattisgarh",
-  "Uttarakhand",
-  "Himachal Pradesh",
-  "Goa",
-  "Jammu & Kashmir",
-  "Chandigarh",
-  "Other Indian State / UT",
-]
-
-const AVAILABLE_COUPONS = [
-  {
-    code: "QUICKGOLD",
-    title: "Flat ₹1,600 off on Gold Pack",
-    desc: "Valid on Gold 12-questions pack. Get it for ₹799.",
-    packId: "pack_gold_12",
-  },
-  {
-    code: "GOLDNOW",
-    title: "Gold Cosmic Offer",
-    desc: "Alternative promo code for Gold pack. Saves ₹1,600.",
-    packId: "pack_gold_12",
-  },
-  {
-    code: "ASKMAX",
-    title: "Up to ₹2,800 off Diamond & Silver",
-    desc: "Valid on 20-question Diamond (₹1,199) and 7-question Silver (₹699).",
-    packId: "pack_diamond_20",
-  },
-]
+import { INDIAN_GST_STATES } from "@/lib/constants"
 
 export default function QuestionPacksModal({
   isOpen,
@@ -116,81 +33,246 @@ export default function QuestionPacksModal({
   onOpenAuth,
   initialPromoCode,
   initialPackId,
+  currency = "INR",
 }) {
   const dispatch = useDispatch()
   const { isAuthenticated, user } = useSelector((state) => state.auth || {})
 
+  // Dynamic backend catalog state (NO hardcoded fallbacks)
+  const [packs, setPacks] = useState([])
+  const [coupons, setCoupons] = useState([])
+  const [isLoadingPacks, setIsLoadingPacks] = useState(false)
+  const [packsError, setPacksError] = useState(null)
+
+  // Step & selection
   const [step, setStep] = useState(1) // 1: Pack Selection, 2: Payment Summary
-  const [selectedPackId, setSelectedPackId] = useState(initialPackId || "pack_gold_12")
+  const [selectedPackId, setSelectedPackId] = useState(initialPackId || "")
   const [billingState, setBillingState] = useState("Delhi")
   const [isStateDropdownOpen, setIsStateDropdownOpen] = useState(false)
-  const [appliedPromo, setAppliedPromo] = useState(initialPromoCode || "QUICKGOLD")
+
+  // Promo code & order calculation
+  const [appliedPromo, setAppliedPromo] = useState(initialPromoCode || "")
   const [promoInput, setPromoInput] = useState("")
   const [isPromoInputVisible, setIsPromoInputVisible] = useState(false)
   const [isCouponsModalOpen, setIsCouponsModalOpen] = useState(false)
   const [isInitiating, setIsInitiating] = useState(false)
+  const [serverBreakdown, setServerBreakdown] = useState(null)
+  const [, setIsValidatingPromo] = useState(false)
 
-  // Sync initial props when opened
-  useEffect(() => {
-    if (isOpen) {
-      if (initialPackId) {
-        setSelectedPackId(initialPackId)
-      }
-      if (initialPromoCode) {
-        setAppliedPromo(initialPromoCode)
-      } else {
-        const defaultPack = QUESTION_PACKAGES.find((p) => p.id === (initialPackId || "pack_gold_12"))
-        if (defaultPack) {
-          setAppliedPromo(defaultPack.promoCode)
-        }
+  // Helper: extracts applicable products list from coupon
+  const getApplicableProducts = (coupon) => {
+    if (!coupon) return []
+    if (Array.isArray(coupon.applicable_products)) return coupon.applicable_products
+    if (typeof coupon.applicable_products === "string") {
+      try {
+        return JSON.parse(coupon.applicable_products)
+      } catch {
+        return []
       }
     }
-  }, [isOpen, initialPackId, initialPromoCode])
+    return []
+  }
 
-  const selectedPack =
-    QUESTION_PACKAGES.find((p) => p.id === selectedPackId) ||
-    QUESTION_PACKAGES[1]
+  // Helper: get matching coupons for a given pack ID
+  const getCouponsForPack = useCallback(
+    (packId) => {
+      if (!packId || !coupons.length) return []
+      return coupons.filter((coupon) => {
+        if (coupon.is_active === false) return false
+        const applicable = getApplicableProducts(coupon)
+        return applicable.length === 0 || applicable.includes(packId)
+      })
+    },
+    [coupons]
+  )
+
+  // Helper: get default coupon code for a pack
+  const getDefaultPromoForPack = useCallback(
+    (packId) => {
+      const matching = getCouponsForPack(packId)
+      return matching[0]?.code || ""
+    },
+    [getCouponsForPack]
+  )
+
+  // Fetch dynamic packages and coupons from backend API
+  const loadCatalog = useCallback(async () => {
+    setIsLoadingPacks(true)
+    setPacksError(null)
+
+    try {
+      const response = await fetchBillingCatalog(currency)
+      const catalogData = response?.data || response
+      const questionPacks = catalogData?.questionPacks || []
+      const availableCoupons = catalogData?.coupons || []
+
+      setPacks(questionPacks)
+      setCoupons(availableCoupons)
+
+      // Auto-select preferred, gold tier, or first pack
+      const initialPack =
+        questionPacks.find((p) => p.id === (initialPackId || selectedPackId)) ||
+        questionPacks.find((p) => p.tier === "gold" || p.id.includes("gold")) ||
+        questionPacks[0]
+
+      if (initialPack) {
+        setSelectedPackId(initialPack.id)
+
+        if (initialPromoCode) {
+          setAppliedPromo(initialPromoCode)
+        } else {
+          const matchingCoupons = availableCoupons.filter((c) => {
+            const applicable = getApplicableProducts(c)
+            return applicable.length === 0 || applicable.includes(initialPack.id)
+          })
+          if (matchingCoupons.length > 0) {
+            setAppliedPromo(matchingCoupons[0].code)
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch billing catalog from backend:", err)
+      setPacksError(
+        err?.response?.data?.message ||
+        err?.message ||
+        "Unable to load question packages from server. Please verify your connection."
+      )
+    } finally {
+      setIsLoadingPacks(false)
+    }
+  }, [currency, initialPackId, initialPromoCode, selectedPackId])
+
+  useEffect(() => {
+    if (isOpen) {
+      loadCatalog()
+    }
+  }, [isOpen, loadCatalog])
 
   const handleModalClose = () => {
     setStep(1)
     setIsStateDropdownOpen(false)
     setIsPromoInputVisible(false)
     setIsCouponsModalOpen(false)
+    setServerBreakdown(null)
     onClose()
   }
 
-  // Calculate pricing based on applied promo
-  const isPromoApplicable =
-    appliedPromo === selectedPack.promoCode ||
-    appliedPromo === selectedPack.alternatePromo ||
-    (appliedPromo === "ASKMAX" && (selectedPack.id === "pack_silver_7" || selectedPack.id === "pack_diamond_20")) ||
-    (appliedPromo === "QUICKGOLD" && selectedPack.id === "pack_gold_12") ||
-    (appliedPromo === "GOLDNOW" && selectedPack.id === "pack_gold_12")
+  // Selected pack resolution
+  const selectedPack =
+    packs.find((p) => p.id === selectedPackId) ||
+    packs[0] ||
+    null
 
-  const discount = isPromoApplicable ? selectedPack.discountAmount : 0
-  const finalPrice = Math.max(0, selectedPack.originalPrice - discount)
+  // Badge mapping for UI display
+  const getBadgeForPack = (pkg) => {
+    if (pkg.tier === "gold" || pkg.id?.includes("gold")) return "POPULAR"
+    if (pkg.tier === "diamond" || pkg.id?.includes("diamond")) return "BEST VALUE"
+    return null
+  }
 
-  const handleApplyPromo = (codeToApply) => {
+  // Active coupon lookup and applicability
+  const activeCoupon = coupons.find(
+    (c) => c.code?.toUpperCase() === appliedPromo?.trim().toUpperCase()
+  )
+
+  const isPromoApplicable = Boolean(
+    activeCoupon &&
+    selectedPack &&
+    (
+      getApplicableProducts(activeCoupon).length === 0 ||
+      getApplicableProducts(activeCoupon).includes(selectedPack.id)
+    )
+  )
+
+  // Price calculations
+  const subtotal = selectedPack ? Number(selectedPack.originalPrice || 0) : 0
+  const offerPrice = selectedPack ? Number(selectedPack.offerPrice || 0) : 0
+
+  const isServerBreakdownFresh =
+    serverBreakdown &&
+    serverBreakdown.packId === selectedPack?.id &&
+    serverBreakdown.couponCode === appliedPromo &&
+    serverBreakdown.billingState === billingState
+
+  const discount = isServerBreakdownFresh
+    ? serverBreakdown.discountAmount
+    : isPromoApplicable
+    ? Math.max(0, subtotal - offerPrice)
+    : 0
+
+  const finalPrice = isServerBreakdownFresh
+    ? serverBreakdown.totalAmount
+    : Math.max(0, subtotal - discount)
+
+  // Selecting a pack
+  const handleSelectPack = (pkg) => {
+    setSelectedPackId(pkg.id)
+    setServerBreakdown(null)
+
+    // Check if current promo is still valid on the newly selected pack
+    const packCoupons = getCouponsForPack(pkg.id)
+    const isCurrentStillValid = packCoupons.some(
+      (c) => c.code?.toUpperCase() === appliedPromo?.toUpperCase()
+    )
+    if (!isCurrentStillValid && packCoupons.length > 0) {
+      setAppliedPromo(packCoupons[0].code)
+    }
+  }
+
+  // Applying promo code
+  const handleApplyPromo = async (codeToApply) => {
     const code = (codeToApply || promoInput).trim().toUpperCase()
     if (!code) return
 
-    if (code === "QUICKGOLD" || code === "GOLDNOW" || code === "ASKMAX") {
-      setAppliedPromo(code)
-      toast.success(`Coupon code ${code} applied successfully!`)
-      setIsPromoInputVisible(false)
-      setIsCouponsModalOpen(false)
-      setPromoInput("")
-    } else {
-      toast.error("Invalid coupon code. Try QUICKGOLD or ASKMAX.")
+    const matchedCoupon = coupons.find((c) => c.code?.toUpperCase() === code)
+    if (!matchedCoupon) {
+      toast.error(`Invalid coupon code "${code}".`)
+      return
+    }
+
+    const applicable = getApplicableProducts(matchedCoupon)
+    if (applicable.length > 0 && selectedPack && !applicable.includes(selectedPack.id)) {
+      toast.error(`Coupon "${code}" is not valid for ${selectedPack.name} Pack.`)
+      return
+    }
+
+    setAppliedPromo(code)
+    setIsPromoInputVisible(false)
+    setIsCouponsModalOpen(false)
+    setPromoInput("")
+    toast.success(`Coupon code ${code} applied successfully!`)
+
+    // If authenticated, request verified GST & discount breakdown from backend
+    if (isAuthenticated && selectedPack) {
+      setIsValidatingPromo(true)
+      try {
+        const breakdownRes = await validateCoupon({
+          packId: selectedPack.id,
+          couponCode: code,
+          currency: selectedPack.currency || "INR",
+          billingState,
+        })
+        if (breakdownRes?.data) {
+          setServerBreakdown(breakdownRes.data)
+        }
+      } catch (err) {
+        console.warn("Backend coupon validation warning:", err)
+      } finally {
+        setIsValidatingPromo(false)
+      }
     }
   }
 
   const handleRemovePromo = () => {
     setAppliedPromo("")
+    setServerBreakdown(null)
     toast.info("Coupon code removed.")
   }
 
+  // Proceed to payment gateway via backend order creation
   const handleProceedToRazorpay = async () => {
+    if (!selectedPack) return
+
     if (!isAuthenticated) {
       if (onOpenAuth) {
         onOpenAuth(() => {
@@ -209,8 +291,8 @@ export default function QuestionPacksModal({
       const orderRes = await createRazorpayOrder({
         packId: selectedPack.id,
         itemType: "questions",
-        currency: "INR",
-        couponCode: appliedPromo || undefined,
+        currency: selectedPack.currency || "INR",
+        couponCode: isPromoApplicable ? appliedPromo : undefined,
         billingState: billingState,
       })
 
@@ -229,9 +311,9 @@ export default function QuestionPacksModal({
         orderId: backendOrderId,
         amountSubunits: amountSubunits,
         amount: finalAmount,
-        currency: orderRes.currency || orderRes.data?.currency || "INR",
+        currency: orderRes.currency || orderRes.data?.currency || selectedPack.currency || "INR",
         name: "AstroTring",
-        description: `${selectedPack.name} Pack (${selectedPack.questions} questions)`,
+        description: `${selectedPack.name} Pack (${selectedPack.credits} questions)`,
         user: {
           name: user?.name,
           email: user?.email,
@@ -251,7 +333,7 @@ export default function QuestionPacksModal({
             if (typeof creditsRemaining === "number") {
               dispatch(setQuestionQuota(creditsRemaining))
             } else {
-              dispatch(addQuestionQuota(selectedPack.questions))
+              dispatch(addQuestionQuota(selectedPack.credits))
             }
 
             // Save local invoice copy
@@ -265,7 +347,7 @@ export default function QuestionPacksModal({
                 orderId: paymentResponse.razorpay_order_id,
                 date: new Date().toISOString(),
                 itemType: "questions",
-                itemTitle: `${selectedPack.name} Pack (${selectedPack.questions} questions)`,
+                itemTitle: `${selectedPack.name} Pack (${selectedPack.credits} questions)`,
                 subtotal: selectedPack.originalPrice,
                 discount: discount,
                 couponCode: appliedPromo || "NONE",
@@ -283,14 +365,14 @@ export default function QuestionPacksModal({
             }
 
             toast.success(
-              `Payment successful! ${selectedPack.questions} questions added to your account.`
+              `Payment successful! ${selectedPack.credits} questions added to your account.`
             )
             handleModalClose()
           } catch (verifyErr) {
             console.error("Signature verification failed:", verifyErr)
             toast.error(
               verifyErr?.response?.data?.message ||
-                "Payment was successful, but server verification failed. Please contact support."
+              "Payment was successful, but server verification failed. Please contact support."
             )
           }
         },
@@ -315,15 +397,13 @@ export default function QuestionPacksModal({
       console.error("Failed to create Razorpay order:", orderErr)
       toast.error(
         orderErr?.response?.data?.message ||
-          orderErr?.message ||
-          "Could not initialize checkout. Please check connection and try again."
+        orderErr?.message ||
+        "Could not initialize checkout. Please check connection and try again."
       )
     } finally {
       setIsInitiating(false)
     }
   }
-
-
 
   return (
     <>
@@ -332,7 +412,7 @@ export default function QuestionPacksModal({
           showCloseButton={false}
           className="sm:max-w-[880px] md:max-w-[900px] w-[95vw] p-0 overflow-hidden border border-white/10 bg-[#161220] text-foreground rounded-2xl sm:rounded-3xl shadow-2xl"
         >
-          {/* ================= STEP 1: PACKAGES POPUP (Melooha Ref 10) ================= */}
+          {/* ================= STEP 1: PACKAGES POPUP ================= */}
           {step === 1 && (
             <div className="flex flex-col">
               {/* Header */}
@@ -356,85 +436,139 @@ export default function QuestionPacksModal({
                 </button>
               </div>
 
-              {/* 3 Tier Cards Side-by-Side (Melooha exact proportions & INR prices) */}
-              <div className="px-7 sm:px-9 py-6 sm:py-7 grid grid-cols-1 md:grid-cols-3 gap-5">
-                {QUESTION_PACKAGES.map((pkg) => {
-                  const isSelected = selectedPackId === pkg.id
-                  return (
-                    <div
-                      key={pkg.id}
-                      onClick={() => {
-                        setSelectedPackId(pkg.id)
-                        setAppliedPromo(pkg.promoCode)
-                      }}
-                      className={`relative rounded-2xl p-6 sm:p-7 border cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[300px] sm:min-h-[320px] ${
-                        isSelected
-                          ? "border-2 border-[#b32b6e] bg-[#22162a] ring-1 ring-[#b32b6e]/50 shadow-[0_0_30px_rgba(179,43,110,0.25)]"
-                          : "border-white/10 bg-[#1b1726]/60 hover:border-white/20 hover:bg-[#1b1726]"
-                      }`}
+              {/* Main Content Area: Loading, Error, or Loaded Packs */}
+              <div className="px-7 sm:px-9 py-6 sm:py-7">
+                {/* 1. Loading Skeleton */}
+                {isLoadingPacks && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    {[1, 2, 3].map((idx) => (
+                      <div
+                        key={idx}
+                        className="rounded-2xl p-6 sm:p-7 border border-white/10 bg-[#1b1726]/60 flex flex-col justify-between min-h-[300px] sm:min-h-[320px]"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between">
+                            <Skeleton className="h-4 w-16 bg-white/10" />
+                            <Skeleton className="h-5 w-5 rounded-full bg-white/10" />
+                          </div>
+                          <div className="mt-5 space-y-2">
+                            <Skeleton className="h-14 w-20 bg-white/10" />
+                            <Skeleton className="h-4 w-24 bg-white/5" />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="border-t border-white/10 my-5" />
+                          <Skeleton className="h-8 w-32 bg-white/10" />
+                          <Skeleton className="h-4 w-24 bg-white/5 mt-2" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 2. Error State with Retry Button */}
+                {!isLoadingPacks && packsError && (
+                  <div className="rounded-2xl border border-red-500/20 bg-red-950/20 p-8 text-center flex flex-col items-center justify-center gap-3">
+                    <AlertCircle className="w-8 h-8 text-red-400" />
+                    <h3 className="text-white font-medium text-base">Unable to load packages</h3>
+                    <p className="text-white/60 text-xs sm:text-sm max-w-md">{packsError}</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={loadCatalog}
+                      className="mt-2 border-white/20 text-white hover:bg-white/10 flex items-center gap-2 cursor-pointer"
                     >
-                      {/* Floating Badge (Popular / Best Value) */}
-                      {pkg.badge && (
-                        <span className="absolute -top-3 left-5 bg-[#f59e0b] text-[#1c1209] font-bold text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-[4px] shadow-sm">
-                          {pkg.badge}
-                        </span>
-                      )}
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Retry Loading</span>
+                    </Button>
+                  </div>
+                )}
 
-                      {/* Top Row: Tier Name + Radio Circle */}
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <span className="font-mono text-xs uppercase tracking-[0.2em] text-white/70 font-medium">
-                            {pkg.name}
-                          </span>
-                          <div
-                            className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
-                              isSelected
-                                ? "border-[#b32b6e] bg-[#b32b6e] text-white"
-                                : "border-white/25 bg-transparent"
-                            }`}
-                          >
-                            {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                {/* 3. Loaded Packs Grid */}
+                {!isLoadingPacks && !packsError && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    {packs.map((pkg) => {
+                      const isSelected = selectedPackId === pkg.id
+                      const badge = getBadgeForPack(pkg)
+                      const unitPrice = Math.round(Number(pkg.offerPrice || 0) / Number(pkg.credits || 1))
+                      const defaultPromo = getDefaultPromoForPack(pkg.id)
+
+                      return (
+                        <div
+                          key={pkg.id}
+                          onClick={() => handleSelectPack(pkg)}
+                          className={`relative rounded-2xl p-6 sm:p-7 border cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[300px] sm:min-h-[320px] ${
+                            isSelected
+                              ? "border-2 border-[#b32b6e] bg-[#22162a] ring-1 ring-[#b32b6e]/50 shadow-[0_0_30px_rgba(179,43,110,0.25)]"
+                              : "border-white/10 bg-[#1b1726]/60 hover:border-white/20 hover:bg-[#1b1726]"
+                          }`}
+                        >
+                          {/* Floating Badge (Popular / Best Value) */}
+                          {badge && (
+                            <span className="absolute -top-3 left-5 bg-[#f59e0b] text-[#1c1209] font-bold text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-[4px] shadow-sm">
+                              {badge}
+                            </span>
+                          )}
+
+                          {/* Top Row: Tier Name + Radio Circle */}
+                          <div>
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono text-xs uppercase tracking-[0.2em] text-white/70 font-medium">
+                                {pkg.name || pkg.tier}
+                              </span>
+                              <div
+                                className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
+                                  isSelected
+                                    ? "border-[#b32b6e] bg-[#b32b6e] text-white"
+                                    : "border-white/25 bg-transparent"
+                                }`}
+                              >
+                                {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                              </div>
+                            </div>
+
+                            {/* Giant Number of Questions */}
+                            <div className="mt-4">
+                              <div className="font-serif text-[56px] sm:text-[62px] font-light text-white tracking-tight leading-none">
+                                {pkg.credits}
+                              </div>
+                              <div className="text-xs sm:text-sm text-white/50 mt-1 font-sans">
+                                questions
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Divider & Price Section */}
+                          <div>
+                            <div className="border-t border-white/10 my-5" />
+
+                            <div className="flex items-baseline gap-2">
+                              <span className="font-mono text-2xl sm:text-[26px] font-semibold text-white">
+                                ₹{Number(pkg.offerPrice).toLocaleString("en-IN")}
+                              </span>
+                              <span className="font-mono text-xs text-white/40 line-through">
+                                ₹{Number(pkg.originalPrice).toLocaleString("en-IN")}
+                              </span>
+                            </div>
+
+                            <div className="text-xs text-white/50 mt-1 font-sans">
+                              ₹{unitPrice} per question
+                            </div>
+
+                            {defaultPromo && (
+                              <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 mt-4">
+                                CODE <span className="text-white/70 font-semibold">{defaultPromo}</span>
+                              </div>
+                            )}
                           </div>
                         </div>
-
-                        {/* Giant Number of Questions */}
-                        <div className="mt-4">
-                          <div className="font-serif text-[56px] sm:text-[62px] font-light text-white tracking-tight leading-none">
-                            {pkg.questions}
-                          </div>
-                          <div className="text-xs sm:text-sm text-white/50 mt-1 font-sans">
-                            questions
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Divider & Price Section */}
-                      <div>
-                        <div className="border-t border-white/10 my-5" />
-
-                        <div className="flex items-baseline gap-2">
-                          <span className="font-mono text-2xl sm:text-[26px] font-semibold text-white">
-                            ₹{pkg.offerPrice.toLocaleString("en-IN")}
-                          </span>
-                          <span className="font-mono text-xs text-white/40 line-through">
-                            ₹{pkg.originalPrice.toLocaleString("en-IN")}
-                          </span>
-                        </div>
-
-                        <div className="text-xs text-white/50 mt-1 font-sans">
-                          ₹{pkg.unitPrice} per question
-                        </div>
-
-                        <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 mt-4">
-                          CODE <span className="text-white/70 font-semibold">{pkg.promoCode}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
+                      )
+                    })}
+                  </div>
+                )}
               </div>
 
-              {/* Dark Footer Bar (Melooha Ref 10) */}
+              {/* Dark Footer Bar */}
               <div className="bg-[#100c17] px-7 sm:px-9 py-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <span className="text-[11px] font-mono tracking-[0.2em] uppercase text-white/40">
                   SECURE PAYMENT · GST INVOICE · INSTANT CREDIT
@@ -442,20 +576,27 @@ export default function QuestionPacksModal({
 
                 <Button
                   type="button"
+                  disabled={!selectedPack || isLoadingPacks}
                   onClick={() => setStep(2)}
-                  className="w-full sm:w-auto bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white px-8 py-3.5 rounded-full font-medium shadow-lg shadow-[#b32b6e]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer"
+                  className="w-full sm:w-auto bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white px-8 py-3.5 rounded-full font-medium shadow-lg shadow-[#b32b6e]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer disabled:opacity-50"
                 >
-                  <span>Continue with {selectedPack.questions} questions</span>
-                  <span className="text-white/40">·</span>
-                  <span>₹{selectedPack.offerPrice.toLocaleString("en-IN")}</span>
-                  <span className="text-base">→</span>
+                  {selectedPack ? (
+                    <>
+                      <span>Continue with {selectedPack.credits} questions</span>
+                      <span className="text-white/40">·</span>
+                      <span>₹{Number(selectedPack.offerPrice).toLocaleString("en-IN")}</span>
+                      <span className="text-base">→</span>
+                    </>
+                  ) : (
+                    <span>Select a Package</span>
+                  )}
                 </Button>
               </div>
             </div>
           )}
 
-          {/* ================= STEP 2: PAYMENT SUMMARY (Melooha Ref 16) ================= */}
-          {step === 2 && (
+          {/* ================= STEP 2: PAYMENT SUMMARY ================= */}
+          {step === 2 && selectedPack && (
             <div className="flex flex-col">
               {/* Header with Back button and Step indicator */}
               <div className="pt-7 sm:pt-8 px-7 sm:px-9 pb-4 flex items-center justify-between border-b border-white/5">
@@ -488,7 +629,7 @@ export default function QuestionPacksModal({
                 </button>
               </div>
 
-              {/* 2-Column Grid (Melooha Payment Summary Exact Layout) */}
+              {/* 2-Column Grid */}
               <div className="px-7 sm:px-9 py-6 sm:py-7 grid grid-cols-1 md:grid-cols-12 gap-8">
                 {/* Left Column: Pack Review, State, Promo */}
                 <div className="md:col-span-7 space-y-6">
@@ -513,7 +654,7 @@ export default function QuestionPacksModal({
                       </div>
                       <div>
                         <div className="text-white font-serif font-medium text-lg">
-                          {selectedPack.name} · {selectedPack.questions} questions
+                          {selectedPack.name} · {selectedPack.credits} questions
                         </div>
                         <div className="text-xs text-white/50 mt-1 font-sans">
                           Never expires · added to your account instantly
@@ -579,13 +720,15 @@ export default function QuestionPacksModal({
                       <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-emerald-400 font-semibold">
                         PROMO CODE
                       </span>
-                      <button
-                        type="button"
-                        onClick={() => setIsCouponsModalOpen(true)}
-                        className="text-[11px] font-mono uppercase tracking-[0.15em] text-white/60 hover:text-white transition cursor-pointer"
-                      >
-                        VIEW ALL COUPONS &gt;
-                      </button>
+                      {coupons.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setIsCouponsModalOpen(true)}
+                          className="text-[11px] font-mono uppercase tracking-[0.15em] text-white/60 hover:text-white transition cursor-pointer"
+                        >
+                          VIEW ALL COUPONS &gt;
+                        </button>
+                      )}
                     </div>
 
                     {isPromoApplicable && !isPromoInputVisible ? (
@@ -617,6 +760,12 @@ export default function QuestionPacksModal({
                           placeholder="e.g. QUICKGOLD or ASKMAX"
                           value={promoInput}
                           onChange={(e) => setPromoInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault()
+                              handleApplyPromo()
+                            }
+                          }}
                           className="flex-1 rounded-2xl border border-white/10 bg-[#1b1726] px-5 py-3 text-xs text-white uppercase placeholder:text-white/30 focus:outline-none focus:border-[#b32b6e] font-mono"
                         />
                         <Button
@@ -640,11 +789,11 @@ export default function QuestionPacksModal({
 
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between items-center text-white/80">
-                        <span>{selectedPack.questions} Questions</span>
-                        <span className="font-mono">₹{selectedPack.originalPrice.toLocaleString("en-IN")}</span>
+                        <span>{selectedPack.credits} Questions</span>
+                        <span className="font-mono">₹{subtotal.toLocaleString("en-IN")}</span>
                       </div>
 
-                      {isPromoApplicable && (
+                      {isPromoApplicable && discount > 0 && (
                         <div className="flex justify-between items-center text-emerald-400">
                           <span className="text-xs">{appliedPromo} discount</span>
                           <span className="font-mono">− ₹{discount.toLocaleString("en-IN")}</span>
@@ -674,7 +823,7 @@ export default function QuestionPacksModal({
                     </div>
                   </div>
 
-                  {/* Proceed to Pay Button (Melooha Ref 16) */}
+                  {/* Proceed to Pay Button */}
                   <div className="mt-8 space-y-2.5">
                     <Button
                       type="button"
@@ -704,7 +853,7 @@ export default function QuestionPacksModal({
         </DialogContent>
       </Dialog>
 
-      {/* Coupons List Modal */}
+      {/* Dynamic Coupons List Modal */}
       <Dialog open={isCouponsModalOpen} onOpenChange={setIsCouponsModalOpen}>
         <DialogContent className="sm:max-w-[460px] bg-[#161220] border border-white/10 text-white p-6 rounded-2xl">
           <div className="flex items-center justify-between pb-3 border-b border-white/10">
@@ -715,46 +864,54 @@ export default function QuestionPacksModal({
             <button
               type="button"
               onClick={() => setIsCouponsModalOpen(false)}
-              className="text-white/50 hover:text-white"
+              className="text-white/50 hover:text-white cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="space-y-3 py-3">
-            {AVAILABLE_COUPONS.map((coupon) => (
-              <div
-                key={coupon.code}
-                className="p-3.5 rounded-xl border border-white/10 bg-[#1b1726] flex items-center justify-between gap-3"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-amber-300 bg-amber-950/40 border border-amber-500/30 px-2 py-0.5 rounded">
-                      {coupon.code}
-                    </span>
-                    <span className="text-xs font-medium text-white">{coupon.title}</span>
-                  </div>
-                  <p className="text-[11px] text-white/50 mt-1">{coupon.desc}</p>
-                </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    if (coupon.packId) {
-                      setSelectedPackId(coupon.packId)
-                    }
-                    handleApplyPromo(coupon.code)
-                  }}
-                  className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300 text-xs shrink-0 cursor-pointer"
+          <div className="space-y-3 py-3 max-h-[60vh] overflow-y-auto">
+            {coupons.map((coupon) => {
+              const applicable = getApplicableProducts(coupon)
+              return (
+                <div
+                  key={coupon.code}
+                  className="p-3.5 rounded-xl border border-white/10 bg-[#1b1726] flex items-center justify-between gap-3"
                 >
-                  Apply
-                </Button>
-              </div>
-            ))}
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs font-bold text-amber-300 bg-amber-950/40 border border-amber-500/30 px-2 py-0.5 rounded">
+                        {coupon.code}
+                      </span>
+                    </div>
+                    <p className="text-xs text-white/80 mt-1.5 font-medium">
+                      {coupon.description || `${coupon.code} special discount`}
+                    </p>
+                    {applicable.length > 0 && (
+                      <p className="text-[10px] text-white/40 mt-0.5 font-mono">
+                        Valid on: {applicable.join(", ")}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      if (applicable.length > 0 && !applicable.includes(selectedPack?.id)) {
+                        setSelectedPackId(applicable[0])
+                      }
+                      handleApplyPromo(coupon.code)
+                    }}
+                    className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300 text-xs shrink-0 cursor-pointer"
+                  >
+                    Apply
+                  </Button>
+                </div>
+              )
+            })}
           </div>
         </DialogContent>
       </Dialog>
-
     </>
   )
 }
