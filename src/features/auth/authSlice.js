@@ -300,6 +300,52 @@ export const authSlice = createSlice({
         state.isOnboardingSubmitting = false;
         state.onboardingError =
           action.payload || "Failed to submit onboarding details.";
+      })
+      // Sync auth.user credit and report balances with vaani quota actions
+      .addCase("vaani/setQuestionQuota", (state, action) => {
+        if (state.user) {
+          state.user.creditBalance = action.payload;
+          try {
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(state.user));
+          } catch {}
+        }
+      })
+      .addCase("vaani/addQuestionQuota", (state, action) => {
+        if (state.user) {
+          state.user.creditBalance = (state.user.creditBalance || 0) + action.payload;
+          try {
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(state.user));
+          } catch {}
+        }
+      })
+      .addCase("vaani/setReportQuota", (state, action) => {
+        if (state.user) {
+          state.user.reportCredits = action.payload;
+          try {
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(state.user));
+          } catch {}
+        }
+      })
+      .addCase("vaani/addReportQuota", (state, action) => {
+        if (state.user) {
+          state.user.reportCredits = (state.user.reportCredits || 0) + action.payload;
+          try {
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(state.user));
+          } catch {}
+        }
+      })
+      .addCase("vaani/addConversation", (state, action) => {
+        if (state.user) {
+          const reading = action.payload;
+          if (typeof reading?.creditsRemaining === "number") {
+            state.user.creditBalance = reading.creditsRemaining;
+          } else if (reading?.engine !== "astropedia" && state.user.creditBalance > 0) {
+            state.user.creditBalance -= 1;
+          }
+          try {
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(state.user));
+          } catch {}
+        }
       });
   },
 });

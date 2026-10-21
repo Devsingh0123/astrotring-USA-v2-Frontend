@@ -209,36 +209,3 @@ export const REPORTS_CATALOG = [
     vaaniPrompt: "What are my primary cognitive strengths and intellectual gifts according to my chart?",
   },
 ]
-
-export const REPORT_PACKAGES = [
-  {
-    id: "silver",
-    name: "Silver",
-    reportsCount: 1,
-    price: 1999,
-    originalPrice: 2999,
-    perReportText: null,
-    isPopular: false,
-    badge: null,
-  },
-  {
-    id: "gold",
-    name: "Gold",
-    reportsCount: 2,
-    price: 2299,
-    originalPrice: 5999,
-    perReportText: "₹1,150 per report",
-    isPopular: false,
-    badge: null,
-  },
-  {
-    id: "diamond",
-    name: "Diamond",
-    reportsCount: 4,
-    price: 2499,
-    originalPrice: 11999,
-    perReportText: "₹625 per report",
-    isPopular: true,
-    badge: "Best Value",
-  },
-]

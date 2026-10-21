@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, useOutletContext } from "react-router-dom"
+import { useSelector } from "react-redux"
 import { motion } from "framer-motion"
 import { Lock, Sparkles, ArrowRight, ShieldCheck, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -10,7 +11,17 @@ import { REPORT_CATEGORIES, REPORTS_CATALOG } from "@/features/reports/reportsDa
 export default function ReportsListingPage() {
   const context = useOutletContext() || {}
   const [isBuyReportsModalOpen, setIsBuyReportsModalOpen] = useState(false)
-  const [reportCredits, setReportCredits] = useState(0) // Default 0 credits for new user
+  const { reportQuota } = useSelector((state) => state.vaani || {})
+  const { user } = useSelector((state) => state.auth || {})
+
+  const realReportCredits =
+    typeof reportQuota === "number"
+      ? reportQuota
+      : typeof user?.reportCredits === "number"
+      ? user.reportCredits
+      : typeof user?.report_credits === "number"
+      ? user.report_credits
+      : 0
 
   return (
     <div className="flex-1 flex flex-col justify-between min-h-screen bg-[#0f090c] text-foreground">
@@ -38,13 +49,13 @@ export default function ReportsListingPage() {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-amber-400"></span>
               <span className="text-sm sm:text-base font-semibold text-white">
-                {reportCredits === 0
+                {realReportCredits === 0
                   ? "No report credits left"
-                  : `${reportCredits} report credit${reportCredits > 1 ? "s" : ""} available`}
+                  : `${realReportCredits} report credit${realReportCredits > 1 ? "s" : ""} available`}
               </span>
             </div>
             <p className="text-xs text-mlh-muted font-sans">
-              {reportCredits === 0
+              {realReportCredits === 0
                 ? "Buy a pack to unlock any report below."
                 : "Choose any report to generate your instant reading."}
             </p>
@@ -130,8 +141,7 @@ export default function ReportsListingPage() {
       <ReportPacksModal
         isOpen={isBuyReportsModalOpen}
         onClose={() => setIsBuyReportsModalOpen(false)}
-        onSelectPackage={(pkg) => {
-          setReportCredits((prev) => prev + pkg.reportsCount)
+        onSelectPackage={() => {
           setIsBuyReportsModalOpen(false)
         }}
       />

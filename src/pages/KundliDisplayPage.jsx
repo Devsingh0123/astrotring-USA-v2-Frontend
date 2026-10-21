@@ -109,6 +109,7 @@ export default function KundliDisplayPage() {
     if (activeVarga === "d9") {
       return (
         userKundli.navamsaChart ||
+        userKundli.horoscope?.divisional_charts?.["D-9_navamsa"] ||
         userKundli.raw?.allDivisionalCharts?.["D-9_navamsa"] ||
         {}
       );
@@ -116,12 +117,14 @@ export default function KundliDisplayPage() {
     if (activeVarga === "d10") {
       return (
         userKundli.dasamsaChart ||
+        userKundli.horoscope?.divisional_charts?.["D-10_dasamsa"] ||
         userKundli.raw?.allDivisionalCharts?.["D-10_dasamsa"] ||
         {}
       );
     }
     return (
       userKundli.rasiChart ||
+      userKundli.horoscope?.divisional_charts?.["D-1_rasi"] ||
       userKundli.raw?.rasiChart ||
       userKundli.raw?.allDivisionalCharts?.["D-1_rasi"] ||
       {}
@@ -585,6 +588,7 @@ export default function KundliDisplayPage() {
               <div className="animate-in fade-in duration-300">
                 <DashaTimeline
                   dashas={userKundli?.dashas || userKundli?.raw?.dashas}
+                  summary={summary}
                 />
               </div>
             )}

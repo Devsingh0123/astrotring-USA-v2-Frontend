@@ -30,7 +30,25 @@ export default function UserProfileMenu({
   const navigate = useNavigate()
 
   const { user, birthDetails } = useSelector((state) => state.auth || {})
-  const { questionQuota = 0, reportQuota = 0 } = useSelector((state) => state.vaani || {})
+  const { questionQuota, reportQuota } = useSelector((state) => state.vaani || {})
+
+  const realQuestionQuota =
+    typeof questionQuota === "number"
+      ? questionQuota
+      : typeof user?.creditBalance === "number"
+      ? user.creditBalance
+      : typeof user?.credit_balance === "number"
+      ? user.credit_balance
+      : 0
+
+  const realReportQuota =
+    typeof reportQuota === "number"
+      ? reportQuota
+      : typeof user?.reportCredits === "number"
+      ? user.reportCredits
+      : typeof user?.report_credits === "number"
+      ? user.report_credits
+      : 0
 
   const displayName =
     user?.name ||
@@ -147,8 +165,8 @@ export default function UserProfileMenu({
             <div>
               <div className="text-[11px] font-medium text-white/70">Vaani questions</div>
               <div className="text-xs font-semibold text-white">
-                <span className="font-mono text-amber-300">{questionQuota}</span> question
-                {questionQuota === 1 ? "" : "s"} left
+                <span className="font-mono text-amber-300">{realQuestionQuota}</span> question
+                {realQuestionQuota === 1 ? "" : "s"} left
               </div>
             </div>
             <button
@@ -165,7 +183,7 @@ export default function UserProfileMenu({
             <div>
               <div className="text-[11px] font-medium text-white/70">Reports</div>
               <div className="text-xs font-semibold text-white">
-                <span className="font-mono text-mlh-plum-300">{reportQuota}</span> available
+                <span className="font-mono text-mlh-plum-300">{realReportQuota}</span> available
               </div>
             </div>
             <button

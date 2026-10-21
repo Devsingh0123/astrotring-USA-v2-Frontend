@@ -189,6 +189,7 @@ export default function OnboardingPage() {
         city: selectedLocation.city,
         lat: selectedLocation.lat,
         lng: selectedLocation.lng,
+        timezone: selectedLocation.timezoneOffset ?? 5.5,
         timezoneOffset: selectedLocation.timezoneOffset ?? 5.5,
       },
     }

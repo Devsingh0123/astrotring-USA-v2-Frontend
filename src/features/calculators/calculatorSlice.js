@@ -3,9 +3,10 @@ import {
   calculateKundli,
   searchLocations,
   fetchUserChart,
+  normalizeHoroscopeData,
 } from "./calculatorApi";
 
-export { calculateKundli, searchLocations, fetchUserChart };
+export { calculateKundli, searchLocations, fetchUserChart, normalizeHoroscopeData };
 
 /**
  * Load cached Kundli if available
@@ -16,7 +17,7 @@ const getInitialKundli = () => {
     if (cached) {
       const parsed = JSON.parse(cached);
       return {
-        data: parsed.data || null,
+        data: parsed.data ? normalizeHoroscopeData(parsed.data, parsed.input) : null,
         lastInput: parsed.input || null,
       };
     }

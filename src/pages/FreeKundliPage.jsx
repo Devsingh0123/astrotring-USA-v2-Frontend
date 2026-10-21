@@ -38,6 +38,7 @@ export default function FreeKundliPage() {
     if (vargaTab === "d9") {
       return (
         kundliData.navamsaChart ||
+        kundliData.horoscope?.divisional_charts?.["D-9_navamsa"] ||
         kundliData.allDivisionalCharts?.["D-9_navamsa"] ||
         {}
       );
@@ -45,12 +46,14 @@ export default function FreeKundliPage() {
     if (vargaTab === "d10") {
       return (
         kundliData.dasamsaChart ||
+        kundliData.horoscope?.divisional_charts?.["D-10_dasamsa"] ||
         kundliData.allDivisionalCharts?.["D-10_dasamsa"] ||
         {}
       );
     }
     return (
       kundliData.rasiChart ||
+      kundliData.horoscope?.divisional_charts?.["D-1_rasi"] ||
       kundliData.allDivisionalCharts?.["D-1_rasi"] ||
       {}
     );

@@ -37,17 +37,17 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
         birthDetails?.fullName ||
         birthDetails?.name ||
         user?.name ||
-        (user?.email ? user.email.split("@")[0] : "Suraj Kumar")
+        (user?.email ? user.email.split("@")[0] : "")
       setFullName(name)
 
       const gen = birthDetails?.gender || user?.gender || "male"
       setGender(gen.toLowerCase())
 
-      const dateStr = birthDetails?.dateOfBirth || birthDetails?.dob || "2000-01-20"
-      setDob(dateStr.split("T")[0])
+      const dateStr = birthDetails?.dateOfBirth || birthDetails?.dob || ""
+      setDob(dateStr ? dateStr.split("T")[0] : "")
 
-      const timeStr = birthDetails?.timeOfBirth || birthDetails?.tob || "00:01"
-      setTob(timeStr.slice(0, 5))
+      const timeStr = birthDetails?.timeOfBirth || birthDetails?.tob || ""
+      setTob(timeStr ? timeStr.slice(0, 5) : "")
 
       setIsTimeUnknown(Boolean(birthDetails?.isTimeUnknown))
 
@@ -55,14 +55,18 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
         birthDetails?.birthCity ||
         birthDetails?.city ||
         birthDetails?.place ||
-        "Delhi, India"
+        ""
       setCityQuery(city)
-      setSelectedLocation({
-        city: city,
-        lat: birthDetails?.latitude || 28.6139,
-        lng: birthDetails?.longitude || 77.209,
-        timezoneOffset: birthDetails?.timezone || 5.5,
-      })
+      if (birthDetails?.latitude && birthDetails?.longitude) {
+        setSelectedLocation({
+          city: city,
+          lat: birthDetails.latitude,
+          lng: birthDetails.longitude,
+          timezoneOffset: birthDetails.timezone || 5.5,
+        })
+      } else {
+        setSelectedLocation(null)
+      }
     }
   }, [isOpen, birthDetails, user])
 
@@ -79,17 +83,22 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
         const res = await apiClient.get(
           `/vedic/location/autocomplete?query=${encodeURIComponent(cityQuery)}`
         )
-        const list = res.data?.data?.suggestions || res.data?.suggestions || []
+        const list =
+          res.data?.results ||
+          res.data?.data?.results ||
+          res.data?.data?.suggestions ||
+          res.data?.suggestions ||
+          []
         setSuggestions(list)
       } catch (err) {
         // Fallback default cities
         const defaults = [
-          { city: "Delhi, India", lat: 28.6139, lng: 77.209, timezoneOffset: 5.5 },
-          { city: "Mumbai, Maharashtra, India", lat: 19.076, lng: 72.8777, timezoneOffset: 5.5 },
-          { city: "Bengaluru, Karnataka, India", lat: 12.9716, lng: 77.5946, timezoneOffset: 5.5 },
-          { city: "New York, NY, USA", lat: 40.7128, lng: -74.006, timezoneOffset: -5.0 },
-          { city: "London, UK", lat: 51.5074, lng: -0.1278, timezoneOffset: 0.0 },
-        ].filter((c) => c.city.toLowerCase().includes(cityQuery.toLowerCase()))
+          { displayName: "Delhi, India", place: "Delhi", lat: 28.6139, lng: 77.209, timezone: 5.5 },
+          { displayName: "Mumbai, Maharashtra, India", place: "Mumbai", lat: 19.076, lng: 72.8777, timezone: 5.5 },
+          { displayName: "Bengaluru, Karnataka, India", place: "Bengaluru", lat: 12.9716, lng: 77.5946, timezone: 5.5 },
+          { displayName: "New York, NY, USA", place: "New York", lat: 40.7128, lng: -74.006, timezone: -5.0 },
+          { displayName: "London, UK", place: "London", lat: 51.5074, lng: -0.1278, timezone: 0.0 },
+        ].filter((c) => (c.displayName || c.place).toLowerCase().includes(cityQuery.toLowerCase()))
         setSuggestions(defaults)
       } finally {
         setIsSearching(false)
@@ -100,8 +109,17 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
   }, [cityQuery, selectedLocation])
 
   const handleSelectLocation = (item) => {
-    setSelectedLocation(item)
-    setCityQuery(item.city)
+    const cityName = item.displayName || item.place || item.city || ""
+    const lat = item.latitude ?? item.lat ?? 28.6139
+    const lng = item.longitude ?? item.lng ?? 77.209
+    const tz = item.timezone ?? item.timezoneOffset ?? 5.5
+    setSelectedLocation({
+      city: cityName,
+      lat,
+      lng,
+      timezoneOffset: tz,
+    })
+    setCityQuery(cityName)
     setSuggestions([])
   }
 
@@ -144,6 +162,7 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
             city: updatedDetails.birthCity,
             lat: updatedDetails.latitude,
             lng: updatedDetails.longitude,
+            timezone: updatedDetails.timezone,
             timezoneOffset: updatedDetails.timezone,
           },
         })
@@ -271,7 +290,9 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
                     className="w-full text-left p-2 rounded-lg hover:bg-white/10 text-xs text-white/90 hover:text-white transition-colors cursor-pointer flex items-center gap-2"
                   >
                     <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                    <span className="truncate">{item.city}</span>
+                    <span className="truncate">
+                      {item.displayName || item.place || item.city}
+                    </span>
                   </button>
                 ))}
               </div>

@@ -79,7 +79,16 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
   const dispatch = useDispatch()
   const { conversations, activeConversationId, isGenerating, thinkingStep, questionQuota } =
     useSelector((state) => state.vaani || {})
-  const { birthDetails } = useSelector((state) => state.auth || {})
+  const { user, birthDetails } = useSelector((state) => state.auth || {})
+
+  const activeQuestionQuota =
+    typeof questionQuota === "number"
+      ? questionQuota
+      : typeof user?.creditBalance === "number"
+      ? user.creditBalance
+      : typeof user?.credit_balance === "number"
+      ? user.credit_balance
+      : 0
 
   const activeConv = conversations.find((c) => c.id === activeConversationId) || conversations[0]
 
@@ -113,7 +122,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
     const currentEngine = activeConv?.engine || "vaani"
 
     if (currentEngine === "vaani") {
-      if (questionQuota <= 0) {
+      if (activeQuestionQuota <= 0) {
         if (onOpenBuyModal) {
           onOpenBuyModal({ promoCode: "QUICKGOLD", packId: "pack_gold_12" })
         }
@@ -286,7 +295,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                   </div>
 
                   {/* Promotional Offer Banner (Melooha Ref 15 exact structure) */}
-                  {isVaani && (activeConv?.offer || questionQuota <= 0) && (
+                  {isVaani && (activeConv?.offer || activeQuestionQuota <= 0) && (
                     <div className="border-amber-500/20 bg-gradient-to-b from-[#24131b]/60 to-[#120a10]/80 relative mt-4 overflow-hidden rounded-[16px] border p-4 sm:p-5 shadow-lg">
                       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
                         <div className="text-amber-300/85 flex items-center gap-2 font-mono text-[9px] tracking-[0.22em] uppercase">
@@ -507,7 +516,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                   {isVaani && (
                     <div className="flex items-stretch overflow-hidden rounded-full border font-mono text-[10.5px] font-medium tracking-[0.14em] whitespace-nowrap uppercase border-amber-500/50 bg-amber-500/12 text-amber-300">
                       <span className="px-3.5 py-[7px]">
-                        <span>{questionQuota}</span> {questionQuota === 1 ? "question" : "questions"} left
+                        <span>{activeQuestionQuota}</span> {activeQuestionQuota === 1 ? "question" : "questions"} left
                       </span>
                       <button
                         type="button"

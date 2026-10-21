@@ -28,6 +28,42 @@ const saveConversationsToStorage = (convs) => {
 
 const initialConversations = loadStoredConversations();
 
+const getInitialQuotas = () => {
+  try {
+    const raw = localStorage.getItem("astrotring_user");
+    if (raw) {
+      const user = JSON.parse(raw);
+      return {
+        questionQuota:
+          typeof user.creditBalance === "number"
+            ? user.creditBalance
+            : typeof user.credit_balance === "number"
+            ? user.credit_balance
+            : 0,
+        reportQuota:
+          typeof user.reportCredits === "number"
+            ? user.reportCredits
+            : typeof user.report_credits === "number"
+            ? user.report_credits
+            : 0,
+      };
+    }
+  } catch (err) {
+    console.error("Failed to parse user quota from localStorage:", err);
+  }
+  const hasToken = Boolean(
+    localStorage.getItem("astrotring_auth_token") ||
+    localStorage.getItem("token") ||
+    localStorage.getItem("astrotring_token")
+  );
+  return {
+    questionQuota: hasToken ? 0 : 1,
+    reportQuota: 0,
+  };
+};
+
+const initialQuotas = getInitialQuotas();
+
 const initialState = {
   conversations: initialConversations,
   activeConversationId: null,
@@ -35,8 +71,8 @@ const initialState = {
   serverThreads: [],
   isGenerating: false,
   thinkingStep: "",
-  questionQuota: 1, // 1 free question default, synced with backend credit_balance
-  reportQuota: 0,
+  questionQuota: initialQuotas.questionQuota,
+  reportQuota: initialQuotas.reportQuota,
   filter: "ALL", // "ALL" | "VAANI" | "ASTROPEDIA"
   isLoadingHistory: false,
   historyError: null,
@@ -87,9 +123,24 @@ export const vaaniSlice = createSlice({
       // If backend returned creditsRemaining in the action payload, sync it!
       if (typeof reading.creditsRemaining === "number") {
         state.questionQuota = reading.creditsRemaining;
+        try {
+          const raw = localStorage.getItem("astrotring_user");
+          if (raw) {
+            const user = JSON.parse(raw);
+            user.creditBalance = reading.creditsRemaining;
+            localStorage.setItem("astrotring_user", JSON.stringify(user));
+          }
+        } catch {}
       } else if (reading?.engine !== "astropedia" && state.questionQuota > 0) {
-        // Fallback local decrement
         state.questionQuota -= 1;
+        try {
+          const raw = localStorage.getItem("astrotring_user");
+          if (raw) {
+            const user = JSON.parse(raw);
+            user.creditBalance = state.questionQuota;
+            localStorage.setItem("astrotring_user", JSON.stringify(user));
+          }
+        } catch {}
       }
       saveConversationsToStorage(state.conversations);
     },
@@ -103,15 +154,47 @@ export const vaaniSlice = createSlice({
     },
     setQuestionQuota: (state, action) => {
       state.questionQuota = action.payload;
+      try {
+        const raw = localStorage.getItem("astrotring_user");
+        if (raw) {
+          const user = JSON.parse(raw);
+          user.creditBalance = action.payload;
+          localStorage.setItem("astrotring_user", JSON.stringify(user));
+        }
+      } catch {}
     },
     addQuestionQuota: (state, action) => {
       state.questionQuota += action.payload;
+      try {
+        const raw = localStorage.getItem("astrotring_user");
+        if (raw) {
+          const user = JSON.parse(raw);
+          user.creditBalance = (user.creditBalance || 0) + action.payload;
+          localStorage.setItem("astrotring_user", JSON.stringify(user));
+        }
+      } catch {}
     },
     setReportQuota: (state, action) => {
       state.reportQuota = action.payload;
+      try {
+        const raw = localStorage.getItem("astrotring_user");
+        if (raw) {
+          const user = JSON.parse(raw);
+          user.reportCredits = action.payload;
+          localStorage.setItem("astrotring_user", JSON.stringify(user));
+        }
+      } catch {}
     },
     addReportQuota: (state, action) => {
       state.reportQuota += action.payload;
+      try {
+        const raw = localStorage.getItem("astrotring_user");
+        if (raw) {
+          const user = JSON.parse(raw);
+          user.reportCredits = (user.reportCredits || 0) + action.payload;
+          localStorage.setItem("astrotring_user", JSON.stringify(user));
+        }
+      } catch {}
     },
   },
   extraReducers: (builder) => {
@@ -144,7 +227,6 @@ export const vaaniSlice = createSlice({
           state.activeThreadId = thread.id;
         }
         if (Array.isArray(readings) && readings.length > 0) {
-          // Prepend readings to conversations if not already present
           readings.forEach((r) => {
             if (!state.conversations.some((c) => c.id === r.id)) {
               state.conversations.unshift(r);
@@ -186,17 +268,54 @@ export const vaaniSlice = createSlice({
       saveConversationsToStorage(state.conversations);
     });
 
-    // 5. Sync question quota with user's creditBalance on authentication / profile fetch
+    // 5. Sync question and report quota with real user balances on profile fetch, OTP verify, and onboarding
     builder
-      .addCase("auth/verifyOtp/fulfilled", (state, action) => {
-        if (typeof action.payload?.user?.creditBalance === "number") {
-          state.questionQuota = action.payload.user.creditBalance;
+      .addCase("auth/fetchUserProfile/fulfilled", (state, action) => {
+        const user = action.payload?.user;
+        if (typeof user?.creditBalance === "number") {
+          state.questionQuota = user.creditBalance;
+        } else if (typeof user?.credit_balance === "number") {
+          state.questionQuota = user.credit_balance;
+        }
+        if (typeof user?.reportCredits === "number") {
+          state.reportQuota = user.reportCredits;
+        } else if (typeof user?.report_credits === "number") {
+          state.reportQuota = user.report_credits;
         }
       })
-      .addCase("auth/checkAuthStatus/fulfilled", (state, action) => {
-        if (typeof action.payload?.user?.creditBalance === "number") {
-          state.questionQuota = action.payload.user.creditBalance;
+      .addCase("auth/verifyOtp/fulfilled", (state, action) => {
+        const user = action.payload?.user;
+        if (typeof user?.creditBalance === "number") {
+          state.questionQuota = user.creditBalance;
+        } else if (typeof user?.credit_balance === "number") {
+          state.questionQuota = user.credit_balance;
         }
+        if (typeof user?.reportCredits === "number") {
+          state.reportQuota = user.reportCredits;
+        } else if (typeof user?.report_credits === "number") {
+          state.reportQuota = user.report_credits;
+        }
+      })
+      .addCase("auth/submitOnboarding/fulfilled", (state, action) => {
+        const user = action.payload?.user;
+        if (typeof user?.creditBalance === "number") {
+          state.questionQuota = user.creditBalance;
+        } else if (typeof user?.credit_balance === "number") {
+          state.questionQuota = user.credit_balance;
+        }
+        if (typeof user?.reportCredits === "number") {
+          state.reportQuota = user.reportCredits;
+        } else if (typeof user?.report_credits === "number") {
+          state.reportQuota = user.report_credits;
+        }
+      })
+      .addCase("auth/logoutUser/fulfilled", (state) => {
+        state.questionQuota = 1;
+        state.reportQuota = 0;
+      })
+      .addCase("auth/logout", (state) => {
+        state.questionQuota = 1;
+        state.reportQuota = 0;
       });
   },
 });

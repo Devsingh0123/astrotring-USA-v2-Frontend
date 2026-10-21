@@ -15,7 +15,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
-import { openAuthModal } from "@/features/auth"
+import { openAuthModal, updateUserProfile } from "@/features/auth"
 import { addQuestionQuota, setQuestionQuota } from "@/features/vaani"
 import {
   fetchBillingCatalog,
@@ -109,24 +109,26 @@ export default function QuestionPacksModal({
       setPacks(questionPacks)
       setCoupons(availableCoupons)
 
-      // Auto-select preferred, gold tier, or first pack
-      const initialPack =
-        questionPacks.find((p) => p.id === (initialPackId || selectedPackId)) ||
+      // Auto-select preferred pack on first load: initialPackId -> gold tier -> first pack
+      const defaultPack =
+        questionPacks.find((p) => p.id === initialPackId) ||
         questionPacks.find((p) => p.tier === "gold" || p.id.includes("gold")) ||
         questionPacks[0]
 
-      if (initialPack) {
-        setSelectedPackId(initialPack.id)
+      if (defaultPack) {
+        setSelectedPackId(defaultPack.id)
 
         if (initialPromoCode) {
           setAppliedPromo(initialPromoCode)
         } else {
           const matchingCoupons = availableCoupons.filter((c) => {
             const applicable = getApplicableProducts(c)
-            return applicable.length === 0 || applicable.includes(initialPack.id)
+            return applicable.length === 0 || applicable.includes(defaultPack.id)
           })
           if (matchingCoupons.length > 0) {
             setAppliedPromo(matchingCoupons[0].code)
+          } else {
+            setAppliedPromo("")
           }
         }
       }
@@ -140,10 +142,11 @@ export default function QuestionPacksModal({
     } finally {
       setIsLoadingPacks(false)
     }
-  }, [currency, initialPackId, initialPromoCode, selectedPackId])
+  }, [currency, initialPackId, initialPromoCode])
 
   useEffect(() => {
     if (isOpen) {
+      setStep(1)
       loadCatalog()
     }
   }, [isOpen, loadCatalog])
@@ -206,6 +209,7 @@ export default function QuestionPacksModal({
 
   // Selecting a pack
   const handleSelectPack = (pkg) => {
+    if (!pkg) return
     setSelectedPackId(pkg.id)
     setServerBreakdown(null)
 
@@ -214,8 +218,8 @@ export default function QuestionPacksModal({
     const isCurrentStillValid = packCoupons.some(
       (c) => c.code?.toUpperCase() === appliedPromo?.toUpperCase()
     )
-    if (!isCurrentStillValid && packCoupons.length > 0) {
-      setAppliedPromo(packCoupons[0].code)
+    if (!isCurrentStillValid) {
+      setAppliedPromo(packCoupons[0]?.code || "")
     }
   }
 
@@ -339,8 +343,10 @@ export default function QuestionPacksModal({
             const creditsRemaining = verifyRes.data?.creditsRemaining
             if (typeof creditsRemaining === "number") {
               dispatch(setQuestionQuota(creditsRemaining))
+              dispatch(updateUserProfile({ creditBalance: creditsRemaining }))
             } else {
               dispatch(addQuestionQuota(selectedPack.credits))
+              dispatch(updateUserProfile({ creditBalance: (user?.creditBalance || 0) + selectedPack.credits }))
             }
 
             // Save local invoice copy
@@ -641,33 +647,74 @@ export default function QuestionPacksModal({
               <div className="px-7 sm:px-9 py-6 sm:py-7 grid grid-cols-1 md:grid-cols-12 gap-8">
                 {/* Left Column: Pack Review, State, Promo */}
                 <div className="md:col-span-7 space-y-6">
-                  {/* 1. YOUR PACK */}
+                  {/* 1. YOUR PACK & QUICK SWITCH */}
                   <div>
                     <div className="flex items-center justify-between mb-2.5">
                       <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/50">
-                        YOUR PACK
+                        SELECT RECHARGE PACK
                       </span>
                       <button
                         type="button"
                         onClick={() => setStep(1)}
-                        className="text-[11px] font-mono uppercase tracking-[0.15em] text-white/70 hover:text-white transition cursor-pointer"
+                        className="text-[11px] font-mono uppercase tracking-[0.15em] text-amber-400 hover:text-amber-300 transition cursor-pointer"
                       >
-                        CHANGE &gt;
+                        FULL DETAILS &gt;
                       </button>
                     </div>
 
-                    <div className="rounded-2xl p-5 border border-[#3c1e3a]/60 bg-[#211526]/80 flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-[#4a1838] border border-[#682451] flex items-center justify-center text-amber-200 shrink-0">
-                        <Sparkles className="w-4 h-4 text-amber-300" />
-                      </div>
-                      <div>
-                        <div className="text-white font-serif font-medium text-lg">
-                          {selectedPack.name} · {selectedPack.credits} questions
-                        </div>
-                        <div className="text-xs text-white/50 mt-1 font-sans">
-                          Never expires · added to your account instantly
-                        </div>
-                      </div>
+                    <div className="grid grid-cols-3 gap-2.5">
+                      {packs.map((pkg) => {
+                        const isSelected = selectedPackId === pkg.id
+                        const badge = getBadgeForPack(pkg)
+                        return (
+                          <div
+                            key={pkg.id}
+                            onClick={() => handleSelectPack(pkg)}
+                            className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative flex flex-col justify-between ${
+                              isSelected
+                                ? "border-amber-400 bg-[#25152a] ring-1 ring-amber-400/50 shadow-md"
+                                : "border-white/10 bg-[#1b1726]/70 hover:border-white/20 hover:bg-[#1b1726]"
+                            }`}
+                          >
+                            {badge && (
+                              <span className="absolute -top-2 right-2 px-1.5 py-0.5 rounded text-[8px] font-mono font-bold uppercase bg-amber-400 text-black">
+                                {badge}
+                              </span>
+                            )}
+                            <div className="flex items-center justify-between w-full">
+                              <span
+                                className={`text-[11px] font-mono uppercase tracking-wider font-semibold ${
+                                  isSelected ? "text-amber-300" : "text-white/70"
+                                }`}
+                              >
+                                {pkg.name}
+                              </span>
+                              <div
+                                className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                                  isSelected
+                                    ? "border-amber-400 bg-amber-400 text-black"
+                                    : "border-white/25 bg-transparent"
+                                }`}
+                              >
+                                {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                              </div>
+                            </div>
+                            <div className="mt-2">
+                              <div className="font-serif text-lg sm:text-xl font-light text-white leading-tight">
+                                {pkg.credits}{" "}
+                                <span className="text-xs font-sans text-white/50">Qs</span>
+                              </div>
+                              <div className="font-mono text-xs text-white/90 font-medium mt-1">
+                                ₹{Number(pkg.offerPrice).toLocaleString("en-IN")}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                    <div className="text-[11px] text-white/50 mt-2 font-sans flex items-center gap-1.5">
+                      <Sparkles className="w-3 h-3 text-amber-300 shrink-0" />
+                      <span>{selectedPack.name} Pack ({selectedPack.credits} questions) · never expires</span>
                     </div>
                   </div>
 

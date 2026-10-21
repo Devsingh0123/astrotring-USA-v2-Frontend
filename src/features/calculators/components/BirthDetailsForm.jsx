@@ -109,6 +109,7 @@ export default function BirthDetailsForm({
         city: formData.city,
         lat: Number(formData.lat),
         lng: Number(formData.lng),
+        timezone: Number(formData.timezoneOffset || 5.5),
         timezoneOffset: Number(formData.timezoneOffset || 5.5),
       },
     };

@@ -37,7 +37,16 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
   )
   const dispatch = useDispatch()
   const { isAuthenticated, user, birthDetails } = useSelector((state) => state.auth || {})
-  const { questionQuota = 0, isGenerating } = useSelector((state) => state.vaani || {})
+  const { questionQuota, isGenerating } = useSelector((state) => state.vaani || {})
+
+  const activeQuestionQuota =
+    typeof questionQuota === "number"
+      ? questionQuota
+      : typeof user?.creditBalance === "number"
+      ? user.creditBalance
+      : typeof user?.credit_balance === "number"
+      ? user.credit_balance
+      : 0
 
   // Keep engine state and query state in sync if URL query param changes
   useEffect(() => {
@@ -90,7 +99,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
         return
       }
 
-      if (questionQuota <= 0) {
+      if (activeQuestionQuota <= 0) {
         toast.error("Your question quota is empty. Top up with Gold Pack to consult Vaani.")
         if (onOpenBuyModal) {
           onOpenBuyModal({ promoCode: "QUICKGOLD", packId: "pack_gold_12" })
@@ -226,30 +235,30 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
               isAuthenticated ? (
                 <div
                   className={`flex items-center gap-2 pl-3 pr-1 py-1 rounded-full text-xs transition-all shadow-xs ${
-                    questionQuota > 0
+                    activeQuestionQuota > 0
                       ? "bg-[#18101e]/90 border border-[#3d2449]"
                       : "bg-[#231206]/90 border border-amber-900/60"
                   }`}
                 >
                   <span
                     className={`text-xs font-sans tracking-wide ${
-                      questionQuota > 0 ? "text-neutral-300" : "text-amber-200/90"
+                      activeQuestionQuota > 0 ? "text-neutral-300" : "text-amber-200/90"
                     }`}
                   >
                     <strong
                       className={`font-mono font-semibold ${
-                        questionQuota > 0 ? "text-white" : "text-amber-300"
+                        activeQuestionQuota > 0 ? "text-white" : "text-amber-300"
                       }`}
                     >
-                      {questionQuota}
+                      {activeQuestionQuota}
                     </strong>{" "}
-                    {questionQuota === 1 ? "question" : "questions"} left
+                    {activeQuestionQuota === 1 ? "question" : "questions"} left
                   </span>
                   <button
                     type="button"
                     onClick={handleBuyQuestions}
                     className={`px-3 py-1 rounded-full text-xs font-medium tracking-wide transition-all duration-150 cursor-pointer shadow-xs active:scale-95 ${
-                      questionQuota > 0
+                      activeQuestionQuota > 0
                         ? "bg-[#82184d] hover:bg-[#9d1c5d] text-white border border-[#c43282]/30 hover:border-[#e04599]/50 shadow-[0_2px_8px_rgba(130,24,77,0.35)]"
                         : "bg-gradient-to-r from-[#92400e] to-[#b45309] hover:from-[#a14710] hover:to-[#c65d0b] text-amber-100 border border-amber-500/30 shadow-[0_2px_8px_rgba(180,83,9,0.35)]"
                     }`}

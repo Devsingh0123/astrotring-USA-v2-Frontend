@@ -33,7 +33,25 @@ export default function InvoicesPage() {
   const onOpenBuyModal = context.onOpenBuyModal || (() => {})
 
   const { user, birthDetails } = useSelector((state) => state.auth || {})
-  const { questionQuota = 0, reportQuota = 0 } = useSelector((state) => state.vaani || {})
+  const { questionQuota, reportQuota } = useSelector((state) => state.vaani || {})
+
+  const realQuestionsCount =
+    typeof questionQuota === "number"
+      ? questionQuota
+      : typeof user?.creditBalance === "number"
+      ? user.creditBalance
+      : typeof user?.credit_balance === "number"
+      ? user.credit_balance
+      : 0
+
+  const realReportsCount =
+    typeof reportQuota === "number"
+      ? reportQuota
+      : typeof user?.reportCredits === "number"
+      ? user.reportCredits
+      : typeof user?.report_credits === "number"
+      ? user.report_credits
+      : 0
 
   const [invoices, setInvoices] = useState([])
   const [selectedInvoice, setSelectedInvoice] = useState(null)
@@ -162,12 +180,12 @@ export default function InvoicesPage() {
 
           <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex flex-col justify-between">
             <span className="text-[11px] font-mono uppercase tracking-wider text-white/50">Vaani Questions Left</span>
-            <div className="mt-2 text-2xl font-mono font-bold text-amber-300">{questionQuota}</div>
+            <div className="mt-2 text-2xl font-mono font-bold text-amber-300">{realQuestionsCount}</div>
           </div>
 
           <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex flex-col justify-between">
             <span className="text-[11px] font-mono uppercase tracking-wider text-white/50">Available Reports</span>
-            <div className="mt-2 text-2xl font-mono font-bold text-mlh-plum-300">{reportQuota}</div>
+            <div className="mt-2 text-2xl font-mono font-bold text-mlh-plum-300">{realReportsCount}</div>
           </div>
         </div>
 
@@ -431,10 +449,10 @@ export default function InvoicesPage() {
                     BILLED TO (BUYER)
                   </span>
                   <div className="font-bold text-neutral-900 text-sm">
-                    {selectedInvoice.userName || user?.name || "Suraj Kumar"}
+                    {selectedInvoice.userName || user?.name || "Customer"}
                   </div>
                   <div className="text-neutral-600 font-mono mt-0.5">
-                    {selectedInvoice.userEmail || user?.email || "priya.sharma@example.com"}
+                    {selectedInvoice.userEmail || user?.email || ""}
                   </div>
                   <div className="text-neutral-600 mt-0.5">
                     State: {selectedInvoice.billingState || "Delhi"}, India
