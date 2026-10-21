@@ -305,21 +305,28 @@ export default function QuestionPacksModal({
         throw new Error("Razorpay Key ID was not returned by the backend order response.")
       }
 
-      // 2. Open official Razorpay modal using credentials directly from backend
-      openRazorpayCheckout({
-        keyId: backendKeyId,
-        orderId: backendOrderId,
-        amountSubunits: amountSubunits,
-        amount: finalAmount,
-        currency: orderRes.currency || orderRes.data?.currency || selectedPack.currency || "INR",
-        name: "AstroTring",
-        description: `${selectedPack.name} Pack (${selectedPack.credits} questions)`,
-        user: {
-          name: user?.name,
-          email: user?.email,
-          phone: user?.phone,
-        },
-        onSuccess: async (paymentResponse) => {
+      // 2. Release active focus & close Radix Dialog to avoid focus-trap collision with Razorpay iframe
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur()
+      }
+      handleModalClose()
+
+      // 3. Open official Razorpay modal outside Radix modal scope
+      setTimeout(() => {
+        openRazorpayCheckout({
+          keyId: backendKeyId,
+          orderId: backendOrderId,
+          amountSubunits: amountSubunits,
+          amount: finalAmount,
+          currency: orderRes.currency || orderRes.data?.currency || selectedPack.currency || "INR",
+          name: "AstroTring",
+          description: `${selectedPack.name} Pack (${selectedPack.credits} questions)`,
+          user: {
+            name: user?.name,
+            email: user?.email,
+            phone: user?.phone,
+          },
+          onSuccess: async (paymentResponse) => {
           try {
             // 3. Verify signature with real backend & fulfill quota
             const verifyRes = await verifyRazorpayPayment({
@@ -393,6 +400,7 @@ export default function QuestionPacksModal({
           toast.info("Payment window dismissed.")
         },
       })
+    }, 50)
     } catch (orderErr) {
       console.error("Failed to create Razorpay order:", orderErr)
       toast.error(

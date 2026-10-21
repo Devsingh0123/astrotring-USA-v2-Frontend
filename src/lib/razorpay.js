@@ -3,36 +3,6 @@
  * Docs: https://razorpay.com/docs/payments/payment-gateway/web-integration/standard/
  */
 
-export const RAZORPAY_SCRIPT_URL = "https://checkout.razorpay.com/v1/checkout.js";
-
-/**
- * Loads Razorpay checkout.js script if not already available on window
- * @returns {Promise<boolean>}
- */
-export const loadRazorpay = () => {
-  return new Promise((resolve) => {
-    if (typeof window === "undefined") {
-      resolve(false);
-      return;
-    }
-
-    if (window.Razorpay) {
-      resolve(true);
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = RAZORPAY_SCRIPT_URL;
-    script.async = true;
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-};
-
-// Backwards-compatible alias
-export const loadRazorpayScript = loadRazorpay;
-
 /**
  * Opens the official Razorpay Standard Checkout modal
  *
@@ -51,7 +21,7 @@ export const loadRazorpayScript = loadRazorpay;
  * @param {Function} [options.onFailure] - Callback (error) => void
  * @param {Function} [options.onDismiss] - Callback () => void
  */
-export const openRazorpayCheckout = async ({
+export const openRazorpayCheckout = ({
   keyId,
   orderId,
   amountSubunits,
@@ -66,10 +36,10 @@ export const openRazorpayCheckout = async ({
   onFailure,
   onDismiss,
 }) => {
-  const isLoaded = await loadRazorpay();
-
-  if (!isLoaded || !window.Razorpay) {
-    const error = new Error("Unable to load Razorpay checkout SDK. Please check your connection.");
+  if (typeof window === "undefined" || !window.Razorpay) {
+    const error = new Error(
+      "Razorpay checkout SDK is not loaded. Please refresh the page and try again."
+    );
     onFailure?.(error);
     return;
   }
@@ -122,3 +92,5 @@ export const openRazorpayCheckout = async ({
     onFailure?.(err);
   }
 };
+
+export default openRazorpayCheckout;

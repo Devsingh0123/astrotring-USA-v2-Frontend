@@ -49,7 +49,13 @@ export default function ReportPacksModal({ isOpen, onClose, onSelectPackage }) {
         throw new Error("Razorpay Key ID was not returned by the backend order response.")
       }
 
-      openRazorpayCheckout({
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur()
+      }
+      onClose()
+
+      setTimeout(() => {
+        openRazorpayCheckout({
         keyId: backendKeyId,
         orderId: backendOrderId,
         amountSubunits: amountSubunits,
@@ -139,6 +145,7 @@ export default function ReportPacksModal({ isOpen, onClose, onSelectPackage }) {
           toast.info("Payment window dismissed.")
         },
       })
+    }, 50)
     } catch (orderErr) {
       console.error("Failed to create Razorpay order for reports:", orderErr)
       toast.error(
