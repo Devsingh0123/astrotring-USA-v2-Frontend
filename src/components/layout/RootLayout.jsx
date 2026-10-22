@@ -6,7 +6,8 @@ import MobileHeader from "@/components/layout/MobileHeader"
 import AuthModal from "@/features/auth/AuthModal"
 import QuestionPacksModal from "@/components/common/QuestionPacksModal"
 import MyBirthDetailsModal from "@/features/user/components/MyBirthDetailsModal"
-import { openAuthModal, closeAuthModal, fetchUserProfile } from "@/features/auth/authSlice"
+import { openAuthModal, closeAuthModal, fetchUserProfile, logout } from "@/features/auth/authSlice"
+import { getStoredAccessToken, AUTH_CHANNEL_NAME } from "@/lib/api-client"
 
 export default function RootLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -24,12 +25,9 @@ export default function RootLayout() {
     setIsBuyModalOpen(true)
   }
 
-  // App load: Fetch user profile (/auth/me) if token exists in storage
+  // App load: Fetch user profile (/auth/me) if access token exists in storage
   useEffect(() => {
-    const token =
-      localStorage.getItem("astrotring_auth_token") ||
-      localStorage.getItem("token") ||
-      localStorage.getItem("astrotring_token")
+    const token = getStoredAccessToken()
     if (token) {
       dispatch(fetchUserProfile())
     }
@@ -74,14 +72,28 @@ export default function RootLayout() {
     }
   }, [isAuthenticated])
 
-  // Listen for global unauthorized session expiration
+  // Listen for cross-tab auth state changes via Broadcast Channel API
   useEffect(() => {
-    const handleUnauthorized = () => {
-      dispatch(openAuthModal())
+    if (typeof window === "undefined" || !("BroadcastChannel" in window)) {
+      return
     }
-    window.addEventListener("astrotring:unauthorized", handleUnauthorized)
+
+    const channel = new BroadcastChannel(AUTH_CHANNEL_NAME)
+
+    channel.onmessage = (event) => {
+      const data = event.data
+      if (!data) return
+
+      if (data.type === "UNAUTHORIZED" || data.type === "LOGOUT") {
+        dispatch(logout())
+        dispatch(openAuthModal())
+      } else if (data.type === "LOGIN") {
+        dispatch(fetchUserProfile())
+      }
+    }
+
     return () => {
-      window.removeEventListener("astrotring:unauthorized", handleUnauthorized)
+      channel.close()
     }
   }, [dispatch])
 

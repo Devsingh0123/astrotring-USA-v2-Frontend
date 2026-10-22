@@ -5,6 +5,7 @@ import {
   submitMessageFeedback,
   deleteThread,
 } from "./vaaniApi";
+import { getStoredAccessToken } from "@/lib/api-client";
 
 const STORAGE_KEY = "astrotring_vaani_conversations";
 
@@ -51,11 +52,7 @@ const getInitialQuotas = () => {
   } catch (err) {
     console.error("Failed to parse user quota from localStorage:", err);
   }
-  const hasToken = Boolean(
-    localStorage.getItem("astrotring_auth_token") ||
-    localStorage.getItem("token") ||
-    localStorage.getItem("astrotring_token")
-  );
+  const hasToken = Boolean(getStoredAccessToken());
   return {
     questionQuota: hasToken ? 0 : 1,
     reportQuota: 0,

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { apiClient } from "@/lib/api-client"
+import { apiClient, getStoredAccessToken } from "@/lib/api-client"
 import { toast } from "sonner"
 
 const BASE_URL =
@@ -9,12 +9,7 @@ const BASE_URL =
  * Helper to get the current auth access token from localStorage.
  */
 const getAuthToken = () => {
-  return (
-    localStorage.getItem("astrotring_auth_token") ||
-    localStorage.getItem("token") ||
-    localStorage.getItem("astrotring_token") ||
-    ""
-  )
+  return getStoredAccessToken() || ""
 }
 
 /**

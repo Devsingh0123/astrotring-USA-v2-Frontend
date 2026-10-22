@@ -3,8 +3,6 @@ import {
   STORAGE_KEYS,
   getInitialUser,
   getInitialBirthDetails,
-  getInitialToken,
-  getInitialRefreshToken,
   sendOtp,
   verifyOtp,
   refreshAccessToken,
@@ -13,14 +11,17 @@ import {
   submitOnboarding,
   checkOnboardingStatus,
 } from "./authApi";
+import {
+  getStoredAccessToken,
+  clearAuthStorage,
+  broadcastAuthMessage,
+} from "@/lib/api-client";
 
-// Re-export all thunks and helpers for convenience
+// Re-export thunks and storage keys for convenience
 export {
   STORAGE_KEYS,
   getInitialUser,
   getInitialBirthDetails,
-  getInitialToken,
-  getInitialRefreshToken,
   sendOtp,
   verifyOtp,
   refreshAccessToken,
@@ -34,9 +35,7 @@ const initialState = {
   user: getInitialUser(),
   birthDetails: getInitialBirthDetails(),
   chartSummary: null,
-  token: getInitialToken(),
-  refreshToken: getInitialRefreshToken(),
-  isAuthenticated: Boolean(getInitialToken()),
+  isAuthenticated: Boolean(getStoredAccessToken()),
   isAuthModalOpen: false,
   email: "",
   step: 1, // 1: Enter email, 2: Enter OTP
@@ -153,8 +152,6 @@ export const authSlice = createSlice({
       state.user = null;
       state.birthDetails = null;
       state.chartSummary = null;
-      state.token = null;
-      state.refreshToken = null;
       state.isAuthenticated = false;
       state.isAuthModalOpen = false;
       state.step = 1;
@@ -169,12 +166,8 @@ export const authSlice = createSlice({
         isTimeUnknown: false,
         location: null,
       };
-      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.LEGACY_TOKEN);
-      localStorage.removeItem("astrotring_token");
-      localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.USER);
-      localStorage.removeItem(STORAGE_KEYS.BIRTH_DETAILS);
+      clearAuthStorage();
+      broadcastAuthMessage({ type: "LOGOUT" });
     },
   },
   extraReducers: (builder) => {
@@ -211,8 +204,6 @@ export const authSlice = createSlice({
       .addCase(verifyOtp.fulfilled, (state, action) => {
         state.loading = false;
         state.isAuthenticated = true;
-        state.token = action.payload.accessToken;
-        state.refreshToken = action.payload.refreshToken;
         state.user = action.payload.user;
         state.error = null;
 
@@ -230,13 +221,11 @@ export const authSlice = createSlice({
 
     // Refresh Access Token
     builder
-      .addCase(refreshAccessToken.fulfilled, (state, action) => {
-        state.token = action.payload.accessToken;
+      .addCase(refreshAccessToken.fulfilled, (state) => {
+        state.isAuthenticated = true;
       })
       .addCase(refreshAccessToken.rejected, (state) => {
         state.user = null;
-        state.token = null;
-        state.refreshToken = null;
         state.isAuthenticated = false;
       });
 
@@ -245,8 +234,6 @@ export const authSlice = createSlice({
       state.user = null;
       state.birthDetails = null;
       state.chartSummary = null;
-      state.token = null;
-      state.refreshToken = null;
       state.isAuthenticated = false;
       state.isAuthModalOpen = false;
       state.step = 1;
@@ -270,8 +257,6 @@ export const authSlice = createSlice({
       .addCase(fetchUserProfile.rejected, (state) => {
         state.user = null;
         state.isAuthenticated = false;
-        state.token = null;
-        state.refreshToken = null;
       });
 
     // Submit Onboarding (POST /onboarding)

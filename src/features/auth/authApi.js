@@ -1,14 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { apiClient } from "@/lib/api-client";
+import {
+  apiClient,
+  STORAGE_KEYS,
+  getStoredRefreshToken,
+  setStoredAccessToken,
+  setStoredRefreshToken,
+  clearAuthStorage,
+  broadcastAuthMessage,
+  requestNewAccessToken,
+} from "@/lib/api-client";
 import { toast } from "sonner";
 
-export const STORAGE_KEYS = {
-  ACCESS_TOKEN: "astrotring_auth_token",
-  LEGACY_TOKEN: "token",
-  REFRESH_TOKEN: "astrotring_refresh_token",
-  USER: "astrotring_user",
-  BIRTH_DETAILS: "astrotring_birth_details",
-};
+export { STORAGE_KEYS };
 
 export const getInitialUser = () => {
   try {
@@ -26,19 +29,6 @@ export const getInitialBirthDetails = () => {
   } catch {
     return null;
   }
-};
-
-export const getInitialToken = () => {
-  return (
-    localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN) ||
-    localStorage.getItem(STORAGE_KEYS.LEGACY_TOKEN) ||
-    localStorage.getItem("astrotring_token") ||
-    null
-  );
-};
-
-export const getInitialRefreshToken = () => {
-  return localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN) || null;
 };
 
 /**
@@ -76,6 +66,7 @@ export const sendOtp = createAsyncThunk(
 /**
  * Async Thunk: Verify OTP and establish authenticated session
  * Endpoint: POST /api/v1/auth/verify-otp
+ * Tokens are strictly persisted to localStorage, not in Redux state.
  */
 export const verifyOtp = createAsyncThunk(
   "auth/verifyOtp",
@@ -92,21 +83,25 @@ export const verifyOtp = createAsyncThunk(
       const user = resData?.user;
 
       if (accessToken) {
-        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-        localStorage.setItem(STORAGE_KEYS.LEGACY_TOKEN, accessToken);
+        setStoredAccessToken(accessToken);
       }
       if (refreshToken) {
-        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+        setStoredRefreshToken(refreshToken);
       }
       if (user) {
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
       }
 
+      // Sync authentication state across other browser tabs
+      broadcastAuthMessage({ type: "LOGIN", user });
+
       toast.success(
         response.data?.message ||
           "Authentication successful! Welcome to AstroTring.",
       );
-      return { accessToken, refreshToken, user };
+
+      // Return only user state for Redux
+      return { user };
     } catch (err) {
       const message =
         err.response?.data?.message ||
@@ -120,32 +115,17 @@ export const verifyOtp = createAsyncThunk(
 /**
  * Async Thunk: Refresh Access Token
  * Endpoint: POST /api/v1/auth/refresh-token
+ * Reuses the single-promise mutex requestNewAccessToken helper.
  */
 export const refreshAccessToken = createAsyncThunk(
   "auth/refreshAccessToken",
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const state = getState();
-      const refreshToken =
-        state.auth?.refreshToken ||
-        localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-
-      if (!refreshToken) {
-        return rejectWithValue("No refresh token available");
+      const newToken = await requestNewAccessToken();
+      if (newToken) {
+        return true;
       }
-
-      const response = await apiClient.post("/auth/refresh-token", {
-        refreshToken,
-      });
-      const resData = response.data?.data || response.data;
-      const newAccessToken = resData?.accessToken;
-
-      if (newAccessToken) {
-        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
-        localStorage.setItem(STORAGE_KEYS.LEGACY_TOKEN, newAccessToken);
-        return { accessToken: newAccessToken };
-      }
-      return rejectWithValue("Invalid token refresh response");
+      return rejectWithValue("Failed to refresh access token");
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || "Failed to refresh access token",
@@ -160,12 +140,9 @@ export const refreshAccessToken = createAsyncThunk(
  */
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const state = getState();
-      const refreshToken =
-        state.auth?.refreshToken ||
-        localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+      const refreshToken = getStoredRefreshToken();
 
       if (refreshToken) {
         try {
@@ -175,16 +152,14 @@ export const logoutUser = createAsyncThunk(
         }
       }
 
-      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.LEGACY_TOKEN);
-      localStorage.removeItem("astrotring_token");
-      localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.USER);
-      localStorage.removeItem(STORAGE_KEYS.BIRTH_DETAILS);
+      clearAuthStorage();
+      broadcastAuthMessage({ type: "LOGOUT" });
 
       toast.info("Signed out of your account.");
       return true;
     } catch (err) {
+      clearAuthStorage();
+      broadcastAuthMessage({ type: "LOGOUT" });
       return rejectWithValue(err.message || "Failed to logout");
     }
   },
@@ -193,6 +168,7 @@ export const logoutUser = createAsyncThunk(
 /**
  * Async Thunk: Fetch profile of current user (Protected)
  * Endpoint: GET /api/v1/auth/me
+ * If access token is expired, apiClient interceptor automatically refreshes it!
  */
 export const fetchUserProfile = createAsyncThunk(
   "auth/fetchUserProfile",
