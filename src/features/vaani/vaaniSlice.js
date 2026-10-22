@@ -71,6 +71,9 @@ const initialState = {
   serverThreads: [],
   isGenerating: false,
   thinkingStep: "",
+  thinkingSteps: [],
+  pendingQuestion: "",
+  pendingEngine: "vaani",
   questionQuota: initialQuotas.questionQuota,
   reportQuota: initialQuotas.reportQuota,
   filter: "ALL", // "ALL" | "VAANI" | "ASTROPEDIA"
@@ -97,14 +100,29 @@ export const vaaniSlice = createSlice({
     },
     startGenerating: (state, action) => {
       state.isGenerating = true;
-      state.thinkingStep = action.payload || "Reading your birth chart...";
+      let initialStep = "Reading your birth chart...";
+      if (typeof action.payload === "string") {
+        initialStep = action.payload;
+      } else if (action.payload && typeof action.payload === "object") {
+        initialStep = action.payload.step || initialStep;
+        state.pendingQuestion = action.payload.query || "";
+        state.pendingEngine = action.payload.engine || "vaani";
+      }
+      state.thinkingStep = initialStep;
+      state.thinkingSteps = initialStep ? [initialStep] : [];
     },
     setThinkingStep: (state, action) => {
-      state.thinkingStep = action.payload;
+      const step = action.payload;
+      state.thinkingStep = step;
+      if (step && !state.thinkingSteps.includes(step)) {
+        state.thinkingSteps.push(step);
+      }
     },
     stopGenerating: (state) => {
       state.isGenerating = false;
       state.thinkingStep = "";
+      state.thinkingSteps = [];
+      state.pendingQuestion = "";
     },
     addConversation: (state, action) => {
       const reading = action.payload;
@@ -119,6 +137,8 @@ export const vaaniSlice = createSlice({
       }
       state.isGenerating = false;
       state.thinkingStep = "";
+      state.thinkingSteps = [];
+      state.pendingQuestion = "";
 
       // If backend returned creditsRemaining in the action payload, sync it!
       if (typeof reading.creditsRemaining === "number") {

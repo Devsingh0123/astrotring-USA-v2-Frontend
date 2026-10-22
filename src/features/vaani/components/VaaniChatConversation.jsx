@@ -77,8 +77,16 @@ function renderParagraph(text, isVaani) {
 
 export default function VaaniChatConversation({ onOpenBuyModal }) {
   const dispatch = useDispatch()
-  const { conversations, activeConversationId, isGenerating, thinkingStep, questionQuota } =
-    useSelector((state) => state.vaani || {})
+  const {
+    conversations,
+    activeConversationId,
+    isGenerating,
+    thinkingStep,
+    thinkingSteps = [],
+    pendingQuestion,
+    pendingEngine,
+    questionQuota,
+  } = useSelector((state) => state.vaani || {})
   const { user, birthDetails } = useSelector((state) => state.auth || {})
 
   const activeQuestionQuota =
@@ -111,27 +119,39 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
     }
-  }, [activeConv, isGenerating, thinkingStep])
+  }, [activeConv, isGenerating, thinkingStep, thinkingSteps])
 
   const handleSendFollowUp = (queryToSend) => {
     const text = (queryToSend || followUpQuery).trim()
     if (!text || isGenerating) return
 
-    setInFlightQuery(text)
-    setFollowUpQuery("")
-    const currentEngine = activeConv?.engine || "vaani"
+    const currentEngine = activeConv?.engine || pendingEngine || "vaani"
 
     if (currentEngine === "vaani") {
       if (activeQuestionQuota <= 0) {
+        toast.error("Your question balance is empty. Top up to consult Vaani.")
         if (onOpenBuyModal) {
           onOpenBuyModal({ promoCode: "QUICKGOLD", packId: "pack_gold_12" })
         }
         return
       }
-      dispatch(startGenerating("Reading your birth chart..."))
-    } else {
-      dispatch(startGenerating("Consulting classical Vedic texts..."))
     }
+
+    setInFlightQuery(text)
+    setFollowUpQuery("")
+
+    const initialStep =
+      currentEngine === "vaani"
+        ? "Reviewing your core birth profile and selecting chart tools..."
+        : "Searching Brihat Parashara Hora Shastra & classical treatises..."
+
+    dispatch(
+      startGenerating({
+        step: initialStep,
+        query: text,
+        engine: currentEngine,
+      })
+    )
 
     // Call real backend SSE streaming endpoint
     streamChatTurn({
@@ -175,11 +195,15 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
     }
   }
 
-  if (!activeConv && !isGenerating && !inFlightQuery) {
+  const isVaani = (activeConv?.engine || pendingEngine || "vaani") === "vaani"
+  const userQuestionText =
+    inFlightQuery ||
+    (isGenerating ? pendingQuestion : null) ||
+    activeConv?.question
+
+  if (!activeConv && !isGenerating && !inFlightQuery && !pendingQuestion) {
     return null
   }
-
-  const isVaani = (activeConv?.engine || "vaani") === "vaani"
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden px-4 sm:px-8 lg:px-10">
@@ -210,20 +234,22 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
           className="flex w-full max-w-[900px] flex-1 flex-col gap-[30px] overflow-x-hidden overflow-y-auto pr-1 pb-2 mlh-thin-scroll"
         >
           {/* User Question Speech Bubble (Aligned to the Right) */}
-          <div className="animate-mlh-rise flex max-w-[700px] flex-col items-end self-end">
-            <span className="text-white/35 mb-2.5 font-mono text-[9.5px] tracking-[0.2em] uppercase">
-              You
-            </span>
-            <div
-              className={`rounded-[18px_18px_4px_18px] border px-[18px] py-3 font-sans text-[15.5px] sm:text-[18px] leading-[1.4] text-pretty shadow-[0_10px_30px_rgba(0,0,0,.35)] ${
-                isVaani
-                  ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#811756]/25 to-[#4d0e34]/15 text-white/95"
-                  : "border-amber-500/35 bg-gradient-to-br from-[#df8107]/25 to-[#92400e]/15 text-white/95"
-              }`}
-            >
-              {activeConv?.question || inFlightQuery}
+          {userQuestionText && (
+            <div className="animate-mlh-rise flex max-w-[700px] flex-col items-end self-end">
+              <span className="text-white/35 mb-2.5 font-mono text-[9.5px] tracking-[0.2em] uppercase">
+                You
+              </span>
+              <div
+                className={`rounded-[18px_18px_4px_18px] border px-[18px] py-3 font-sans text-[15.5px] sm:text-[18px] leading-[1.4] text-pretty shadow-[0_10px_30px_rgba(0,0,0,.35)] ${
+                  isVaani
+                    ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#811756]/25 to-[#4d0e34]/15 text-white/95"
+                    : "border-amber-500/35 bg-gradient-to-br from-[#df8107]/25 to-[#92400e]/15 text-white/95"
+                }`}
+              >
+                {userQuestionText}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Engine Reading Bubble (Open consult scroll with Left Accent Border) */}
           <div
@@ -262,22 +288,71 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
             <div className="min-w-0 flex-1">
               {isGenerating ? (
                 <div className="py-4 space-y-3">
-                  <div
-                    className={`flex items-center gap-2.5 font-mono text-xs sm:text-[13px] tracking-wide animate-pulse ${
-                      isVaani ? "text-mlh-plum-200" : "text-amber-200"
-                    }`}
-                  >
-                    <Sparkles className="w-4 h-4 animate-spin text-amber-300 shrink-0" />
-                    <span>
-                      {thinkingStep ||
-                        (isVaani
-                          ? "Reading your birth chart..."
-                          : "Consulting classical Vedic texts...")}
-                    </span>
+                  <div className="flex flex-col gap-2">
+                    {thinkingSteps && thinkingSteps.length > 0 ? (
+                      thinkingSteps.map((step, sIdx) => {
+                        const isLatest = sIdx === thinkingSteps.length - 1
+                        return (
+                          <div
+                            key={sIdx}
+                            className={`flex items-center gap-2.5 rounded-full px-3.5 py-1.5 font-mono text-xs sm:text-[12.5px] tracking-wide transition-all ${
+                              isLatest
+                                ? isVaani
+                                  ? "border border-mlh-plum-400/50 bg-mlh-plum-500/15 text-mlh-plum-200 shadow-[0_0_16px_rgba(154,69,120,0.25)] animate-pulse"
+                                  : "border border-amber-500/50 bg-amber-500/15 text-amber-200 shadow-[0_0_16px_rgba(223,129,7,0.25)] animate-pulse"
+                                : "border border-white/10 bg-white/[0.03] text-white/50"
+                            }`}
+                          >
+                            {isLatest ? (
+                              <Sparkles className="w-3.5 h-3.5 animate-spin text-amber-300 shrink-0" />
+                            ) : (
+                              <span className="text-emerald-400 text-[11px] font-bold shrink-0">✓</span>
+                            )}
+                            <span className="truncate">{step}</span>
+                          </div>
+                        )
+                      })
+                    ) : (
+                      <div
+                        className={`flex items-center gap-2.5 font-mono text-xs sm:text-[13px] tracking-wide animate-pulse ${
+                          isVaani ? "text-mlh-plum-200" : "text-amber-200"
+                        }`}
+                      >
+                        <Sparkles className="w-4 h-4 animate-spin text-amber-300 shrink-0" />
+                        <span>
+                          {thinkingStep ||
+                            (isVaani
+                              ? "Reading your birth chart..."
+                              : "Consulting classical Vedic texts...")}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : (
                 <>
+                  {/* Consulted Vedic Tools Badges */}
+                  {activeConv?.thinkingSteps && activeConv.thinkingSteps.length > 0 && (
+                    <div className="mb-3.5 flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40">
+                        Tools Consulted:
+                      </span>
+                      {activeConv.thinkingSteps.map((toolBadge, tbIdx) => (
+                        <span
+                          key={tbIdx}
+                          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] tracking-wide ${
+                            isVaani
+                              ? "border-mlh-plum-400/25 bg-mlh-plum-500/8 text-mlh-plum-200/90"
+                              : "border-amber-500/25 bg-amber-500/8 text-amber-200/90"
+                          }`}
+                        >
+                          <span className="text-emerald-400/90 text-[9px]">✦</span>
+                          <span>{toolBadge}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
                   {/* Opening Thought Note */}
                   {activeConv?.openingThought && (
                     <p className="mb-4 text-white/86 font-sans text-[17px] leading-[1.6] sm:text-[20px]">
@@ -386,8 +461,25 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                           >
                             {isVaani ? "What I read from your chart" : "Citations & Classical Treatises"}
                           </div>
-                          <div className="mt-3.5 text-white/80 font-sans text-[15px] sm:text-[17px] leading-relaxed whitespace-pre-wrap">
-                            {activeConv.astrologyBehind.join("\n")}
+                          <div className="mt-3.5 space-y-2.5 font-sans text-[15px] sm:text-[16px] leading-relaxed">
+                            {activeConv.astrologyBehind.map((item, aIdx) => {
+                              const match = item.match(/^(\d+\)\s*[^:]+:)(.*)$/)
+                              if (match) {
+                                return (
+                                  <div key={aIdx} className="flex items-start gap-2 text-white/85">
+                                    <span className={`font-semibold shrink-0 ${isVaani ? "text-mlh-plum-200" : "text-amber-200"}`}>
+                                      {match[1]}
+                                    </span>
+                                    <span className="text-white/75">{match[2]}</span>
+                                  </div>
+                                )
+                              }
+                              return (
+                                <div key={aIdx} className="text-white/80">
+                                  {item}
+                                </div>
+                              )
+                            })}
                           </div>
                         </div>
                       )}
@@ -438,12 +530,17 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                         isVaani ? "border-mlh-plum-400/18" : "border-amber-500/20"
                       }`}
                     >
-                      <div
-                        className={`font-mono text-[9.5px] tracking-[0.22em] uppercase ${
-                          isVaani ? "text-mlh-plum-300/85" : "text-amber-400/85"
-                        }`}
-                      >
-                        {isVaani ? "Ask next" : "Keep exploring"}
+                      <div className="flex items-center justify-between">
+                        <div
+                          className={`font-mono text-[9.5px] tracking-[0.22em] uppercase ${
+                            isVaani ? "text-mlh-plum-300/85" : "text-amber-400/85"
+                          }`}
+                        >
+                          {isVaani ? "Suggested Follow-ups & Questions" : "Keep exploring"}
+                        </div>
+                        <span className="font-mono text-[9px] text-white/35 uppercase tracking-wider hidden sm:inline">
+                          Click to ask instantly
+                        </span>
                       </div>
                       <div className="mt-3.5 grid gap-2.5 sm:grid-cols-2">
                         {activeConv.suggestedQuestions.map((q, idx) => (

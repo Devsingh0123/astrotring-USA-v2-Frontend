@@ -107,10 +107,27 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
         return
       }
 
-      dispatch(startGenerating("Reading your birth chart..."))
+      const initialThinkingStep =
+        engine === "vaani"
+          ? "Reviewing your core birth profile and selecting chart tools..."
+          : "Searching Brihat Parashara Hora Shastra & classical treatises..."
+
+      dispatch(
+        startGenerating({
+          step: initialThinkingStep,
+          query: text,
+          engine,
+        })
+      )
     } else {
       // ASTROPEDIA: Universal Vedic Encyclopedia is 100% Free & Unlimited
-      dispatch(startGenerating("Consulting classical Vedic texts..."))
+      dispatch(
+        startGenerating({
+          step: "Searching Brihat Parashara Hora Shastra & classical treatises...",
+          query: text,
+          engine,
+        })
+      )
     }
 
     // Call real backend SSE streaming endpoint
