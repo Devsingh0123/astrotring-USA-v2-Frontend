@@ -21,8 +21,10 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
 
   const [fullName, setFullName] = useState("")
   const [gender, setGender] = useState("male")
-  const [dob, setDob] = useState("2000-01-20")
-  const [tob, setTob] = useState("00:01")
+  const [dob, setDob] = useState("")
+  const [tob, setTob] = useState("")
+  const [isDobFocused, setIsDobFocused] = useState(false)
+  const [isTobFocused, setIsTobFocused] = useState(false)
   const [isTimeUnknown, setIsTimeUnknown] = useState(false)
   const [cityQuery, setCityQuery] = useState("")
   const [selectedLocation, setSelectedLocation] = useState(null)
@@ -229,29 +231,35 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
           {/* Date of Birth & Time of Birth */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-mlh-muted font-medium flex items-center gap-1.5">
+              <label className="text-mlh-muted font-medium flex items-center gap-1.5 text-xs">
                 <Calendar className="w-3.5 h-3.5 text-mlh-plum-300" />
-                <span>Date of birth</span>
+                <span>Date of birth *</span>
               </label>
               <Input
-                type="date"
+                type={isDobFocused || dob ? "date" : "text"}
+                placeholder="Select a date"
                 value={dob}
+                onFocus={() => setIsDobFocused(true)}
+                onBlur={() => setIsDobFocused(false)}
                 onChange={(e) => setDob(e.target.value)}
-                className="bg-black/40 border-white/10 text-white focus-visible:border-mlh-plum text-sm h-10 rounded-xl"
+                className="bg-black/40 border-white/10 text-white placeholder:text-white/40 focus-visible:border-mlh-plum text-sm h-10 rounded-xl [color-scheme:dark]"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-mlh-muted font-medium flex items-center gap-1.5">
+              <label className="text-mlh-muted font-medium flex items-center gap-1.5 text-xs">
                 <Clock className="w-3.5 h-3.5 text-amber-300" />
                 <span>Time of birth</span>
               </label>
               <Input
-                type="time"
+                type={isTobFocused || tob || isTimeUnknown ? "time" : "text"}
+                placeholder="Select a time"
                 disabled={isTimeUnknown}
-                value={tob}
+                value={isTimeUnknown ? "12:00" : tob}
+                onFocus={() => setIsTobFocused(true)}
+                onBlur={() => setIsTobFocused(false)}
                 onChange={(e) => setTob(e.target.value)}
-                className="bg-black/40 border-white/10 text-white focus-visible:border-mlh-plum text-sm h-10 rounded-xl disabled:opacity-30"
+                className="bg-black/40 border-white/10 text-white placeholder:text-white/40 focus-visible:border-mlh-plum text-sm h-10 rounded-xl disabled:opacity-30 [color-scheme:dark]"
               />
             </div>
           </div>
