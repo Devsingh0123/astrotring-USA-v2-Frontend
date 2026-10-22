@@ -48,8 +48,8 @@ const initialState = {
   onboardingData: {
     name: "",
     gender: "female",
-    dob: "2000-01-01",
-    tob: "12:00",
+    dob: "",
+    tob: "",
     isTimeUnknown: false,
     location: null,
   },
@@ -98,8 +98,8 @@ export const authSlice = createSlice({
       state.onboardingData = {
         name: "",
         gender: "female",
-        dob: "2000-01-01",
-        tob: "12:00",
+        dob: "",
+        tob: "",
         isTimeUnknown: false,
         location: null,
       };
@@ -161,8 +161,8 @@ export const authSlice = createSlice({
       state.onboardingData = {
         name: "",
         gender: "female",
-        dob: "2000-01-01",
-        tob: "12:00",
+        dob: "",
+        tob: "",
         isTimeUnknown: false,
         location: null,
       };

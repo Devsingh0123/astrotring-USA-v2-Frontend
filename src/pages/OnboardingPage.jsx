@@ -38,41 +38,34 @@ export default function OnboardingPage() {
   } = useSelector((state) => state.auth || {})
 
   // Step 1: Name and Gender Local State
-  const [name, setName] = useState(onboardingData?.name || user?.name || "")
-  const [gender, setGender] = useState(onboardingData?.gender || "female")
+  const [name, setName] = useState(() => onboardingData?.name || user?.name || "")
+  const [gender, setGender] = useState(() => onboardingData?.gender || "female")
 
   // Step 2: Birth Details & Location Local State
-  const [dob, setDob] = useState(onboardingData?.dob || "2000-01-01")
-  const [tob, setTob] = useState(onboardingData?.tob || "12:00")
+  const [dob, setDob] = useState(() => onboardingData?.dob || "")
+  const [tob, setTob] = useState(() => onboardingData?.tob || "")
   const [isTimeUnknown, setIsTimeUnknown] = useState(
-    onboardingData?.isTimeUnknown || false
+    () => onboardingData?.isTimeUnknown || false
   )
 
   // Location Autocomplete State
   const [locationQuery, setLocationQuery] = useState(
-    onboardingData?.location?.city || ""
+    () => onboardingData?.location?.city || ""
   )
   const [selectedLocation, setSelectedLocation] = useState(
-    onboardingData?.location || null
+    () => onboardingData?.location || null
   )
   const [locationSuggestions, setLocationSuggestions] = useState([])
   const [isSearchingLocation, setIsSearchingLocation] = useState(false)
   const [showLocationDropdown, setShowLocationDropdown] = useState(false)
   const dropdownRef = useRef(null)
 
-  // Sync state if onboardingData updates in Redux
+  // Sync user name from auth state if it loads asynchronously
   useEffect(() => {
-    if (onboardingData?.name) setName(onboardingData.name)
-    if (onboardingData?.gender) setGender(onboardingData.gender)
-    if (onboardingData?.dob) setDob(onboardingData.dob)
-    if (onboardingData?.tob) setTob(onboardingData.tob)
-    if (onboardingData?.isTimeUnknown !== undefined)
-      setIsTimeUnknown(onboardingData.isTimeUnknown)
-    if (onboardingData?.location) {
-      setSelectedLocation(onboardingData.location)
-      setLocationQuery(onboardingData.location.city)
+    if (user?.name && !name) {
+      setName(user.name)
     }
-  }, [onboardingData])
+  }, [user?.name])
 
   // Debounced Location Autocomplete (/vedic/location/autocomplete)
   useEffect(() => {
@@ -139,7 +132,21 @@ export default function OnboardingPage() {
     setSelectedLocation(locData)
     setLocationQuery(city)
     setShowLocationDropdown(false)
-    dispatch(updateOnboardingData({ location: locData }))
+  }
+
+  // Preserves entered birth details if user returns to Step 1
+  const handleBackToStep1 = () => {
+    dispatch(
+      updateOnboardingData({
+        name: name.trim(),
+        gender: gender.toLowerCase(),
+        dob,
+        tob,
+        isTimeUnknown,
+        location: selectedLocation,
+      })
+    )
+    dispatch(setOnboardingStep(1))
   }
 
   // STEP 1 SUBMIT -> Save to state and advance to Step 2
@@ -179,11 +186,13 @@ export default function OnboardingPage() {
       return
     }
 
+    const finalTob = isTimeUnknown ? "12:00" : tob
+
     const payload = {
-      name: (name || onboardingData.name || "").trim(),
-      gender: (gender || onboardingData.gender || "female").toLowerCase(),
+      name: (name || onboardingData?.name || user?.name || "").trim(),
+      gender: (gender || onboardingData?.gender || "female").toLowerCase(),
       dob,
-      tob: isTimeUnknown ? "12:00:00" : tob,
+      tob: finalTob,
       isTimeUnknown,
       location: {
         city: selectedLocation.city,
@@ -391,7 +400,7 @@ export default function OnboardingPage() {
                 <div className="flex items-center justify-between">
                   <button
                     type="button"
-                    onClick={() => dispatch(setOnboardingStep(1))}
+                    onClick={handleBackToStep1}
                     className="text-white/60 hover:text-white inline-flex items-center gap-1.5 text-xs font-mono tracking-wider cursor-pointer transition mb-1"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
@@ -436,7 +445,7 @@ export default function OnboardingPage() {
                     <div className="relative">
                       <Input
                         type="time"
-                        value={tob}
+                        value={isTimeUnknown ? "12:00" : tob}
                         disabled={isTimeUnknown}
                         onChange={(e) => setTob(e.target.value)}
                         className="w-full rounded-2xl border border-white/10 bg-[#1a1424] px-4 py-3 text-xs sm:text-sm text-white focus-visible:ring-1 focus-visible:ring-[#b32b6e] focus-visible:border-[#b32b6e] transition-all disabled:opacity-30 cursor-pointer h-auto"

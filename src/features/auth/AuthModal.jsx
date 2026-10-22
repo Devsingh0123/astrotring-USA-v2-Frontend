@@ -57,8 +57,8 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
   const [gender, setGender] = useState("Female") // "Female" | "Male" | "Other"
 
   // Step 4 (Your Birth Details) State (Screenshots 3 & 4)
-  const [birthDate, setBirthDate] = useState("2000-01-01")
-  const [birthTime, setBirthTime] = useState("12:00")
+  const [birthDate, setBirthDate] = useState("")
+  const [birthTime, setBirthTime] = useState("")
   const [unknownTime, setUnknownTime] = useState(false)
   const [birthPlace, setBirthPlace] = useState("")
 
