@@ -42,13 +42,11 @@ export function generateAstrologyResponse({ question, engine = "vaani", user, bi
         "How can I strengthen my concentration according to my chart?",
       ],
       offer: {
-        title: "Get 12 questions at 67% discount",
-        description: "Your question balance is ZERO. Buy 12 questions at 67% off. Promo code: QUICKGOLD",
+        title: "Special Offer: 12 Questions Pack",
+        description: "Your question balance is ZERO. Top up with Gold Pack using promo code: QUICKGOLD",
         promoCode: "QUICKGOLD",
         discountPercent: 67,
         questionsCount: 12,
-        originalPrice: "₹2,399",
-        discountedPrice: "₹799",
       },
     }
   }
@@ -80,13 +78,11 @@ export function generateAstrologyResponse({ question, engine = "vaani", user, bi
         "Which houses in my chart are currently most supportive?",
       ],
       offer: {
-        title: "Get 12 questions at 67% discount",
-        description: "Your question balance is ZERO. Buy 12 questions at 67% off. Promo code: QUICKGOLD",
+        title: "Special Offer: 12 Questions Pack",
+        description: "Your question balance is ZERO. Top up with Gold Pack using promo code: QUICKGOLD",
         promoCode: "QUICKGOLD",
         discountPercent: 67,
         questionsCount: 12,
-        originalPrice: "₹2,399",
-        discountedPrice: "₹799",
       },
     }
   }
@@ -118,13 +114,11 @@ export function generateAstrologyResponse({ question, engine = "vaani", user, bi
         "Does my chart support commercial real estate or residential?",
       ],
       offer: {
-        title: "Get 12 questions at 67% discount",
-        description: "Your question balance is ZERO. Buy 12 questions at 67% off. Promo code: QUICKGOLD",
+        title: "Special Offer: 12 Questions Pack",
+        description: "Your question balance is ZERO. Top up with Gold Pack using promo code: QUICKGOLD",
         promoCode: "QUICKGOLD",
         discountPercent: 67,
         questionsCount: 12,
-        originalPrice: "₹2,399",
-        discountedPrice: "₹799",
       },
     }
   }
@@ -159,13 +153,11 @@ export function generateAstrologyResponse({ question, engine = "vaani", user, bi
         "Which houses in my chart are the strongest?",
       ],
       offer: {
-        title: "Get 12 questions at 67% discount",
-        description: "Your question balance is ZERO. Buy 12 questions at 67% off. Promo code: QUICKGOLD",
+        title: "Special Offer: 12 Questions Pack",
+        description: "Your question balance is ZERO. Top up with Gold Pack using promo code: QUICKGOLD",
         promoCode: "QUICKGOLD",
         discountPercent: 67,
         questionsCount: 12,
-        originalPrice: "₹2,399",
-        discountedPrice: "₹799",
       },
     }
   }
@@ -196,13 +188,11 @@ export function generateAstrologyResponse({ question, engine = "vaani", user, bi
       "Which gemstone or remedy aligns best with my Lagna?",
     ],
     offer: {
-      title: "Get 12 questions at 67% discount",
-      description: "Your question balance is ZERO. Buy 12 questions at 67% off. Promo code: QUICKGOLD",
+      title: "Special Offer: 12 Questions Pack",
+      description: "Your question balance is ZERO. Top up with Gold Pack using promo code: QUICKGOLD",
       promoCode: "QUICKGOLD",
       discountPercent: 67,
       questionsCount: 12,
-      originalPrice: "₹2,399",
-      discountedPrice: "₹799",
     },
   }
 }

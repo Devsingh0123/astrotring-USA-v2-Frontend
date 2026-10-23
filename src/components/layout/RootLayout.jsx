@@ -147,6 +147,7 @@ export default function RootLayout() {
         onOpenAuth={handleOpenAuth}
         initialPromoCode={buyModalOptions?.promoCode}
         initialPackId={buyModalOptions?.packId}
+        currency={buyModalOptions?.currency || user?.currency || "INR"}
       />
 
       {/* My Birth Details Edit Modal (Melooha Ref 09) */}

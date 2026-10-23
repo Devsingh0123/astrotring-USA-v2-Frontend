@@ -26,6 +26,7 @@ import {
 } from "@/features/billing/billingApi"
 import { openRazorpayCheckout } from "@/lib/razorpay"
 import { INDIAN_GST_STATES } from "@/lib/constants"
+import { formatCurrency, getPackPricing } from "@/lib/utils"
 
 export default function QuestionPacksModal({
   isOpen,
@@ -38,7 +39,9 @@ export default function QuestionPacksModal({
   const dispatch = useDispatch()
   const { isAuthenticated, user } = useSelector((state) => state.auth || {})
 
-  // Dynamic backend catalog state (NO hardcoded fallbacks)
+  // Dynamic backend catalog & currency state
+  const [activeCurrency, setActiveCurrency] = useState(currency || "INR")
+  const [supportedCurrencies, setSupportedCurrencies] = useState(["INR", "USD", "GBP", "EUR"])
   const [packs, setPacks] = useState([])
   const [coupons, setCoupons] = useState([])
   const [isLoadingPacks, setIsLoadingPacks] = useState(false)
@@ -59,6 +62,13 @@ export default function QuestionPacksModal({
   const [serverBreakdown, setServerBreakdown] = useState(null)
   const [, setIsValidatingPromo] = useState(false)
 
+  // Sync currency prop when passed
+  useEffect(() => {
+    if (currency) {
+      setActiveCurrency(currency)
+    }
+  }, [currency])
+
   // Helper: extracts applicable products list from coupon
   const getApplicableProducts = (coupon) => {
     if (!coupon) return []
@@ -73,17 +83,21 @@ export default function QuestionPacksModal({
     return []
   }
 
-  // Helper: get matching coupons for a given pack ID
+  // Helper: get matching coupons for a given pack ID / code
   const getCouponsForPack = useCallback(
     (packId) => {
       if (!packId || !coupons.length) return []
       return coupons.filter((coupon) => {
         if (coupon.is_active === false) return false
         const applicable = getApplicableProducts(coupon)
-        return applicable.length === 0 || applicable.includes(packId)
+        return (
+          applicable.length === 0 ||
+          applicable.includes(packId) ||
+          applicable.includes(selectedPackId)
+        )
       })
     },
-    [coupons]
+    [coupons, selectedPackId]
   )
 
   // Helper: get default coupon code for a pack
@@ -96,53 +110,66 @@ export default function QuestionPacksModal({
   )
 
   // Fetch dynamic packages and coupons from backend API
-  const loadCatalog = useCallback(async () => {
-    setIsLoadingPacks(true)
-    setPacksError(null)
+  const loadCatalog = useCallback(
+    async (currToFetch) => {
+      const targetCurrency = currToFetch || activeCurrency || "INR"
+      setIsLoadingPacks(true)
+      setPacksError(null)
 
-    try {
-      const response = await fetchBillingCatalog(currency)
-      const catalogData = response?.data || response
-      const questionPacks = catalogData?.questionPacks || []
-      const availableCoupons = catalogData?.coupons || []
+      try {
+        const response = await fetchBillingCatalog(targetCurrency)
+        const catalogData = response?.data || response
+        const questionPacks = catalogData?.questionPacks || []
+        const availableCoupons = catalogData?.coupons || []
+        const backendCurrency = catalogData?.currency || targetCurrency
+        const availableCurrencies = catalogData?.supportedCurrencies || ["INR", "USD", "GBP", "EUR"]
 
-      setPacks(questionPacks)
-      setCoupons(availableCoupons)
+        setActiveCurrency(backendCurrency)
+        setSupportedCurrencies(availableCurrencies)
+        setPacks(questionPacks)
+        setCoupons(availableCoupons)
 
-      // Auto-select preferred pack on first load: initialPackId -> gold tier -> first pack
-      const defaultPack =
-        questionPacks.find((p) => p.id === initialPackId) ||
-        questionPacks.find((p) => p.tier === "gold" || p.id.includes("gold")) ||
-        questionPacks[0]
+        // Auto-select preferred pack: initialPackId -> gold tier -> first pack
+        const defaultPack =
+          questionPacks.find((p) => p.id === initialPackId || p.code === initialPackId) ||
+          questionPacks.find((p) => p.tier === "gold" || p.id?.includes("gold") || p.code?.includes("gold")) ||
+          questionPacks[0]
 
-      if (defaultPack) {
-        setSelectedPackId(defaultPack.id)
+        if (defaultPack) {
+          const packKey = defaultPack.id || defaultPack.code
+          setSelectedPackId(packKey)
 
-        if (initialPromoCode) {
-          setAppliedPromo(initialPromoCode)
-        } else {
-          const matchingCoupons = availableCoupons.filter((c) => {
-            const applicable = getApplicableProducts(c)
-            return applicable.length === 0 || applicable.includes(defaultPack.id)
-          })
-          if (matchingCoupons.length > 0) {
-            setAppliedPromo(matchingCoupons[0].code)
+          if (initialPromoCode) {
+            setAppliedPromo(initialPromoCode)
           } else {
-            setAppliedPromo("")
+            const matchingCoupons = availableCoupons.filter((c) => {
+              const applicable = getApplicableProducts(c)
+              return (
+                applicable.length === 0 ||
+                applicable.includes(defaultPack.id) ||
+                applicable.includes(defaultPack.code)
+              )
+            })
+            if (matchingCoupons.length > 0) {
+              setAppliedPromo(matchingCoupons[0].code)
+            } else {
+              setAppliedPromo("")
+            }
           }
         }
+      } catch (err) {
+        console.error("Failed to fetch billing catalog from backend:", err)
+        setPacksError(
+          err?.response?.data?.message ||
+          err?.message ||
+          "Unable to load question packages from server. Please verify your connection."
+        )
+      } finally {
+        setIsLoadingPacks(false)
       }
-    } catch (err) {
-      console.error("Failed to fetch billing catalog from backend:", err)
-      setPacksError(
-        err?.response?.data?.message ||
-        err?.message ||
-        "Unable to load question packages from server. Please verify your connection."
-      )
-    } finally {
-      setIsLoadingPacks(false)
-    }
-  }, [currency, initialPackId, initialPromoCode])
+    },
+    [activeCurrency, initialPackId, initialPromoCode]
+  )
 
   useEffect(() => {
     if (isOpen) {
@@ -150,6 +177,13 @@ export default function QuestionPacksModal({
       loadCatalog()
     }
   }, [isOpen, loadCatalog])
+
+  const handleCurrencyChange = (newCurrency) => {
+    if (newCurrency === activeCurrency || isLoadingPacks) return
+    setActiveCurrency(newCurrency)
+    setServerBreakdown(null)
+    loadCatalog(newCurrency)
+  }
 
   const handleModalClose = () => {
     setStep(1)
@@ -162,14 +196,17 @@ export default function QuestionPacksModal({
 
   // Selected pack resolution
   const selectedPack =
-    packs.find((p) => p.id === selectedPackId) ||
+    packs.find((p) => p.id === selectedPackId || p.code === selectedPackId) ||
     packs[0] ||
     null
 
+  // Selected pack dynamic pricing
+  const selectedPricing = getPackPricing(selectedPack, activeCurrency)
+
   // Badge mapping for UI display
   const getBadgeForPack = (pkg) => {
-    if (pkg.tier === "gold" || pkg.id?.includes("gold")) return "POPULAR"
-    if (pkg.tier === "diamond" || pkg.id?.includes("diamond")) return "BEST VALUE"
+    if (pkg.tier === "gold" || pkg.id?.includes("gold") || pkg.code?.includes("gold")) return "POPULAR"
+    if (pkg.tier === "diamond" || pkg.id?.includes("diamond") || pkg.code?.includes("diamond")) return "BEST VALUE"
     return null
   }
 
@@ -183,19 +220,21 @@ export default function QuestionPacksModal({
     selectedPack &&
     (
       getApplicableProducts(activeCoupon).length === 0 ||
-      getApplicableProducts(activeCoupon).includes(selectedPack.id)
+      getApplicableProducts(activeCoupon).includes(selectedPack.id) ||
+      getApplicableProducts(activeCoupon).includes(selectedPack.code)
     )
   )
 
-  // Price calculations
-  const subtotal = selectedPack ? Number(selectedPack.originalPrice || 0) : 0
-  const offerPrice = selectedPack ? Number(selectedPack.offerPrice || 0) : 0
+  // Price calculations from dynamic backend pricing
+  const subtotal = selectedPricing.originalPrice
+  const offerPrice = selectedPricing.offerPrice
 
   const isServerBreakdownFresh =
     serverBreakdown &&
-    serverBreakdown.packId === selectedPack?.id &&
+    (serverBreakdown.packId === selectedPack?.id || serverBreakdown.packId === selectedPack?.code) &&
     serverBreakdown.couponCode === appliedPromo &&
-    serverBreakdown.billingState === billingState
+    serverBreakdown.currency === selectedPricing.currency &&
+    serverBreakdown.billingState === (selectedPricing.currency === "INR" ? billingState : "International")
 
   const discount = isServerBreakdownFresh
     ? serverBreakdown.discountAmount
@@ -210,11 +249,12 @@ export default function QuestionPacksModal({
   // Selecting a pack
   const handleSelectPack = (pkg) => {
     if (!pkg) return
-    setSelectedPackId(pkg.id)
+    const packKey = pkg.id || pkg.code
+    setSelectedPackId(packKey)
     setServerBreakdown(null)
 
     // Check if current promo is still valid on the newly selected pack
-    const packCoupons = getCouponsForPack(pkg.id)
+    const packCoupons = getCouponsForPack(packKey)
     const isCurrentStillValid = packCoupons.some(
       (c) => c.code?.toUpperCase() === appliedPromo?.toUpperCase()
     )
@@ -235,7 +275,11 @@ export default function QuestionPacksModal({
     }
 
     const applicable = getApplicableProducts(matchedCoupon)
-    if (applicable.length > 0 && selectedPack && !applicable.includes(selectedPack.id)) {
+    const packMatches =
+      applicable.length === 0 ||
+      (selectedPack && (applicable.includes(selectedPack.id) || applicable.includes(selectedPack.code)))
+
+    if (!packMatches) {
       toast.error(`Coupon "${code}" is not valid for ${selectedPack.name} Pack.`)
       return
     }
@@ -251,10 +295,10 @@ export default function QuestionPacksModal({
       setIsValidatingPromo(true)
       try {
         const breakdownRes = await validateCoupon({
-          packId: selectedPack.id,
+          packId: selectedPack.code || selectedPack.id,
           couponCode: code,
-          currency: selectedPack.currency || "INR",
-          billingState,
+          currency: selectedPricing.currency,
+          billingState: selectedPricing.currency === "INR" ? billingState : "International",
         })
         if (breakdownRes?.data) {
           setServerBreakdown(breakdownRes.data)
@@ -291,19 +335,21 @@ export default function QuestionPacksModal({
     setIsInitiating(true)
 
     try {
-      // 1. Create order on backend (returns orderId, keyId, amountSubunits, etc.)
+      // 1. Create order on backend (passing packId/packCode). Backend computes all amounts.
+      const packCodeOrId = selectedPack.code || selectedPack.id
       const orderRes = await createRazorpayOrder({
-        packId: selectedPack.id,
+        packId: packCodeOrId,
         itemType: "questions",
-        currency: selectedPack.currency || "INR",
+        currency: selectedPricing.currency,
         couponCode: isPromoApplicable ? appliedPromo : undefined,
-        billingState: billingState,
+        billingState: selectedPricing.currency === "INR" ? billingState : "International",
       })
 
       const backendKeyId = orderRes.keyId || orderRes.data?.keyId
       const backendOrderId = orderRes.orderId || orderRes.data?.orderId
       const amountSubunits = orderRes.amountSubunits || orderRes.data?.amountSubunits
       const finalAmount = orderRes.amount || orderRes.data?.amount || finalPrice
+      const orderCurrency = orderRes.currency || orderRes.data?.currency || selectedPricing.currency
 
       if (!backendKeyId) {
         throw new Error("Razorpay Key ID was not returned by the backend order response.")
@@ -322,7 +368,7 @@ export default function QuestionPacksModal({
           orderId: backendOrderId,
           amountSubunits: amountSubunits,
           amount: finalAmount,
-          currency: orderRes.currency || orderRes.data?.currency || selectedPack.currency || "INR",
+          currency: orderCurrency,
           name: "AstroTring",
           description: `${selectedPack.name} Pack (${selectedPack.credits} questions)`,
           user: {
@@ -331,82 +377,83 @@ export default function QuestionPacksModal({
             phone: user?.phone,
           },
           onSuccess: async (paymentResponse) => {
-          try {
-            // 3. Verify signature with real backend & fulfill quota
-            const verifyRes = await verifyRazorpayPayment({
-              razorpay_order_id: paymentResponse.razorpay_order_id,
-              razorpay_payment_id: paymentResponse.razorpay_payment_id,
-              razorpay_signature: paymentResponse.razorpay_signature,
-              method: "standard",
-            })
-
-            const creditsRemaining = verifyRes.data?.creditsRemaining
-            if (typeof creditsRemaining === "number") {
-              dispatch(setQuestionQuota(creditsRemaining))
-              dispatch(updateUserProfile({ creditBalance: creditsRemaining }))
-            } else {
-              dispatch(addQuestionQuota(selectedPack.credits))
-              dispatch(updateUserProfile({ creditBalance: (user?.creditBalance || 0) + selectedPack.credits }))
-            }
-
-            // Save local invoice copy
             try {
-              const existingInvoices = JSON.parse(
-                localStorage.getItem("astrotring_invoices") || "[]"
-              )
-              const inv = verifyRes.data?.invoice || {
-                id: "INV-" + Date.now().toString().slice(-6),
-                paymentId: paymentResponse.razorpay_payment_id,
-                orderId: paymentResponse.razorpay_order_id,
-                date: new Date().toISOString(),
-                itemType: "questions",
-                itemTitle: `${selectedPack.name} Pack (${selectedPack.credits} questions)`,
-                subtotal: selectedPack.originalPrice,
-                discount: discount,
-                couponCode: appliedPromo || "NONE",
-                taxAmount: Math.round((finalPrice * 18) / 118),
-                total: finalPrice,
-                billingState: billingState,
-                status: "PAID",
-                method: "Razorpay Standard",
-                userName: user?.name || "Customer",
-                userEmail: user?.email || "",
-              }
-              localStorage.setItem("astrotring_invoices", JSON.stringify([inv, ...existingInvoices]))
-            } catch (e) {
-              console.warn("Failed to save local invoice:", e)
-            }
+              // 4. Verify signature with real backend & fulfill quota
+              const verifyRes = await verifyRazorpayPayment({
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+                method: "standard",
+              })
 
-            toast.success(
-              `Payment successful! ${selectedPack.credits} questions added to your account.`
-            )
-            handleModalClose()
-          } catch (verifyErr) {
-            console.error("Signature verification failed:", verifyErr)
-            toast.error(
-              verifyErr?.response?.data?.message ||
-              "Payment was successful, but server verification failed. Please contact support."
-            )
-          }
-        },
-        onFailure: (err) => {
-          recordPaymentFailure({
-            razorpay_order_id: backendOrderId,
-            status: "failed",
-            reason: err?.description || err?.message || "Payment failed",
-          })
-          toast.error(err?.description || "Payment failed. Please try again.")
-        },
-        onDismiss: () => {
-          recordPaymentFailure({
-            razorpay_order_id: backendOrderId,
-            status: "cancelled",
-            reason: "User closed checkout modal",
-          })
-          toast.info("Payment window dismissed.")
-        },
-      })
-    }, 50)
+              const creditsRemaining = verifyRes.data?.creditsRemaining
+              if (typeof creditsRemaining === "number") {
+                dispatch(setQuestionQuota(creditsRemaining))
+                dispatch(updateUserProfile({ creditBalance: creditsRemaining }))
+              } else {
+                dispatch(addQuestionQuota(selectedPack.credits))
+                dispatch(updateUserProfile({ creditBalance: (user?.creditBalance || 0) + selectedPack.credits }))
+              }
+
+              // Save local invoice copy
+              try {
+                const existingInvoices = JSON.parse(
+                  localStorage.getItem("astrotring_invoices") || "[]"
+                )
+                const inv = verifyRes.data?.invoice || {
+                  id: "INV-" + Date.now().toString().slice(-6),
+                  paymentId: paymentResponse.razorpay_payment_id,
+                  orderId: paymentResponse.razorpay_order_id,
+                  date: new Date().toISOString(),
+                  currency: orderCurrency,
+                  itemType: "questions",
+                  itemTitle: `${selectedPack.name} Pack (${selectedPack.credits} questions)`,
+                  subtotal: selectedPricing.originalPrice,
+                  discount: discount,
+                  couponCode: appliedPromo || "NONE",
+                  taxAmount: orderCurrency === "INR" ? Math.round((finalPrice * 18) / 118) : 0,
+                  total: finalPrice,
+                  billingState: orderCurrency === "INR" ? billingState : "International",
+                  status: "PAID",
+                  method: "Razorpay Standard",
+                  userName: user?.name || "Customer",
+                  userEmail: user?.email || "",
+                }
+                localStorage.setItem("astrotring_invoices", JSON.stringify([inv, ...existingInvoices]))
+              } catch (e) {
+                console.warn("Failed to save local invoice:", e)
+              }
+
+              toast.success(
+                `Payment successful! ${selectedPack.credits} questions added to your account.`
+              )
+              handleModalClose()
+            } catch (verifyErr) {
+              console.error("Signature verification failed:", verifyErr)
+              toast.error(
+                verifyErr?.response?.data?.message ||
+                "Payment was successful, but server verification failed. Please contact support."
+              )
+            }
+          },
+          onFailure: (err) => {
+            recordPaymentFailure({
+              razorpay_order_id: backendOrderId,
+              status: "failed",
+              reason: err?.description || err?.message || "Payment failed",
+            })
+            toast.error(err?.description || "Payment failed. Please try again.")
+          },
+          onDismiss: () => {
+            recordPaymentFailure({
+              razorpay_order_id: backendOrderId,
+              status: "cancelled",
+              reason: "User closed checkout modal",
+            })
+            toast.info("Payment window dismissed.")
+          },
+        })
+      }, 50)
     } catch (orderErr) {
       console.error("Failed to create Razorpay order:", orderErr)
       toast.error(
@@ -430,7 +477,7 @@ export default function QuestionPacksModal({
           {step === 1 && (
             <div className="flex flex-col">
               {/* Header */}
-              <div className="pt-7 sm:pt-8 px-7 sm:px-9 pb-2 flex items-start justify-between">
+              <div className="pt-7 sm:pt-8 px-7 sm:px-9 pb-2 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div>
                   <h2 className="font-serif text-2xl sm:text-[32px] font-normal text-white tracking-tight leading-tight">
                     Buy more questions
@@ -440,14 +487,48 @@ export default function QuestionPacksModal({
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleModalClose}
-                  className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition cursor-pointer shrink-0 mt-0.5"
-                  aria-label="Close"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
+                  {/* Multi-Currency Toggle */}
+                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-full p-1">
+                    {supportedCurrencies.map((curr) => {
+                      const isCurrActive = activeCurrency === curr
+                      const label =
+                        curr === "INR"
+                          ? "₹ INR"
+                          : curr === "USD"
+                          ? "$ USD"
+                          : curr === "GBP"
+                          ? "£ GBP"
+                          : curr === "EUR"
+                          ? "€ EUR"
+                          : curr
+                      return (
+                        <button
+                          key={curr}
+                          type="button"
+                          onClick={() => handleCurrencyChange(curr)}
+                          disabled={isLoadingPacks}
+                          className={`px-2.5 py-1 text-[11px] font-mono rounded-full transition cursor-pointer disabled:opacity-50 ${
+                            isCurrActive
+                              ? "bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] text-white font-semibold shadow-sm"
+                              : "text-white/60 hover:text-white hover:bg-white/5"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleModalClose}
+                    className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition cursor-pointer shrink-0"
+                    aria-label="Close"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               {/* Main Content Area: Loading, Error, or Loaded Packs */}
@@ -489,7 +570,7 @@ export default function QuestionPacksModal({
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={loadCatalog}
+                      onClick={() => loadCatalog()}
                       className="mt-2 border-white/20 text-white hover:bg-white/10 flex items-center gap-2 cursor-pointer"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
@@ -502,14 +583,15 @@ export default function QuestionPacksModal({
                 {!isLoadingPacks && !packsError && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     {packs.map((pkg) => {
-                      const isSelected = selectedPackId === pkg.id
+                      const isSelected = selectedPackId === pkg.id || selectedPackId === pkg.code
                       const badge = getBadgeForPack(pkg)
-                      const unitPrice = Math.round(Number(pkg.offerPrice || 0) / Number(pkg.credits || 1))
-                      const defaultPromo = getDefaultPromoForPack(pkg.id)
+                      const pkgPricing = getPackPricing(pkg, activeCurrency)
+                      const unitPriceNum = Number(pkgPricing.offerPrice || 0) / Number(pkg.credits || 1)
+                      const defaultPromo = getDefaultPromoForPack(pkg.id || pkg.code)
 
                       return (
                         <div
-                          key={pkg.id}
+                          key={pkg.id || pkg.code}
                           onClick={() => handleSelectPack(pkg)}
                           className={`relative rounded-2xl p-6 sm:p-7 border cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[300px] sm:min-h-[320px] ${
                             isSelected
@@ -558,15 +640,17 @@ export default function QuestionPacksModal({
 
                             <div className="flex items-baseline gap-2">
                               <span className="font-mono text-2xl sm:text-[26px] font-semibold text-white">
-                                ₹{Number(pkg.offerPrice).toLocaleString("en-IN")}
+                                {formatCurrency(pkgPricing.offerPrice, pkgPricing.currency)}
                               </span>
-                              <span className="font-mono text-xs text-white/40 line-through">
-                                ₹{Number(pkg.originalPrice).toLocaleString("en-IN")}
-                              </span>
+                              {pkgPricing.originalPrice > pkgPricing.offerPrice && (
+                                <span className="font-mono text-xs text-white/40 line-through">
+                                  {formatCurrency(pkgPricing.originalPrice, pkgPricing.currency)}
+                                </span>
+                              )}
                             </div>
 
                             <div className="text-xs text-white/50 mt-1 font-sans">
-                              ₹{unitPrice} per question
+                              {formatCurrency(unitPriceNum, pkgPricing.currency)} per question
                             </div>
 
                             {defaultPromo && (
@@ -585,7 +669,7 @@ export default function QuestionPacksModal({
               {/* Dark Footer Bar */}
               <div className="bg-[#100c17] px-7 sm:px-9 py-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <span className="text-[11px] font-mono tracking-[0.2em] uppercase text-white/40">
-                  SECURE PAYMENT · GST INVOICE · INSTANT CREDIT
+                  SECURE PAYMENT · {selectedPricing.currency === "INR" ? "GST INVOICE" : "TAX INVOICE"} · INSTANT CREDIT
                 </span>
 
                 <Button
@@ -598,7 +682,7 @@ export default function QuestionPacksModal({
                     <>
                       <span>Continue with {selectedPack.credits} questions</span>
                       <span className="text-white/40">·</span>
-                      <span>₹{Number(selectedPack.offerPrice).toLocaleString("en-IN")}</span>
+                      <span>{formatCurrency(selectedPricing.offerPrice, selectedPricing.currency)}</span>
                       <span className="text-base">→</span>
                     </>
                   ) : (
@@ -664,11 +748,12 @@ export default function QuestionPacksModal({
 
                     <div className="grid grid-cols-3 gap-2.5">
                       {packs.map((pkg) => {
-                        const isSelected = selectedPackId === pkg.id
+                        const isSelected = selectedPackId === pkg.id || selectedPackId === pkg.code
                         const badge = getBadgeForPack(pkg)
+                        const pPricing = getPackPricing(pkg, activeCurrency)
                         return (
                           <div
-                            key={pkg.id}
+                            key={pkg.id || pkg.code}
                             onClick={() => handleSelectPack(pkg)}
                             className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative flex flex-col justify-between ${
                               isSelected
@@ -705,7 +790,7 @@ export default function QuestionPacksModal({
                                 <span className="text-xs font-sans text-white/50">Qs</span>
                               </div>
                               <div className="font-mono text-xs text-white/90 font-medium mt-1">
-                                ₹{Number(pkg.offerPrice).toLocaleString("en-IN")}
+                                {formatCurrency(pPricing.offerPrice, pPricing.currency)}
                               </div>
                             </div>
                           </div>
@@ -718,55 +803,61 @@ export default function QuestionPacksModal({
                     </div>
                   </div>
 
-                  {/* 2. BILLING STATE */}
+                  {/* 2. BILLING STATE / REGION */}
                   <div>
                     <div className="flex items-center justify-between mb-2.5">
                       <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/50">
-                        BILLING STATE
+                        {selectedPricing.currency === "INR" ? "BILLING STATE" : "BILLING REGION"}
                       </span>
                       <span className="text-xs text-white/40">
-                        Required on your GST invoice
+                        {selectedPricing.currency === "INR" ? "Required on your GST invoice" : "International (0% GST)"}
                       </span>
                     </div>
 
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setIsStateDropdownOpen(!isStateDropdownOpen)}
-                        className="w-full rounded-2xl border border-white/10 bg-[#1b1726] px-5 py-3.5 text-sm text-white flex items-center justify-between hover:border-white/20 transition cursor-pointer"
-                      >
-                        <span>{billingState}</span>
-                        <ChevronDown
-                          className={`w-4 h-4 text-white/40 transition-transform ${
-                            isStateDropdownOpen ? "rotate-180" : ""
-                          }`}
-                        />
-                      </button>
+                    {selectedPricing.currency === "INR" ? (
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setIsStateDropdownOpen(!isStateDropdownOpen)}
+                          className="w-full rounded-2xl border border-white/10 bg-[#1b1726] px-5 py-3.5 text-sm text-white flex items-center justify-between hover:border-white/20 transition cursor-pointer"
+                        >
+                          <span>{billingState}</span>
+                          <ChevronDown
+                            className={`w-4 h-4 text-white/40 transition-transform ${
+                              isStateDropdownOpen ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
 
-                      {isStateDropdownOpen && (
-                        <div className="absolute z-30 left-0 right-0 mt-1.5 max-h-52 overflow-y-auto rounded-2xl border border-white/10 bg-[#181424] p-2 shadow-2xl">
-                          {INDIAN_GST_STATES.map((state) => (
-                            <div
-                              key={state}
-                              onClick={() => {
-                                setBillingState(state)
-                                setIsStateDropdownOpen(false)
-                              }}
-                              className={`px-4 py-2.5 text-xs rounded-xl cursor-pointer transition flex items-center justify-between ${
-                                billingState === state
-                                  ? "bg-[#b32b6e]/30 text-white font-semibold"
-                                  : "text-white/70 hover:bg-white/5 hover:text-white"
-                              }`}
-                            >
-                              <span>{state}</span>
-                              {billingState === state && (
-                                <Check className="w-3.5 h-3.5 text-white" />
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                        {isStateDropdownOpen && (
+                          <div className="absolute z-30 left-0 right-0 mt-1.5 max-h-52 overflow-y-auto rounded-2xl border border-white/10 bg-[#181424] p-2 shadow-2xl">
+                            {INDIAN_GST_STATES.map((state) => (
+                              <div
+                                key={state}
+                                onClick={() => {
+                                  setBillingState(state)
+                                  setIsStateDropdownOpen(false)
+                                }}
+                                className={`px-4 py-2.5 text-xs rounded-xl cursor-pointer transition flex items-center justify-between ${
+                                  billingState === state
+                                    ? "bg-[#b32b6e]/30 text-white font-semibold"
+                                    : "text-white/70 hover:bg-white/5 hover:text-white"
+                                }`}
+                              >
+                                <span>{state}</span>
+                                {billingState === state && (
+                                  <Check className="w-3.5 h-3.5 text-white" />
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="w-full rounded-2xl border border-white/10 bg-[#1b1726] px-5 py-3.5 text-sm text-white/80 font-mono">
+                        International ({selectedPricing.currency}) · GST Exempt
+                      </div>
+                    )}
                   </div>
 
                   {/* 3. PROMO CODE */}
@@ -845,19 +936,19 @@ export default function QuestionPacksModal({
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between items-center text-white/80">
                         <span>{selectedPack.credits} Questions</span>
-                        <span className="font-mono">₹{subtotal.toLocaleString("en-IN")}</span>
+                        <span className="font-mono">{formatCurrency(subtotal, selectedPricing.currency)}</span>
                       </div>
 
                       {isPromoApplicable && discount > 0 && (
                         <div className="flex justify-between items-center text-emerald-400">
                           <span className="text-xs">{appliedPromo} discount</span>
-                          <span className="font-mono">− ₹{discount.toLocaleString("en-IN")}</span>
+                          <span className="font-mono">− {formatCurrency(discount, selectedPricing.currency)}</span>
                         </div>
                       )}
 
                       <div className="flex justify-between items-center text-white/50 text-xs">
                         <span>Taxes and fees</span>
-                        <span>Included</span>
+                        <span>{selectedPricing.currency === "INR" ? "Included (18% GST)" : "Included (0% Tax)"}</span>
                       </div>
                     </div>
 
@@ -869,11 +960,11 @@ export default function QuestionPacksModal({
                           TOTAL
                         </span>
                         <span className="text-[10px] text-white/40 mt-0.5 block">
-                          GST included
+                          {selectedPricing.currency === "INR" ? "GST included" : "All taxes included"}
                         </span>
                       </div>
                       <div className="font-serif text-4xl sm:text-[44px] font-normal text-white tracking-tight">
-                        ₹{finalPrice.toLocaleString("en-IN")}
+                        {formatCurrency(finalPrice, selectedPricing.currency)}
                       </div>
                     </div>
                   </div>
@@ -952,7 +1043,11 @@ export default function QuestionPacksModal({
                     size="sm"
                     variant="outline"
                     onClick={() => {
-                      if (applicable.length > 0 && !applicable.includes(selectedPack?.id)) {
+                      if (
+                        applicable.length > 0 &&
+                        !applicable.includes(selectedPack?.id) &&
+                        !applicable.includes(selectedPack?.code)
+                      ) {
                         setSelectedPackId(applicable[0])
                       }
                       handleApplyPromo(coupon.code)
@@ -967,6 +1062,7 @@ export default function QuestionPacksModal({
           </div>
         </DialogContent>
       </Dialog>
+
     </>
   )
 }

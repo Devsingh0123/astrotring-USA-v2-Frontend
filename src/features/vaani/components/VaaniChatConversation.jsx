@@ -376,11 +376,11 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                         </div>
 
                         <h3 className="text-white mt-2.5 font-serif text-[21px] leading-[1.15] sm:text-[24px]">
-                          {reading.offer?.title || "Get 12 questions at 67% discount"}
+                          {reading.offer?.title || "Special Offer: 12 Questions Pack"}
                         </h3>
                         <p className="text-white/70 mt-1.5 max-w-[62ch] text-[13px] leading-snug sm:text-[13.5px]">
                           {reading.offer?.description ||
-                            "Your question balance is ZERO. Buy 12 questions at 67% off. Promo code: QUICKGOLD"}
+                            "Your question balance is ZERO. Top up with Gold Pack using promo code: QUICKGOLD"}
                         </p>
 
                         <div className="border-amber-500/15 mt-3.5 border-t pt-3.5">
