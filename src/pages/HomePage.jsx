@@ -10,9 +10,9 @@ export default function HomePage() {
   const context = useOutletContext() || {}
   const onOpenBindModal = context.onOpenBindModal || (() => {})
   const onOpenBuyModal = context.onOpenBuyModal || (() => {})
-  const { activeConversationId, isGenerating } = useSelector((state) => state.vaani || {})
+  const { activeConversationId, activeThreadId, isGenerating } = useSelector((state) => state.vaani || {})
 
-  const hasActiveConversation = Boolean(activeConversationId || isGenerating)
+  const hasActiveConversation = Boolean(activeConversationId || activeThreadId || isGenerating)
 
   return (
     <div className="flex-1 flex flex-col h-[100dvh] md:h-screen overflow-hidden relative">

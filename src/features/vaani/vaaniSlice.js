@@ -122,7 +122,10 @@ export const vaaniSlice = createSlice({
       state.pendingQuestion = "";
     },
     addConversation: (state, action) => {
-      const reading = action.payload;
+      const reading = {
+        ...action.payload,
+        createdAt: action.payload.createdAt || new Date().toISOString(),
+      };
       // Remove any existing reading with the exact same ID
       state.conversations = state.conversations.filter(
         (c) => c.id !== reading.id,
@@ -213,6 +216,20 @@ export const vaaniSlice = createSlice({
         }
       } catch {}
     },
+    deleteConversation: (state, action) => {
+      const id = action.payload;
+      state.conversations = state.conversations.filter(
+        (c) => c.id !== id && c.threadId !== id
+      );
+      state.serverThreads = state.serverThreads.filter((t) => t.id !== id);
+      if (state.activeConversationId === id || state.activeThreadId === id) {
+        state.activeConversationId =
+          state.conversations.length > 0 ? state.conversations[0].id : null;
+        state.activeThreadId =
+          state.conversations.length > 0 ? state.conversations[0].threadId : null;
+      }
+      saveConversationsToStorage(state.conversations);
+    },
   },
   extraReducers: (builder) => {
     // 1. Fetch User Threads
@@ -232,26 +249,41 @@ export const vaaniSlice = createSlice({
 
     // 2. Fetch Thread by ID (load readings into view)
     builder
-      .addCase(fetchThreadById.pending, (state) => {
+      .addCase(fetchThreadById.pending, (state, action) => {
         state.isGenerating = true;
         state.thinkingStep = "Loading conversation reading...";
+        const targetThreadId = action.meta?.arg;
+        if (targetThreadId) {
+          state.activeThreadId = targetThreadId;
+          state.activeConversationId = targetThreadId;
+        }
       })
       .addCase(fetchThreadById.fulfilled, (state, action) => {
         state.isGenerating = false;
         state.thinkingStep = "";
-        const { thread, readings } = action.payload;
-        if (thread) {
-          state.activeThreadId = thread.id;
+        const { thread, readings = [], threadId } = action.payload || {};
+        const resolvedThreadId = thread?.id || threadId;
+        if (resolvedThreadId) {
+          state.activeThreadId = resolvedThreadId;
         }
+
         if (Array.isArray(readings) && readings.length > 0) {
           readings.forEach((r) => {
-            if (!state.conversations.some((c) => c.id === r.id)) {
-              state.conversations.unshift(r);
+            const existingIdx = state.conversations.findIndex((c) => c.id === r.id);
+            if (existingIdx >= 0) {
+              state.conversations[existingIdx] = {
+                ...state.conversations[existingIdx],
+                ...r,
+              };
+            } else {
+              state.conversations.push(r);
             }
           });
           state.activeConversationId = readings[readings.length - 1].id;
-          saveConversationsToStorage(state.conversations);
+        } else if (resolvedThreadId) {
+          state.activeConversationId = resolvedThreadId;
         }
+        saveConversationsToStorage(state.conversations);
       })
       .addCase(fetchThreadById.rejected, (state) => {
         state.isGenerating = false;
@@ -351,6 +383,7 @@ export const {
   addQuestionQuota,
   setReportQuota,
   addReportQuota,
+  deleteConversation,
 } = vaaniSlice.actions;
 
 export default vaaniSlice.reducer;

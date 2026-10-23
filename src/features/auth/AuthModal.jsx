@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import MeloohaDatePicker from "@/components/common/MeloohaDatePicker"
+import MeloohaTimePicker from "@/components/common/MeloohaTimePicker"
 import { toast } from "sonner"
 import {
   closeAuthModal,
@@ -59,8 +61,6 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
   // Step 4 (Your Birth Details) State (Screenshots 3 & 4)
   const [birthDate, setBirthDate] = useState("")
   const [birthTime, setBirthTime] = useState("")
-  const [isDobFocused, setIsDobFocused] = useState(false)
-  const [isTobFocused, setIsTobFocused] = useState(false)
   const [unknownTime, setUnknownTime] = useState(false)
   const [birthPlace, setBirthPlace] = useState("")
 
@@ -571,38 +571,23 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                     <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/50 block">
                       DATE OF BIRTH
                     </label>
-                    <div className="relative">
-                      <input
-                        type={isDobFocused || birthDate ? "date" : "text"}
-                        placeholder="Select a date"
-                        value={birthDate}
-                        onFocus={() => setIsDobFocused(true)}
-                        onBlur={() => setIsDobFocused(false)}
-                        onChange={(e) => setBirthDate(e.target.value)}
-                        className="w-full rounded-2xl border border-white/10 bg-[#1a1424] px-4 py-3 text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-[#b32b6e] transition-all cursor-pointer [color-scheme:dark]"
-                        required
-                      />
-                      <Calendar className="w-4 h-4 text-white/40 absolute right-3 top-3.5 pointer-events-none" />
-                    </div>
+                    <MeloohaDatePicker
+                      value={birthDate}
+                      onChange={setBirthDate}
+                      placeholder="Select a date"
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/50 block">
                       TIME OF BIRTH
                     </label>
-                    <div className="relative">
-                      <input
-                        type={isTobFocused || birthTime || unknownTime ? "time" : "text"}
-                        placeholder="Select a time"
-                        value={unknownTime ? "12:00" : birthTime}
-                        disabled={unknownTime}
-                        onFocus={() => setIsTobFocused(true)}
-                        onBlur={() => setIsTobFocused(false)}
-                        onChange={(e) => setBirthTime(e.target.value)}
-                        className="w-full rounded-2xl border border-white/10 bg-[#1a1424] px-4 py-3 text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-[#b32b6e] transition-all disabled:opacity-40 cursor-pointer [color-scheme:dark]"
-                      />
-                      <Clock className="w-4 h-4 text-white/40 absolute right-3 top-3.5 pointer-events-none" />
-                    </div>
+                    <MeloohaTimePicker
+                      value={unknownTime ? "12:00" : birthTime}
+                      onChange={setBirthTime}
+                      disabled={unknownTime}
+                      placeholder="Select a time"
+                    />
                   </div>
                 </div>
 

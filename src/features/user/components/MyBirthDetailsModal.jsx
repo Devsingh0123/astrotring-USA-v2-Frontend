@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import MeloohaDatePicker from "@/components/common/MeloohaDatePicker"
+import MeloohaTimePicker from "@/components/common/MeloohaTimePicker"
 import { updateUserBirthDetails } from "@/features/auth/authSlice"
 import { apiClient } from "@/lib/api-client"
 
@@ -23,8 +25,6 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
   const [gender, setGender] = useState("male")
   const [dob, setDob] = useState("")
   const [tob, setTob] = useState("")
-  const [isDobFocused, setIsDobFocused] = useState(false)
-  const [isTobFocused, setIsTobFocused] = useState(false)
   const [isTimeUnknown, setIsTimeUnknown] = useState(false)
   const [cityQuery, setCityQuery] = useState("")
   const [selectedLocation, setSelectedLocation] = useState(null)
@@ -235,14 +235,11 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
                 <Calendar className="w-3.5 h-3.5 text-mlh-plum-300" />
                 <span>Date of birth *</span>
               </label>
-              <Input
-                type={isDobFocused || dob ? "date" : "text"}
-                placeholder="Select a date"
+              <MeloohaDatePicker
                 value={dob}
-                onFocus={() => setIsDobFocused(true)}
-                onBlur={() => setIsDobFocused(false)}
-                onChange={(e) => setDob(e.target.value)}
-                className="bg-black/40 border-white/10 text-white placeholder:text-white/40 focus-visible:border-mlh-plum text-sm h-10 rounded-xl [color-scheme:dark]"
+                onChange={setDob}
+                placeholder="Select a date"
+                className="bg-black/40 border-white/10"
               />
             </div>
 
@@ -251,15 +248,12 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
                 <Clock className="w-3.5 h-3.5 text-amber-300" />
                 <span>Time of birth</span>
               </label>
-              <Input
-                type={isTobFocused || tob || isTimeUnknown ? "time" : "text"}
-                placeholder="Select a time"
-                disabled={isTimeUnknown}
+              <MeloohaTimePicker
                 value={isTimeUnknown ? "12:00" : tob}
-                onFocus={() => setIsTobFocused(true)}
-                onBlur={() => setIsTobFocused(false)}
-                onChange={(e) => setTob(e.target.value)}
-                className="bg-black/40 border-white/10 text-white placeholder:text-white/40 focus-visible:border-mlh-plum text-sm h-10 rounded-xl disabled:opacity-30 [color-scheme:dark]"
+                onChange={setTob}
+                disabled={isTimeUnknown}
+                placeholder="Select a time"
+                className="bg-black/40 border-white/10"
               />
             </div>
           </div>

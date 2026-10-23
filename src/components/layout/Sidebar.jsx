@@ -14,12 +14,14 @@ import {
   LogOut,
   User,
   Compass,
+  Trash2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { logout, openAuthModal } from "@/features/auth"
-import { setActiveConversation, clearActiveConversation } from "@/features/vaani"
-import { fetchUserThreads, fetchThreadById } from "@/features/vaani/vaaniApi"
+import { setActiveConversation, setActiveThreadId, clearActiveConversation, deleteConversation } from "@/features/vaani"
+import { fetchUserThreads, fetchThreadById, deleteThread } from "@/features/vaani/vaaniApi"
 import UserProfileMenu from "@/features/user/components/UserProfileMenu"
+import { isToday, isYesterday, differenceInCalendarDays, format } from "date-fns"
 
 const navItems = [
   { label: "My Kundli", path: "/kundli", icon: Compass },
@@ -28,6 +30,20 @@ const navItems = [
   { label: "Calculators", path: "/calculators", icon: Calculator },
   { label: "Reports", path: "/reports", icon: FileText },
 ]
+
+function getTimelineBucket(dateInput) {
+  if (!dateInput) return "TODAY"
+  const date = new Date(dateInput)
+  if (isNaN(date.getTime())) return "TODAY"
+
+  if (isToday(date)) return "TODAY"
+  if (isYesterday(date)) return "YESTERDAY"
+
+  const diff = differenceInCalendarDays(new Date(), date)
+  if (diff <= 7) return "PREVIOUS 7 DAYS"
+  if (diff <= 30) return "PREVIOUS 30 DAYS"
+  return format(date, "MMMM yyyy").toUpperCase()
+}
 
 export default function Sidebar({
   onOpenBindModal,
@@ -40,7 +56,7 @@ export default function Sidebar({
   const [activeFilter, setActiveFilter] = useState("ALL")
   const dispatch = useDispatch()
   const { isAuthenticated, user, birthDetails } = useSelector((state) => state.auth || {})
-  const { conversations = [], serverThreads = [], activeConversationId } =
+  const { conversations = [], serverThreads = [], activeConversationId, activeThreadId } =
     useSelector((state) => state.vaani || {})
   const [searchParams] = useSearchParams()
   const location = useLocation()
@@ -205,23 +221,48 @@ export default function Sidebar({
             </div>
 
             {(() => {
-              // Combine active conversations and server threads
-              const allReadings = [...conversations]
+              // Deduplicate readings and threads so each thread appears once in the sidebar
+              const threadMap = new Map()
+
+              // 1. Add server threads as baseline
               serverThreads.forEach((th) => {
-                const alreadyPresent = allReadings.some(
-                  (c) => c.threadId === th.id || c.id === th.id
-                )
-                if (!alreadyPresent) {
-                  allReadings.push({
-                    id: th.id,
-                    threadId: th.id,
-                    question: th.title,
-                    engine: th.engine,
-                    createdAt: th.lastMessageAt || th.createdAt,
-                    isServerThread: true,
+                threadMap.set(th.id, {
+                  id: th.id,
+                  threadId: th.id,
+                  question: th.title,
+                  engine: th.engine,
+                  createdAt: th.lastMessageAt || th.createdAt,
+                  isServerThread: true,
+                })
+              })
+
+              // 2. Add or update with local conversations
+              conversations.forEach((c) => {
+                const key = c.threadId || c.id
+                if (threadMap.has(key)) {
+                  const existing = threadMap.get(key)
+                  const timeC = new Date(c.createdAt || 0).getTime()
+                  const timeExisting = new Date(existing.createdAt || 0).getTime()
+                  if (timeC > timeExisting) {
+                    threadMap.set(key, {
+                      ...existing,
+                      question: existing.question || c.question,
+                      createdAt: c.createdAt,
+                    })
+                  }
+                } else {
+                  threadMap.set(key, {
+                    id: c.id,
+                    threadId: c.threadId || c.id,
+                    question: c.question || "Untitled Reading",
+                    engine: c.engine || "vaani",
+                    createdAt: c.createdAt,
+                    isServerThread: Boolean(c.threadId),
                   })
                 }
               })
+
+              const allReadings = Array.from(threadMap.values())
 
               const filtered = allReadings.filter((item) => {
                 if (activeFilter === "VAANI") return item.engine === "vaani"
@@ -237,50 +278,109 @@ export default function Sidebar({
                 )
               }
 
+              // Sort chronologically newest first
+              filtered.sort((a, b) => {
+                const timeA = new Date(a.createdAt || a.timestamp || 0).getTime()
+                const timeB = new Date(b.createdAt || b.timestamp || 0).getTime()
+                return timeB - timeA
+              })
+
+              // Group readings into timeline buckets preserving chronological order
+              const timelineGroups = []
+              const groupMap = new Map()
+
+              filtered.forEach((item) => {
+                const bucket = getTimelineBucket(item.createdAt || item.timestamp)
+                if (!groupMap.has(bucket)) {
+                  groupMap.set(bucket, [])
+                  timelineGroups.push(bucket)
+                }
+                groupMap.get(bucket).push(item)
+              })
+
               const handleItemClick = (item) => {
-                if (item.isServerThread) {
-                  dispatch(fetchThreadById(item.id))
-                } else {
-                  dispatch(setActiveConversation(item.id))
+                const targetId = item.id
+                const targetThreadId = item.threadId || item.id
+
+                dispatch(setActiveConversation(targetId))
+                dispatch(setActiveThreadId(targetThreadId))
+
+                if (item.isServerThread || targetThreadId) {
+                  dispatch(fetchThreadById(targetThreadId))
                 }
                 if (location.pathname !== "/") {
                   navigate(`/?engine=${item.engine || "vaani"}`)
                 }
               }
 
+              const handleDeleteItem = (e, item) => {
+                e.stopPropagation()
+                if (item.isServerThread) {
+                  dispatch(deleteThread(item.id))
+                }
+                dispatch(deleteConversation(item.id))
+              }
+
               return (
-                <div className="space-y-2.5 pt-1 max-h-[240px] overflow-y-auto no-scrollbar">
-                  {filtered.map((item, idx) => (
-                    <div key={item.id} className="space-y-1">
-                      <div className="flex items-center justify-between text-[10px] font-mono text-mlh-muted px-1">
-                        <span>TODAY</span>
-                        <span>{idx < 9 ? `0${idx + 1}` : idx + 1}</span>
+                <div className="space-y-3 pt-1 max-h-[320px] overflow-y-auto no-scrollbar pr-0.5">
+                  {timelineGroups.map((groupKey) => {
+                    const items = groupMap.get(groupKey) || []
+                    return (
+                      <div key={groupKey} className="space-y-1">
+                        <div className="flex items-center justify-between text-[10px] font-mono text-mlh-muted px-1.5 pt-1.5 pb-0.5 tracking-wider uppercase select-none">
+                          <span>{groupKey}</span>
+                          <span className="text-[9px] text-white/30 font-sans">{items.length}</span>
+                        </div>
+                        <div className="space-y-1">
+                          {items.map((item) => {
+                            const isSelected =
+                              activeConversationId === item.id ||
+                              activeConversationId === item.threadId ||
+                              (activeThreadId && (activeThreadId === item.id || activeThreadId === item.threadId))
+
+                            return (
+                              <div
+                                key={item.id}
+                                className="relative group/reading flex items-center"
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => handleItemClick(item)}
+                                  className={`w-full text-left p-2 rounded-xl text-xs font-sans transition-all cursor-pointer flex items-start gap-2 pr-7 ${
+                                    isSelected
+                                      ? item.engine === "astropedia"
+                                        ? "bg-amber-500/15 text-white border border-amber-500/40 shadow-xs"
+                                        : "bg-mlh-plum/20 text-white border border-mlh-plum/50 shadow-xs"
+                                      : "text-white/70 hover:text-white hover:bg-white/5 border border-transparent"
+                                  }`}
+                                >
+                                  <span className="flex-none pt-0.5">
+                                    {item.engine === "astropedia" ? (
+                                      <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                                    ) : (
+                                      <Sparkles className="w-3.5 h-3.5 text-mlh-plum-300" />
+                                    )}
+                                  </span>
+                                  <span className="line-clamp-2 leading-snug flex-1">
+                                    {item.question || item.title || "Untitled Reading"}
+                                  </span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleDeleteItem(e, item)}
+                                  title="Delete reading"
+                                  className="absolute right-1.5 top-2.5 opacity-0 group-hover/reading:opacity-100 transition-opacity p-1 rounded-md text-white/40 hover:text-rose-400 hover:bg-white/10 cursor-pointer"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              </div>
+                            )
+                          })}
+                        </div>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleItemClick(item)}
-                        className={`w-full text-left p-2 rounded-xl text-xs font-sans transition-all cursor-pointer flex items-start gap-2 ${
-                          activeConversationId === item.id ||
-                          activeConversationId === item.threadId
-                            ? item.engine === "astropedia"
-                              ? "bg-amber-500/15 text-white border border-amber-500/40"
-                              : "bg-mlh-plum/20 text-white border border-mlh-plum/50"
-                            : "text-white/70 hover:text-white hover:bg-white/5 border border-transparent"
-                        }`}
-                      >
-                        <span className="flex-none pt-0.5">
-                          {item.engine === "astropedia" ? (
-                            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
-                          ) : (
-                            <Sparkles className="w-3.5 h-3.5 text-mlh-plum-300" />
-                          )}
-                        </span>
-                        <span className="line-clamp-2 leading-snug flex-1">
-                          {item.question}
-                        </span>
-                      </button>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )
             })()}

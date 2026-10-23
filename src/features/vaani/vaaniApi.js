@@ -148,9 +148,121 @@ export const fetchThreadById = createAsyncThunk(
     try {
       const response = await apiClient.get(`/chat/threads/${threadId}`)
       if (response.data && response.data.success) {
+        // Backend returns: { success: true, data: { thread, messages, readings } }
+        const payload = response.data.data || response.data || {}
+        const thread = payload.thread || null
+        let readings = Array.isArray(payload.readings) ? [...payload.readings] : []
+        const messages = Array.isArray(payload.messages) ? payload.messages : []
+
+        // If readings array is empty, construct readings from raw assistant/user messages
+        if (readings.length === 0 && messages.length > 0) {
+          for (let i = 0; i < messages.length; i++) {
+            const msg = messages[i]
+            if (msg.role === "assistant") {
+              const prevUser = i > 0 && messages[i - 1]?.role === "user" ? messages[i - 1] : null
+              let structured = msg.structuredData || msg.structured_data || {}
+              if (typeof structured === "string") {
+                try {
+                  structured = JSON.parse(structured)
+                } catch {
+                  structured = {}
+                }
+              }
+              let paragraphs = structured.paragraphs || (msg.content ? [msg.content] : [])
+              if (typeof paragraphs === "string") {
+                try {
+                  paragraphs = JSON.parse(paragraphs)
+                } catch {
+                  paragraphs = [paragraphs]
+                }
+              }
+              readings.push({
+                id: msg.id,
+                threadId: thread?.id || threadId,
+                engine: thread?.engine || "vaani",
+                question: prevUser ? prevUser.content : (thread?.title || "Reading"),
+                createdAt: msg.createdAt || msg.created_at || new Date().toISOString(),
+                openingThought: structured.openingThought || "",
+                thinkingSteps: Array.isArray(structured.thinkingSteps) ? structured.thinkingSteps : [],
+                paragraphs: Array.isArray(paragraphs) ? paragraphs : [paragraphs],
+                astrologyBehind: Array.isArray(structured.astrologyBehind) ? structured.astrologyBehind : [],
+                suggestedQuestions: Array.isArray(structured.suggestedQuestions) ? structured.suggestedQuestions : [],
+                offer: structured.offer || null,
+                feedback: msg.feedback,
+              })
+            }
+          }
+        }
+
+        // Normalize every reading to ensure clean arrays and strings
+        readings = readings.map((r) => {
+          let structured = r.structuredData || r.structured_data || {}
+          if (typeof structured === "string") {
+            try {
+              structured = JSON.parse(structured)
+            } catch {
+              structured = {}
+            }
+          }
+          let paragraphs = r.paragraphs
+          if (typeof paragraphs === "string") {
+            try {
+              paragraphs = JSON.parse(paragraphs)
+            } catch {
+              paragraphs = [paragraphs]
+            }
+          }
+          if (!paragraphs || !Array.isArray(paragraphs) || paragraphs.length === 0) {
+            if (Array.isArray(structured.paragraphs) && structured.paragraphs.length > 0) {
+              paragraphs = structured.paragraphs
+            } else if (r.content) {
+              paragraphs = [r.content]
+            } else {
+              paragraphs = ["Consultation reading."]
+            }
+          }
+          return {
+            ...r,
+            threadId: r.threadId || thread?.id || threadId,
+            engine: r.engine || thread?.engine || "vaani",
+            question: r.question || thread?.title || "Reading",
+            openingThought: r.openingThought || structured.openingThought || "",
+            thinkingSteps: Array.isArray(r.thinkingSteps)
+              ? r.thinkingSteps
+              : Array.isArray(structured.thinkingSteps)
+              ? structured.thinkingSteps
+              : [],
+            paragraphs: Array.isArray(paragraphs) ? paragraphs : [paragraphs],
+            astrologyBehind: Array.isArray(r.astrologyBehind)
+              ? r.astrologyBehind
+              : Array.isArray(structured.astrologyBehind)
+              ? structured.astrologyBehind
+              : [],
+            suggestedQuestions: Array.isArray(r.suggestedQuestions)
+              ? r.suggestedQuestions
+              : Array.isArray(structured.suggestedQuestions)
+              ? structured.suggestedQuestions
+              : [],
+            offer: r.offer || structured.offer || null,
+          }
+        })
+
+        // If still empty but thread exists, provide a fallback entry
+        if (readings.length === 0 && thread) {
+          readings.push({
+            id: thread.id,
+            threadId: thread.id,
+            engine: thread.engine || "vaani",
+            question: thread.title || "Consultation",
+            createdAt: thread.createdAt || new Date().toISOString(),
+            paragraphs: ["Consultation thread opened."],
+          })
+        }
+
         return {
-          thread: response.data.thread,
-          readings: response.data.readings || [],
+          thread,
+          readings,
+          threadId,
         }
       }
       return rejectWithValue("Failed to fetch conversation thread.")

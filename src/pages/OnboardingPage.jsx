@@ -16,6 +16,8 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import MeloohaDatePicker from "@/components/common/MeloohaDatePicker"
+import MeloohaTimePicker from "@/components/common/MeloohaTimePicker"
 import { toast } from "sonner"
 import { apiClient } from "@/lib/api-client"
 import {
@@ -44,8 +46,6 @@ export default function OnboardingPage() {
   // Step 2: Birth Details & Location Local State
   const [dob, setDob] = useState(() => onboardingData?.dob || "")
   const [tob, setTob] = useState(() => onboardingData?.tob || "")
-  const [isDobFocused, setIsDobFocused] = useState(false)
-  const [isTobFocused, setIsTobFocused] = useState(false)
   const [isTimeUnknown, setIsTimeUnknown] = useState(
     () => onboardingData?.isTimeUnknown || false
   )
@@ -428,38 +428,23 @@ export default function OnboardingPage() {
                     <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/60 block">
                       DATE OF BIRTH *
                     </label>
-                    <div className="relative">
-                      <Input
-                        type={isDobFocused || dob ? "date" : "text"}
-                        placeholder="Select a date"
-                        value={dob}
-                        onFocus={() => setIsDobFocused(true)}
-                        onBlur={() => setIsDobFocused(false)}
-                        onChange={(e) => setDob(e.target.value)}
-                        className="w-full rounded-2xl border border-white/10 bg-[#1a1424] px-4 py-3 text-xs sm:text-sm text-white placeholder:text-white/40 focus-visible:ring-1 focus-visible:ring-[#b32b6e] focus-visible:border-[#b32b6e] transition-all cursor-pointer h-auto [color-scheme:dark]"
-                        required
-                      />
-                      <Calendar className="w-4 h-4 text-white/40 absolute right-3.5 top-3.5 pointer-events-none" />
-                    </div>
+                    <MeloohaDatePicker
+                      value={dob}
+                      onChange={setDob}
+                      placeholder="Select a date"
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/60 block">
                       TIME OF BIRTH
                     </label>
-                    <div className="relative">
-                      <Input
-                        type={isTobFocused || tob || isTimeUnknown ? "time" : "text"}
-                        placeholder="Select a time"
-                        value={isTimeUnknown ? "12:00" : tob}
-                        disabled={isTimeUnknown}
-                        onFocus={() => setIsTobFocused(true)}
-                        onBlur={() => setIsTobFocused(false)}
-                        onChange={(e) => setTob(e.target.value)}
-                        className="w-full rounded-2xl border border-white/10 bg-[#1a1424] px-4 py-3 text-xs sm:text-sm text-white placeholder:text-white/40 focus-visible:ring-1 focus-visible:ring-[#b32b6e] focus-visible:border-[#b32b6e] transition-all disabled:opacity-30 cursor-pointer h-auto [color-scheme:dark]"
-                      />
-                      <Clock className="w-4 h-4 text-white/40 absolute right-3.5 top-3.5 pointer-events-none" />
-                    </div>
+                    <MeloohaTimePicker
+                      value={isTimeUnknown ? "12:00" : tob}
+                      onChange={setTob}
+                      disabled={isTimeUnknown}
+                      placeholder="Select a time"
+                    />
                   </div>
                 </div>
 

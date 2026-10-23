@@ -78,8 +78,9 @@ function renderParagraph(text, isVaani) {
 export default function VaaniChatConversation({ onOpenBuyModal }) {
   const dispatch = useDispatch()
   const {
-    conversations,
+    conversations = [],
     activeConversationId,
+    activeThreadId,
     isGenerating,
     thinkingStep,
     thinkingSteps = [],
@@ -98,13 +99,47 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
       ? user.credit_balance
       : 0
 
-  const activeConv = conversations.find((c) => c.id === activeConversationId) || conversations[0]
+  // 1. Identify the current active thread ID
+  const currentThreadId =
+    activeThreadId ||
+    (activeConversationId
+      ? conversations.find(
+          (c) => c.id === activeConversationId || c.threadId === activeConversationId
+        )?.threadId || activeConversationId
+      : null)
+
+  // 2. Filter readings that belong to this thread or active conversation
+  const threadReadings = currentThreadId
+    ? conversations.filter(
+        (c) => c.threadId === currentThreadId || c.id === currentThreadId
+      )
+    : conversations.filter((c) => c.id === activeConversationId)
+
+  // 3. Sort chronologically (oldest first) so user reads downwards naturally
+  const displayReadings = [...threadReadings].sort((a, b) => {
+    const timeA = new Date(a.createdAt || 0).getTime()
+    const timeB = new Date(b.createdAt || 0).getTime()
+    return timeA - timeB
+  })
+
+  // 4. Latest reading in the active thread
+  const latestReading =
+    displayReadings.length > 0 ? displayReadings[displayReadings.length - 1] : null
+
+  const isVaani = (latestReading?.engine || pendingEngine || "vaani") === "vaani"
 
   const [followUpQuery, setFollowUpQuery] = useState("")
   const [inFlightQuery, setInFlightQuery] = useState("")
-  const [expandedAstrology, setExpandedAstrology] = useState(false)
+  const [expandedAstrologyMap, setExpandedAstrologyMap] = useState({})
   const [countdownSeconds, setCountdownSeconds] = useState(582)
   const scrollAreaRef = useRef(null)
+
+  const toggleExpandedAstrology = (id) => {
+    setExpandedAstrologyMap((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }))
+  }
 
   // Countdown timer for promotional offer banner
   useEffect(() => {
@@ -114,18 +149,18 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
     return () => clearInterval(timer)
   }, [])
 
-  // Auto-scroll inside message list when reading updates or generates
+  // Auto-scroll inside message list when readings update or generator thinking step changes
   useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
     }
-  }, [activeConv, isGenerating, thinkingStep, thinkingSteps])
+  }, [displayReadings.length, isGenerating, thinkingStep, thinkingSteps])
 
   const handleSendFollowUp = (queryToSend) => {
     const text = (queryToSend || followUpQuery).trim()
     if (!text || isGenerating) return
 
-    const currentEngine = activeConv?.engine || pendingEngine || "vaani"
+    const currentEngine = latestReading?.engine || pendingEngine || "vaani"
 
     if (currentEngine === "vaani") {
       if (activeQuestionQuota <= 0) {
@@ -157,7 +192,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
     streamChatTurn({
       engine: currentEngine,
       query: text,
-      threadId: activeConv?.threadId,
+      threadId: currentThreadId || latestReading?.threadId,
       chartId: birthDetails?.chartId,
       onThinking: (step) => {
         dispatch(setThinkingStep(step))
@@ -188,20 +223,15 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
     }
   }
 
-  const handleFeedback = (feedbackType) => {
-    if (activeConv) {
-      dispatch(updateConversationFeedback({ id: activeConv.id, feedback: feedbackType }))
-      dispatch(submitMessageFeedback({ messageId: activeConv.id, feedback: feedbackType }))
+  const handleFeedback = (readingId, feedbackType) => {
+    if (readingId) {
+      dispatch(updateConversationFeedback({ id: readingId, feedback: feedbackType }))
+      dispatch(submitMessageFeedback({ messageId: readingId, feedback: feedbackType }))
     }
   }
 
-  const isVaani = (activeConv?.engine || pendingEngine || "vaani") === "vaani"
-  const userQuestionText =
-    inFlightQuery ||
-    (isGenerating ? pendingQuestion : null) ||
-    activeConv?.question
-
-  if (!activeConv && !isGenerating && !inFlightQuery && !pendingQuestion) {
+  // If there are no readings in this thread and nothing in progress, return null so home page shows hero input
+  if (displayReadings.length === 0 && !isGenerating && !inFlightQuery && !pendingQuestion) {
     return null
   }
 
@@ -233,61 +263,362 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
           ref={scrollAreaRef}
           className="flex w-full max-w-[900px] flex-1 flex-col gap-[30px] overflow-x-hidden overflow-y-auto pr-1 pb-2 mlh-thin-scroll"
         >
-          {/* User Question Speech Bubble (Aligned to the Right) */}
-          {userQuestionText && (
-            <div className="animate-mlh-rise flex max-w-[700px] flex-col items-end self-end">
-              <span className="text-white/35 mb-2.5 font-mono text-[9.5px] tracking-[0.2em] uppercase">
-                You
-              </span>
-              <div
-                className={`rounded-[18px_18px_4px_18px] border px-[18px] py-3 font-sans text-[15.5px] sm:text-[18px] leading-[1.4] text-pretty shadow-[0_10px_30px_rgba(0,0,0,.35)] ${
-                  isVaani
-                    ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#811756]/25 to-[#4d0e34]/15 text-white/95"
-                    : "border-amber-500/35 bg-gradient-to-br from-[#df8107]/25 to-[#92400e]/15 text-white/95"
-                }`}
-              >
-                {userQuestionText}
-              </div>
-            </div>
-          )}
+          {/* Render All Completed Turns for this Thread */}
+          {displayReadings.map((reading, rIdx) => {
+            const isLastReading = rIdx === displayReadings.length - 1
+            const readingIsVaani = (reading.engine || "vaani") === "vaani"
+            const isExpanded = Boolean(expandedAstrologyMap[reading.id || rIdx])
 
-          {/* Engine Reading Bubble (Open consult scroll with Left Accent Border) */}
-          <div
-            className={`animate-mlh-rise max-w-[840px] border-l pl-4 sm:pl-[22px] ${
-              isVaani ? "border-mlh-plum-400/28" : "border-amber-500/30"
-            }`}
-          >
-            {/* Engine Header */}
-            <div className="mb-2.5 flex items-center gap-2.5">
-              <span
-                aria-hidden="true"
-                className={`relative grid h-[26px] w-[26px] flex-none place-items-center rounded-[9px] border ${
-                  isVaani
-                    ? "border-mlh-plum-400/45 text-mlh-plum-300 shadow-[0_0_14px_rgba(154,69,120,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(154,69,120,0.42),rgba(154,69,120,0.08))]"
-                    : "border-amber-500/45 text-amber-300 shadow-[0_0_14px_rgba(223,129,7,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(223,129,7,0.42),rgba(223,129,7,0.08))]"
-                }`}
-              >
-                {isVaani ? (
-                  <Sparkles className="w-3.5 h-3.5 text-mlh-plum-300" />
-                ) : (
-                  <BookOpen className="w-3.5 h-3.5 text-amber-300" />
+            return (
+              <div key={reading.id || rIdx} className="flex flex-col gap-[30px]">
+                {/* User Question Speech Bubble (Aligned to the Right) */}
+                {reading.question && (
+                  <div className="animate-mlh-rise flex max-w-[700px] flex-col items-end self-end">
+                    <span className="text-white/35 mb-2.5 font-mono text-[9.5px] tracking-[0.2em] uppercase">
+                      You
+                    </span>
+                    <div
+                      className={`rounded-[18px_18px_4px_18px] border px-[18px] py-3 font-sans text-[15.5px] sm:text-[18px] leading-[1.4] text-pretty shadow-[0_10px_30px_rgba(0,0,0,.35)] ${
+                        readingIsVaani
+                          ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#811756]/25 to-[#4d0e34]/15 text-white/95"
+                          : "border-amber-500/35 bg-gradient-to-br from-[#df8107]/25 to-[#92400e]/15 text-white/95"
+                      }`}
+                    >
+                      {reading.question}
+                    </div>
+                  </div>
                 )}
-              </span>
-              <span
-                className={`font-mono text-[9px] tracking-[0.2em] uppercase sm:text-[9.5px] ${
-                  isVaani ? "text-mlh-plum-300/85" : "text-amber-400/90"
+
+                {/* Engine Reading Bubble (Open consult scroll with Left Accent Border) */}
+                <div
+                  className={`animate-mlh-rise max-w-[840px] border-l pl-4 sm:pl-[22px] ${
+                    readingIsVaani ? "border-mlh-plum-400/28" : "border-amber-500/30"
+                  }`}
+                >
+                  {/* Engine Header */}
+                  <div className="mb-2.5 flex items-center gap-2.5">
+                    <span
+                      aria-hidden="true"
+                      className={`relative grid h-[26px] w-[26px] flex-none place-items-center rounded-[9px] border ${
+                        readingIsVaani
+                          ? "border-mlh-plum-400/45 text-mlh-plum-300 shadow-[0_0_14px_rgba(154,69,120,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(154,69,120,0.42),rgba(154,69,120,0.08))]"
+                          : "border-amber-500/45 text-amber-300 shadow-[0_0_14px_rgba(223,129,7,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(223,129,7,0.42),rgba(223,129,7,0.08))]"
+                      }`}
+                    >
+                      {readingIsVaani ? (
+                        <Sparkles className="w-3.5 h-3.5 text-mlh-plum-300" />
+                      ) : (
+                        <BookOpen className="w-3.5 h-3.5 text-amber-300" />
+                      )}
+                    </span>
+                    <span
+                      className={`font-mono text-[9px] tracking-[0.2em] uppercase sm:text-[9.5px] ${
+                        readingIsVaani ? "text-mlh-plum-300/85" : "text-amber-400/90"
+                      }`}
+                    >
+                      {readingIsVaani
+                        ? "Vaani · reading from your birth chart"
+                        : "Vaani · Astropedia"}
+                    </span>
+                  </div>
+
+                  {/* Content Body */}
+                  <div className="min-w-0 flex-1">
+                    {/* Consulted Vedic Tools Badges */}
+                    {reading.thinkingSteps && reading.thinkingSteps.length > 0 && (
+                      <div className="mb-3.5 flex flex-wrap items-center gap-2">
+                        <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40">
+                          Tools Consulted:
+                        </span>
+                        {reading.thinkingSteps.map((toolBadge, tbIdx) => (
+                          <span
+                            key={tbIdx}
+                            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] tracking-wide ${
+                              readingIsVaani
+                                ? "border-mlh-plum-400/25 bg-mlh-plum-500/8 text-mlh-plum-200/90"
+                                : "border-amber-500/25 bg-amber-500/8 text-amber-200/90"
+                            }`}
+                          >
+                            <span className="text-emerald-400/90 text-[9px]">✦</span>
+                            <span>{toolBadge}</span>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Opening Thought Note */}
+                    {reading.openingThought && (
+                      <p className="mb-4 text-white/86 font-sans text-[17px] leading-[1.6] sm:text-[20px]">
+                        {reading.openingThought}
+                      </p>
+                    )}
+
+                    {/* Reading Paragraphs */}
+                    <div className="text-white/86 font-sans text-[17px] leading-[1.6] text-pretty sm:text-[20px]">
+                      {reading.paragraphs?.map((p, idx) => (
+                        <div key={idx} className="mb-4 last:mb-0">
+                          {renderParagraph(p, readingIsVaani)}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Promotional Offer Banner (Melooha Ref 15 exact structure, shown on latest reading) */}
+                    {readingIsVaani && isLastReading && (reading.offer || activeQuestionQuota <= 0) && (
+                      <div className="border-amber-500/20 bg-gradient-to-b from-[#24131b]/60 to-[#120a10]/80 relative mt-4 overflow-hidden rounded-[16px] border p-4 sm:p-5 shadow-lg">
+                        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                          <div className="text-amber-300/85 flex items-center gap-2 font-mono text-[9px] tracking-[0.22em] uppercase">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                            Offer
+                          </div>
+                          <span className="border-amber-500/35 bg-amber-500/12 text-amber-300 rounded-md border px-2 py-[2px] font-mono text-[9px] tracking-[0.14em] whitespace-nowrap uppercase">
+                            {countdownSeconds > 0 ? formatCountdown(countdownSeconds) : "Offer ended"}
+                          </span>
+                        </div>
+
+                        <h3 className="text-white mt-2.5 font-serif text-[21px] leading-[1.15] sm:text-[24px]">
+                          {reading.offer?.title || "Get 12 questions at 67% discount"}
+                        </h3>
+                        <p className="text-white/70 mt-1.5 max-w-[62ch] text-[13px] leading-snug sm:text-[13.5px]">
+                          {reading.offer?.description ||
+                            "Your question balance is ZERO. Buy 12 questions at 67% off. Promo code: QUICKGOLD"}
+                        </p>
+
+                        <div className="border-amber-500/15 mt-3.5 border-t pt-3.5">
+                          <div className="flex flex-wrap items-center gap-x-5 gap-y-3 justify-between">
+                            <div className="text-white/40 font-mono text-[9px] tracking-[0.16em] uppercase">
+                              Code {reading.offer?.promoCode || "QUICKGOLD"}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                onOpenBuyModal &&
+                                onOpenBuyModal({
+                                  promoCode: reading.offer?.promoCode || "QUICKGOLD",
+                                  packId: "pack_gold_12",
+                                })
+                              }
+                              className="from-[#feb371] to-[#df8107] text-[#0f090c] shrink-0 rounded-full bg-gradient-to-b px-5 py-2.5 text-[13.5px] font-semibold shadow-[0_0_26px_rgba(223,129,7,.26)] transition-all duration-200 hover:shadow-[0_0_34px_rgba(223,129,7,.42)] hover:brightness-110 cursor-pointer"
+                            >
+                              Buy Now
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* The Astrology Behind This (Collapsible Citations Drawer) */}
+                    {reading.astrologyBehind && reading.astrologyBehind.length > 0 && (
+                      <div className="mt-4">
+                        <div className="flex flex-wrap gap-2.5">
+                          <button
+                            type="button"
+                            aria-expanded={isExpanded}
+                            onClick={() => toggleExpandedAstrology(reading.id || rIdx)}
+                            className={`flex cursor-pointer items-center gap-2.5 rounded-full border px-4 py-2 font-sans text-[15px] sm:text-[16px] transition-[color,background-color,border-color] duration-200 ${
+                              readingIsVaani
+                                ? "border-mlh-plum-400/28 bg-mlh-plum-500/8 text-white/75 hover:border-mlh-plum-400/52 hover:text-white"
+                                : "border-amber-500/28 bg-amber-500/8 text-white/75 hover:border-amber-500/52 hover:text-white"
+                            }`}
+                          >
+                            <span
+                              aria-hidden="true"
+                              className={`text-[12px] leading-none ${
+                                readingIsVaani ? "text-mlh-plum-300" : "text-amber-400"
+                              }`}
+                            >
+                              ✦
+                            </span>
+                            <span>
+                              {readingIsVaani ? "The astrology behind this" : "Classical references & citations"}
+                            </span>
+                            <ChevronDown
+                              className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                                isExpanded ? "rotate-180" : ""
+                              }`}
+                            />
+                          </button>
+                        </div>
+
+                        {isExpanded && (
+                          <div
+                            className={`mt-3 overflow-hidden rounded-2xl border p-5 sm:px-[22px] ${
+                              readingIsVaani
+                                ? "border-mlh-plum-400/22 bg-mlh-plum-500/6"
+                                : "border-amber-500/22 bg-amber-500/6"
+                            }`}
+                          >
+                            <div
+                              className={`font-mono text-[9.5px] tracking-[0.22em] uppercase ${
+                                readingIsVaani ? "text-mlh-plum-300/85" : "text-amber-400/85"
+                              }`}
+                            >
+                              {readingIsVaani ? "What I read from your chart" : "Citations & Classical Treatises"}
+                            </div>
+                            <div className="mt-3.5 space-y-2.5 font-sans text-[15px] sm:text-[16px] leading-relaxed">
+                              {reading.astrologyBehind.map((item, aIdx) => {
+                                const match = item.match(/^(\d+\)\s*[^:]+:)(.*)$/)
+                                if (match) {
+                                  return (
+                                    <div key={aIdx} className="flex items-start gap-2 text-white/85">
+                                      <span className={`font-semibold shrink-0 ${readingIsVaani ? "text-mlh-plum-200" : "text-amber-200"}`}>
+                                        {match[1]}
+                                      </span>
+                                      <span className="text-white/75">{match[2]}</span>
+                                    </div>
+                                  )
+                                }
+                                return (
+                                  <div key={aIdx} className="text-white/80">
+                                    {item}
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Feedback Buttons */}
+                    <div className="mt-4">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-white/45 mr-1 font-mono text-[9px] tracking-[0.2em] uppercase">
+                          Was this useful
+                        </span>
+                        <button
+                          type="button"
+                          aria-label="Yes"
+                          onClick={() => handleFeedback(reading.id, "yes")}
+                          className={`grid h-[30px] w-[30px] cursor-pointer place-items-center rounded-lg border transition-colors ${
+                            reading.feedback === "yes"
+                              ? "border-emerald-500/80 bg-emerald-500/20 text-emerald-300"
+                              : readingIsVaani
+                              ? "border-mlh-plum-400/40 bg-mlh-plum-500/8 text-white/65 hover:border-mlh-plum-400/70 hover:text-white"
+                              : "border-amber-500/40 bg-amber-500/8 text-white/65 hover:border-amber-500/70 hover:text-white"
+                          }`}
+                        >
+                          <ThumbsUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="No"
+                          onClick={() => handleFeedback(reading.id, "no")}
+                          className={`grid h-[30px] w-[30px] cursor-pointer place-items-center rounded-lg border transition-colors ${
+                            reading.feedback === "no"
+                              ? "border-rose-500/80 bg-rose-500/20 text-rose-300"
+                              : readingIsVaani
+                              ? "border-mlh-plum-400/40 bg-mlh-plum-500/8 text-white/65 hover:border-mlh-plum-400/70 hover:text-white"
+                              : "border-amber-500/40 bg-amber-500/8 text-white/65 hover:border-amber-500/70 hover:text-white"
+                          }`}
+                        >
+                          <ThumbsDown className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Suggested Questions Grid (shown on latest reading) */}
+                    {isLastReading && reading.suggestedQuestions && reading.suggestedQuestions.length > 0 && (
+                      <div
+                        className={`mt-[22px] border-t pt-[18px] ${
+                          readingIsVaani ? "border-mlh-plum-400/18" : "border-amber-500/20"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div
+                            className={`font-mono text-[9.5px] tracking-[0.22em] uppercase ${
+                              readingIsVaani ? "text-mlh-plum-300/85" : "text-amber-400/85"
+                            }`}
+                          >
+                            {readingIsVaani ? "Suggested Follow-ups & Questions" : "Keep exploring"}
+                          </div>
+                          <span className="font-mono text-[9px] text-white/35 uppercase tracking-wider hidden sm:inline">
+                            Click to ask instantly
+                          </span>
+                        </div>
+                        <div className="mt-3.5 grid gap-2.5 sm:grid-cols-2">
+                          {reading.suggestedQuestions.map((q, qIdx) => (
+                            <button
+                              key={qIdx}
+                              type="button"
+                              onClick={() => handleSendFollowUp(q)}
+                              className={`group flex cursor-pointer items-center gap-2.5 rounded-full border px-4 py-2.5 text-left font-sans text-[15px] sm:text-[16px] transition-[color,background-color,border-color,transform,box-shadow] duration-200 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,.35)] ${
+                                readingIsVaani
+                                  ? "border-white/15 bg-mlh-plum-500/[.05] text-white/75 hover:border-mlh-plum-400/60 hover:bg-mlh-plum-500/14 hover:text-white"
+                                  : "border-white/15 bg-amber-500/[.05] text-white/75 hover:border-amber-500/60 hover:bg-amber-500/14 hover:text-white"
+                              }`}
+                            >
+                              <span className="flex-1">{q}</span>
+                              <span
+                                aria-hidden="true"
+                                className={`ml-auto pl-1 font-mono text-[11px] transition-transform duration-200 group-hover:translate-x-0.5 ${
+                                  readingIsVaani ? "text-mlh-plum-300/70" : "text-amber-300/70"
+                                }`}
+                              >
+                                →
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+
+          {/* Active Generating Turn (if isGenerating) */}
+          {isGenerating && (
+            <div className="flex flex-col gap-[30px]">
+              {(inFlightQuery || pendingQuestion) && (
+                <div className="animate-mlh-rise flex max-w-[700px] flex-col items-end self-end">
+                  <span className="text-white/35 mb-2.5 font-mono text-[9.5px] tracking-[0.2em] uppercase">
+                    You
+                  </span>
+                  <div
+                    className={`rounded-[18px_18px_4px_18px] border px-[18px] py-3 font-sans text-[15.5px] sm:text-[18px] leading-[1.4] text-pretty shadow-[0_10px_30px_rgba(0,0,0,.35)] ${
+                      isVaani
+                        ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#811756]/25 to-[#4d0e34]/15 text-white/95"
+                        : "border-amber-500/35 bg-gradient-to-br from-[#df8107]/25 to-[#92400e]/15 text-white/95"
+                    }`}
+                  >
+                    {inFlightQuery || pendingQuestion}
+                  </div>
+                </div>
+              )}
+
+              <div
+                className={`animate-mlh-rise max-w-[840px] border-l pl-4 sm:pl-[22px] ${
+                  isVaani ? "border-mlh-plum-400/28" : "border-amber-500/30"
                 }`}
               >
-                {isVaani
-                  ? "Vaani · reading from your birth chart"
-                  : "Vaani · Astropedia"}
-              </span>
-            </div>
+                <div className="mb-2.5 flex items-center gap-2.5">
+                  <span
+                    aria-hidden="true"
+                    className={`relative grid h-[26px] w-[26px] flex-none place-items-center rounded-[9px] border ${
+                      isVaani
+                        ? "border-mlh-plum-400/45 text-mlh-plum-300 shadow-[0_0_14px_rgba(154,69,120,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(154,69,120,0.42),rgba(154,69,120,0.08))]"
+                        : "border-amber-500/45 text-amber-300 shadow-[0_0_14px_rgba(223,129,7,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(223,129,7,0.42),rgba(223,129,7,0.08))]"
+                    }`}
+                  >
+                    {isVaani ? (
+                      <Sparkles className="w-3.5 h-3.5 text-mlh-plum-300" />
+                    ) : (
+                      <BookOpen className="w-3.5 h-3.5 text-amber-300" />
+                    )}
+                  </span>
+                  <span
+                    className={`font-mono text-[9px] tracking-[0.2em] uppercase sm:text-[9.5px] ${
+                      isVaani ? "text-mlh-plum-300/85" : "text-amber-400/90"
+                    }`}
+                  >
+                    {isVaani
+                      ? "Vaani · reading from your birth chart"
+                      : "Vaani · Astropedia"}
+                  </span>
+                </div>
 
-            {/* Content Body */}
-            <div className="min-w-0 flex-1">
-              {isGenerating ? (
-                <div className="py-4 space-y-3">
+                <div className="min-w-0 flex-1 py-3 space-y-3">
                   <div className="flex flex-col gap-2">
                     {thinkingSteps && thinkingSteps.length > 0 ? (
                       thinkingSteps.map((step, sIdx) => {
@@ -329,249 +660,9 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                     )}
                   </div>
                 </div>
-              ) : (
-                <>
-                  {/* Consulted Vedic Tools Badges */}
-                  {activeConv?.thinkingSteps && activeConv.thinkingSteps.length > 0 && (
-                    <div className="mb-3.5 flex flex-wrap items-center gap-2">
-                      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40">
-                        Tools Consulted:
-                      </span>
-                      {activeConv.thinkingSteps.map((toolBadge, tbIdx) => (
-                        <span
-                          key={tbIdx}
-                          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] tracking-wide ${
-                            isVaani
-                              ? "border-mlh-plum-400/25 bg-mlh-plum-500/8 text-mlh-plum-200/90"
-                              : "border-amber-500/25 bg-amber-500/8 text-amber-200/90"
-                          }`}
-                        >
-                          <span className="text-emerald-400/90 text-[9px]">✦</span>
-                          <span>{toolBadge}</span>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Opening Thought Note */}
-                  {activeConv?.openingThought && (
-                    <p className="mb-4 text-white/86 font-sans text-[17px] leading-[1.6] sm:text-[20px]">
-                      {activeConv.openingThought}
-                    </p>
-                  )}
-
-                  {/* Reading Paragraphs */}
-                  <div className="text-white/86 font-sans text-[17px] leading-[1.6] text-pretty sm:text-[20px]">
-                    {activeConv?.paragraphs?.map((p, idx) => (
-                      <div key={idx} className="mb-4 last:mb-0">
-                        {renderParagraph(p, isVaani)}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Promotional Offer Banner (Melooha Ref 15 exact structure) */}
-                  {isVaani && (activeConv?.offer || activeQuestionQuota <= 0) && (
-                    <div className="border-amber-500/20 bg-gradient-to-b from-[#24131b]/60 to-[#120a10]/80 relative mt-4 overflow-hidden rounded-[16px] border p-4 sm:p-5 shadow-lg">
-                      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-                        <div className="text-amber-300/85 flex items-center gap-2 font-mono text-[9px] tracking-[0.22em] uppercase">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                          Offer
-                        </div>
-                        <span className="border-amber-500/35 bg-amber-500/12 text-amber-300 rounded-md border px-2 py-[2px] font-mono text-[9px] tracking-[0.14em] whitespace-nowrap uppercase">
-                          {countdownSeconds > 0 ? formatCountdown(countdownSeconds) : "Offer ended"}
-                        </span>
-                      </div>
-
-                      <h3 className="text-white mt-2.5 font-serif text-[21px] leading-[1.15] sm:text-[24px]">
-                        {activeConv?.offer?.title || "Get 12 questions at 67% discount"}
-                      </h3>
-                      <p className="text-white/70 mt-1.5 max-w-[62ch] text-[13px] leading-snug sm:text-[13.5px]">
-                        {activeConv?.offer?.description ||
-                          "Your question balance is ZERO. Buy 12 questions at 67% off. Promo code: QUICKGOLD"}
-                      </p>
-
-                      <div className="border-amber-500/15 mt-3.5 border-t pt-3.5">
-                        <div className="flex flex-wrap items-center gap-x-5 gap-y-3 justify-between">
-                          <div className="text-white/40 font-mono text-[9px] tracking-[0.16em] uppercase">
-                            Code {activeConv?.offer?.promoCode || "QUICKGOLD"}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              onOpenBuyModal &&
-                              onOpenBuyModal({
-                                promoCode: activeConv?.offer?.promoCode || "QUICKGOLD",
-                                packId: "pack_gold_12",
-                              })
-                            }
-                            className="from-[#feb371] to-[#df8107] text-[#0f090c] shrink-0 rounded-full bg-gradient-to-b px-5 py-2.5 text-[13.5px] font-semibold shadow-[0_0_26px_rgba(223,129,7,.26)] transition-all duration-200 hover:shadow-[0_0_34px_rgba(223,129,7,.42)] hover:brightness-110 cursor-pointer"
-                          >
-                            Buy Now
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* The Astrology Behind This (Collapsible Citations Drawer) */}
-                  {activeConv?.astrologyBehind && activeConv.astrologyBehind.length > 0 && (
-                    <div className="mt-4">
-                      <div className="flex flex-wrap gap-2.5">
-                        <button
-                          type="button"
-                          aria-expanded={expandedAstrology}
-                          onClick={() => setExpandedAstrology(!expandedAstrology)}
-                          className={`flex cursor-pointer items-center gap-2.5 rounded-full border px-4 py-2 font-sans text-[15px] sm:text-[16px] transition-[color,background-color,border-color] duration-200 ${
-                            isVaani
-                              ? "border-mlh-plum-400/28 bg-mlh-plum-500/8 text-white/75 hover:border-mlh-plum-400/52 hover:text-white"
-                              : "border-amber-500/28 bg-amber-500/8 text-white/75 hover:border-amber-500/52 hover:text-white"
-                          }`}
-                        >
-                          <span
-                            aria-hidden="true"
-                            className={`text-[12px] leading-none ${
-                              isVaani ? "text-mlh-plum-300" : "text-amber-400"
-                            }`}
-                          >
-                            ✦
-                          </span>
-                          <span>
-                            {isVaani ? "The astrology behind this" : "Classical references & citations"}
-                          </span>
-                          <ChevronDown
-                            className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                              expandedAstrology ? "rotate-180" : ""
-                            }`}
-                          />
-                        </button>
-                      </div>
-
-                      {expandedAstrology && (
-                        <div
-                          className={`mt-3 overflow-hidden rounded-2xl border p-5 sm:px-[22px] ${
-                            isVaani
-                              ? "border-mlh-plum-400/22 bg-mlh-plum-500/6"
-                              : "border-amber-500/22 bg-amber-500/6"
-                          }`}
-                        >
-                          <div
-                            className={`font-mono text-[9.5px] tracking-[0.22em] uppercase ${
-                              isVaani ? "text-mlh-plum-300/85" : "text-amber-400/85"
-                            }`}
-                          >
-                            {isVaani ? "What I read from your chart" : "Citations & Classical Treatises"}
-                          </div>
-                          <div className="mt-3.5 space-y-2.5 font-sans text-[15px] sm:text-[16px] leading-relaxed">
-                            {activeConv.astrologyBehind.map((item, aIdx) => {
-                              const match = item.match(/^(\d+\)\s*[^:]+:)(.*)$/)
-                              if (match) {
-                                return (
-                                  <div key={aIdx} className="flex items-start gap-2 text-white/85">
-                                    <span className={`font-semibold shrink-0 ${isVaani ? "text-mlh-plum-200" : "text-amber-200"}`}>
-                                      {match[1]}
-                                    </span>
-                                    <span className="text-white/75">{match[2]}</span>
-                                  </div>
-                                )
-                              }
-                              return (
-                                <div key={aIdx} className="text-white/80">
-                                  {item}
-                                </div>
-                              )
-                            })}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Feedback Buttons (Melooha Ref 15 exact structure) */}
-                  <div className="mt-4">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-white/45 mr-1 font-mono text-[9px] tracking-[0.2em] uppercase">
-                        Was this useful
-                      </span>
-                      <button
-                        type="button"
-                        aria-label="Yes"
-                        onClick={() => handleFeedback("yes")}
-                        className={`grid h-[30px] w-[30px] cursor-pointer place-items-center rounded-lg border transition-colors ${
-                          activeConv?.feedback === "yes"
-                            ? "border-emerald-500/80 bg-emerald-500/20 text-emerald-300"
-                            : isVaani
-                            ? "border-mlh-plum-400/40 bg-mlh-plum-500/8 text-white/65 hover:border-mlh-plum-400/70 hover:text-white"
-                            : "border-amber-500/40 bg-amber-500/8 text-white/65 hover:border-amber-500/70 hover:text-white"
-                        }`}
-                      >
-                        <ThumbsUp className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        aria-label="No"
-                        onClick={() => handleFeedback("no")}
-                        className={`grid h-[30px] w-[30px] cursor-pointer place-items-center rounded-lg border transition-colors ${
-                          activeConv?.feedback === "no"
-                            ? "border-rose-500/80 bg-rose-500/20 text-rose-300"
-                            : isVaani
-                            ? "border-mlh-plum-400/40 bg-mlh-plum-500/8 text-white/65 hover:border-mlh-plum-400/70 hover:text-white"
-                            : "border-amber-500/40 bg-amber-500/8 text-white/65 hover:border-amber-500/70 hover:text-white"
-                        }`}
-                      >
-                        <ThumbsDown className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Ask Next / Keep Exploring Suggestions Grid */}
-                  {activeConv?.suggestedQuestions && activeConv.suggestedQuestions.length > 0 && (
-                    <div
-                      className={`mt-[22px] border-t pt-[18px] ${
-                        isVaani ? "border-mlh-plum-400/18" : "border-amber-500/20"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div
-                          className={`font-mono text-[9.5px] tracking-[0.22em] uppercase ${
-                            isVaani ? "text-mlh-plum-300/85" : "text-amber-400/85"
-                          }`}
-                        >
-                          {isVaani ? "Suggested Follow-ups & Questions" : "Keep exploring"}
-                        </div>
-                        <span className="font-mono text-[9px] text-white/35 uppercase tracking-wider hidden sm:inline">
-                          Click to ask instantly
-                        </span>
-                      </div>
-                      <div className="mt-3.5 grid gap-2.5 sm:grid-cols-2">
-                        {activeConv.suggestedQuestions.map((q, idx) => (
-                          <button
-                            key={idx}
-                            type="button"
-                            onClick={() => handleSendFollowUp(q)}
-                            className={`group flex cursor-pointer items-center gap-2.5 rounded-full border px-4 py-2.5 text-left font-sans text-[15px] sm:text-[16px] transition-[color,background-color,border-color,transform,box-shadow] duration-200 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,.35)] ${
-                              isVaani
-                                ? "border-white/15 bg-mlh-plum-500/[.05] text-white/75 hover:border-mlh-plum-400/60 hover:bg-mlh-plum-500/14 hover:text-white"
-                                : "border-white/15 bg-amber-500/[.05] text-white/75 hover:border-amber-500/60 hover:bg-amber-500/14 hover:text-white"
-                            }`}
-                          >
-                            <span className="flex-1">{q}</span>
-                            <span
-                              aria-hidden="true"
-                              className={`ml-auto pl-1 font-mono text-[11px] transition-transform duration-200 group-hover:translate-x-0.5 ${
-                                isVaani ? "text-mlh-plum-300/70" : "text-amber-300/70"
-                              }`}
-                            >
-                              →
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Pinned Bottom Follow-Up Composer (Melooha exact structure) */}
