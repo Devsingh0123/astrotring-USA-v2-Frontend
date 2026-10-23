@@ -3,6 +3,9 @@ import { Clock } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
+const HOURS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"))
+const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"))
+
 export default function MeloohaTimePicker({
   value = "",
   onChange,
@@ -12,70 +15,95 @@ export default function MeloohaTimePicker({
 }) {
   const [open, setOpen] = React.useState(false)
 
-  // Parse 24h "HH:mm" string into 12h pieces
-  const { hour12, minute, period } = React.useMemo(() => {
+  // Parse 24h "HH:mm" into 12h parts, default period is AM
+  const { parsedHour, parsedMinute, parsedPeriod } = React.useMemo(() => {
     if (!value || typeof value !== "string" || !value.includes(":")) {
-      return { hour12: "12", minute: "00", period: "PM" }
+      return { parsedHour: "12", parsedMinute: "00", parsedPeriod: "AM" }
     }
     const [hStr, mStr] = value.split(":")
     const h = parseInt(hStr, 10)
     const m = parseInt(mStr, 10)
     if (isNaN(h) || isNaN(m)) {
-      return { hour12: "12", minute: "00", period: "PM" }
+      return { parsedHour: "12", parsedMinute: "00", parsedPeriod: "AM" }
     }
     const isPm = h >= 12
     const h12 = h % 12 || 12
     return {
-      hour12: String(h12).padStart(2, "0"),
-      minute: String(m).padStart(2, "0"),
-      period: isPm ? "PM" : "AM",
+      parsedHour: String(h12).padStart(2, "0"),
+      parsedMinute: String(m).padStart(2, "0"),
+      parsedPeriod: isPm ? "PM" : "AM",
     }
   }, [value])
 
-  const [selectedHour, setSelectedHour] = React.useState(hour12)
-  const [selectedMinute, setSelectedMinute] = React.useState(minute)
-  const [selectedPeriod, setSelectedPeriod] = React.useState(period)
+  const [selectedHour, setSelectedHour] = React.useState(parsedHour)
+  const [selectedMinute, setSelectedMinute] = React.useState(parsedMinute)
+  const [selectedPeriod, setSelectedPeriod] = React.useState(parsedPeriod)
 
-  // Sync internal state when value prop changes
+  const hourRef = React.useRef(null)
+  const minuteRef = React.useRef(null)
+
   React.useEffect(() => {
-    setSelectedHour(hour12)
-    setSelectedMinute(minute)
-    setSelectedPeriod(period)
-  }, [hour12, minute, period])
+    setSelectedHour(parsedHour)
+    setSelectedMinute(parsedMinute)
+    setSelectedPeriod(parsedPeriod)
+  }, [parsedHour, parsedMinute, parsedPeriod])
 
-  const commitTime = (h12, min, ampm) => {
+  // Auto-scroll selected hour and minute to center on open
+  React.useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        if (hourRef.current) {
+          const el = hourRef.current.querySelector('[data-selected="true"]')
+          if (el) el.scrollIntoView({ block: "center", behavior: "auto" })
+        }
+        if (minuteRef.current) {
+          const el = minuteRef.current.querySelector('[data-selected="true"]')
+          if (el) el.scrollIntoView({ block: "center", behavior: "auto" })
+        }
+      }, 30)
+    }
+  }, [open])
+
+  // Convert to 24h string (HH:mm) and call onChange
+  const commit = (h12, min, ampm) => {
     let h = parseInt(h12, 10)
+    if (isNaN(h)) h = 12
     if (ampm === "PM" && h !== 12) h += 12
     if (ampm === "AM" && h === 12) h = 0
-    const formatted = `${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}`
+
+    let m = parseInt(min, 10)
+    if (isNaN(m) || m < 0 || m > 59) m = 0
+
+    const formatted = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`
     onChange?.(formatted)
   }
 
   const handleHourSelect = (h) => {
-    const formattedH = String(h).padStart(2, "0")
-    setSelectedHour(formattedH)
-    commitTime(formattedH, selectedMinute, selectedPeriod)
+    setSelectedHour(h)
+    commit(h, selectedMinute, selectedPeriod)
   }
 
   const handleMinuteSelect = (m) => {
-    const formattedM = String(m).padStart(2, "0")
-    setSelectedMinute(formattedM)
-    commitTime(selectedHour, formattedM, selectedPeriod)
+    setSelectedMinute(m)
+    commit(selectedHour, m, selectedPeriod)
   }
 
   const handlePeriodSelect = (ampm) => {
     setSelectedPeriod(ampm)
-    commitTime(selectedHour, selectedMinute, ampm)
+    commit(selectedHour, selectedMinute, ampm)
   }
 
-  const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"))
-  const minutes = [
-    "00", "05", "10", "15", "20", "25",
-    "30", "35", "40", "45", "50", "55",
-  ]
-
-  // Formatted display text
-  const displayText = value ? `${selectedHour}:${selectedMinute} ${selectedPeriod}` : ""
+  // Display text for input trigger button
+  const displayText = React.useMemo(() => {
+    if (!value || typeof value !== "string" || !value.includes(":")) return ""
+    const [hStr, mStr] = value.split(":")
+    const h = parseInt(hStr, 10)
+    const m = parseInt(mStr, 10)
+    if (isNaN(h) || isNaN(m)) return ""
+    const isPm = h >= 12
+    const h12 = h % 12 || 12
+    return `${String(h12).padStart(2, "0")}:${String(m).padStart(2, "0")} ${isPm ? "PM" : "AM"}`
+  }, [value])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -91,7 +119,12 @@ export default function MeloohaTimePicker({
           )}
         >
           <div className="flex items-center gap-2.5 truncate">
-            <span className={cn("truncate font-medium", !displayText ? "text-white/40" : "text-white")}>
+            <span
+              className={cn(
+                "truncate font-medium",
+                !displayText ? "text-white/40" : "text-white"
+              )}
+            >
               {displayText || placeholder}
             </span>
           </div>
@@ -101,92 +134,85 @@ export default function MeloohaTimePicker({
 
       <PopoverContent
         align="start"
-        className="w-56 p-2.5 border border-white/15 bg-[#171424] shadow-2xl rounded-2xl backdrop-blur-xl text-white space-y-2.5"
+        sideOffset={6}
+        collisionPadding={12}
+        className="w-56 p-2 border border-white/15 bg-[#161224] shadow-2xl rounded-2xl backdrop-blur-xl text-white select-none overflow-hidden"
       >
-        {/* Header Preview & AM/PM Switcher */}
-        <div className="flex items-center justify-between pb-1.5 border-b border-white/10">
-          <div className="text-sm font-semibold text-white tracking-wide font-mono">
-            {selectedHour}:{selectedMinute} {selectedPeriod}
-          </div>
-          <div className="flex items-center bg-[#100d18] p-0.5 rounded-lg border border-white/10">
-            {["AM", "PM"].map((p) => (
-              <button
-                key={p}
-                type="button"
-                onClick={() => handlePeriodSelect(p)}
-                className={cn(
-                  "px-2 py-0.5 text-[11px] font-semibold rounded-md transition-all cursor-pointer",
-                  selectedPeriod === p
-                    ? "bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] text-white shadow-sm"
-                    : "text-white/50 hover:text-white"
-                )}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Columns Grid: Hours & Minutes */}
-        <div className="grid grid-cols-2 gap-2">
-          {/* Hours column */}
-          <div className="space-y-1">
-            <span className="text-[9px] font-mono uppercase text-white/40 tracking-wider block text-center">
-              HOUR
-            </span>
-            <div className="grid grid-cols-3 gap-1 max-h-32 overflow-y-auto pr-0.5 no-scrollbar">
-              {hours.map((h) => (
+        {/* Clean 3-Column Time Picker: [Hour] | [Minute] | [AM/PM] */}
+        <div className="flex divide-x divide-white/10 h-48">
+          {/* Column 1: Hour (01 to 12) */}
+          <div
+            ref={hourRef}
+            className="flex-1 overflow-y-auto no-scrollbar py-1 px-1 space-y-0.5"
+          >
+            {HOURS.map((h) => {
+              const isSelected = selectedHour === h
+              return (
                 <button
                   key={h}
                   type="button"
+                  data-selected={isSelected}
                   onClick={() => handleHourSelect(h)}
                   className={cn(
-                    "h-6 rounded-md text-[11px] font-medium transition-all cursor-pointer flex items-center justify-center",
-                    selectedHour === h
-                      ? "bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] text-white font-bold shadow-sm"
-                      : "text-white/80 hover:bg-white/10 hover:text-white"
+                    "w-full h-8 rounded-lg text-xs font-mono font-medium flex items-center justify-center transition-all cursor-pointer",
+                    isSelected
+                      ? "bg-[#b32b6e] text-white font-bold shadow-sm"
+                      : "text-white/70 hover:bg-white/10 hover:text-white"
                   )}
                 >
                   {h}
                 </button>
-              ))}
-            </div>
+              )
+            })}
           </div>
 
-          {/* Minutes column */}
-          <div className="space-y-1">
-            <span className="text-[9px] font-mono uppercase text-white/40 tracking-wider block text-center">
-              MINUTE
-            </span>
-            <div className="grid grid-cols-3 gap-1 max-h-32 overflow-y-auto pr-0.5 no-scrollbar">
-              {minutes.map((m) => (
+          {/* Column 2: Minute (00 to 59 - All minutes) */}
+          <div
+            ref={minuteRef}
+            className="flex-1 overflow-y-auto no-scrollbar py-1 px-1 space-y-0.5"
+          >
+            {MINUTES.map((m) => {
+              const isSelected = selectedMinute === m
+              return (
                 <button
                   key={m}
                   type="button"
+                  data-selected={isSelected}
                   onClick={() => handleMinuteSelect(m)}
                   className={cn(
-                    "h-6 rounded-md text-[11px] font-medium transition-all cursor-pointer flex items-center justify-center",
-                    selectedMinute === m
-                      ? "bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] text-white font-bold shadow-sm"
-                      : "text-white/80 hover:bg-white/10 hover:text-white"
+                    "w-full h-8 rounded-lg text-xs font-mono font-medium flex items-center justify-center transition-all cursor-pointer",
+                    isSelected
+                      ? "bg-[#b32b6e] text-white font-bold shadow-sm"
+                      : "text-white/70 hover:bg-white/10 hover:text-white"
                   )}
                 >
                   {m}
                 </button>
-              ))}
-            </div>
+              )
+            })}
           </div>
-        </div>
 
-        {/* Quick Close Button */}
-        <div className="pt-1.5 border-t border-white/10 flex justify-end">
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            className="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-white/10 hover:bg-white/15 text-white transition-colors cursor-pointer"
-          >
-            Done
-          </button>
+          {/* Column 3: AM / PM (Default AM) */}
+          <div className="w-14 flex flex-col justify-center py-1 px-1 space-y-2">
+            {["AM", "PM"].map((p) => {
+              const isSelected = selectedPeriod === p
+              return (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => handlePeriodSelect(p)}
+                  className={cn(
+                    "w-full h-9 rounded-lg text-xs font-semibold flex items-center justify-center transition-all cursor-pointer",
+                    isSelected
+                      ? "bg-[#b32b6e] text-white font-bold shadow-sm"
+                      : "text-white/60 hover:bg-white/10 hover:text-white"
+                  )}
+                >
+                  {p}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </PopoverContent>
     </Popover>
