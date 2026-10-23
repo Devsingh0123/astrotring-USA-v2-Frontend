@@ -214,6 +214,23 @@ export default function MeloohaTimePicker({
             })}
           </div>
         </div>
+
+        {/* Footer: Done button */}
+        <div className="pt-2 px-1 border-t border-white/10 flex items-center justify-between">
+          <span className="text-[11px] font-mono text-white/50 pl-1">
+            {selectedHour}:{selectedMinute} {selectedPeriod}
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              commit(selectedHour, selectedMinute, selectedPeriod)
+              setOpen(false)
+            }}
+            className="px-3.5 py-1 text-xs font-semibold rounded-lg bg-[#b32b6e] hover:bg-[#c23277] text-white shadow-sm transition-colors cursor-pointer"
+          >
+            Done
+          </button>
+        </div>
       </PopoverContent>
     </Popover>
   )
