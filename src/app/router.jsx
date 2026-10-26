@@ -10,6 +10,8 @@ import OnboardingPage from "@/pages/OnboardingPage"
 import ReportsListingPage from "@/pages/ReportsListingPage"
 import ReportDetailPage from "@/pages/ReportDetailPage"
 import InvoicesPage from "@/pages/InvoicesPage"
+import BlogsListingPage from "@/pages/BlogsListingPage"
+import BlogDetailPage from "@/pages/BlogDetailPage"
 import ProtectedRoute from "@/components/common/ProtectedRoute"
 import PlaceholderPage from "@/pages/PlaceholderPage"
 import NotFoundPage from "@/pages/NotFoundPage"
@@ -84,6 +86,22 @@ export const router = createBrowserRouter([
       {
         path: "reports/:slug",
         element: <ReportDetailPage />,
+      },
+      {
+        path: "blogs",
+        element: <BlogsListingPage />,
+      },
+      {
+        path: "blogs/:slug",
+        element: <BlogDetailPage />,
+      },
+      {
+        path: "blog",
+        element: <Navigate to="/blogs" replace />,
+      },
+      {
+        path: "blog/:slug",
+        element: <BlogDetailPage />,
       },
       {
         path: "invoices",

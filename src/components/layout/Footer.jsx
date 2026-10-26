@@ -3,7 +3,7 @@ import { Sparkles, QrCode } from "lucide-react"
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-[#252637] bg-[#0c070a] text-mlh-muted mt-20">
+    <footer className="w-full border-t border-[#252637]/70 bg-[#0a0608] text-mlh-muted mt-12 sm:mt-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand & Socials Column */}

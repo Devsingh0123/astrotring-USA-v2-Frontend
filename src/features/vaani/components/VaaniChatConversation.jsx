@@ -238,7 +238,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden px-4 sm:px-8 lg:px-10">
       {/* Melooha Monospace Breadcrumb Header */}
-      <div className="text-white/40 mlh-in relative z-10 flex flex-none items-center justify-between pt-4 font-mono text-[9px] sm:text-[10px] tracking-[0.22em] uppercase">
+      <div className="text-white/40 mlh-in relative z-10 flex flex-none items-center justify-between pt-3 pb-2.5 sm:pt-4 sm:pb-3 border-b border-white/5 font-mono text-[9px] sm:text-[10px] tracking-[0.22em] uppercase">
         <div className="flex items-center gap-1.5">
           <span>AstroTring</span>
           <span>/</span>
@@ -258,10 +258,10 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
       </div>
 
       {/* Main Conversation Container (Scrollable message area) */}
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center pt-3.5">
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center w-full">
         <div
           ref={scrollAreaRef}
-          className="flex w-full max-w-[900px] flex-1 flex-col gap-[30px] overflow-x-hidden overflow-y-auto pr-1 pb-2 mlh-thin-scroll"
+          className="flex w-full max-w-[900px] flex-1 flex-col gap-[30px] overflow-x-hidden overflow-y-auto pr-1 pt-4 sm:pt-6 pb-6 mlh-thin-scroll"
         >
           {/* Render All Completed Turns for this Thread */}
           {displayReadings.map((reading, rIdx) => {
