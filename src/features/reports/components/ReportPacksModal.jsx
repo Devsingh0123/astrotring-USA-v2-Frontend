@@ -84,30 +84,42 @@ export default function ReportPacksModal({
     return []
   }
 
-  // Helper: get matching coupons for a given pack ID / code
+  // Helper: get matching coupons for a given pack ID / code / packDbId
   const getCouponsForPack = useCallback(
     (packId) => {
       if (!packId || !coupons.length) return []
+      const currentPack = packs.find(
+        (p) => p.id === packId || p.code === packId || p.packDbId === packId
+      )
+      const idsToCheck = [
+        packId,
+        selectedPackId,
+        currentPack?.id,
+        currentPack?.code,
+        currentPack?.packDbId,
+      ].filter(Boolean)
+
       return coupons.filter((coupon) => {
         if (coupon.is_active === false) return false
         const applicable = getApplicableProducts(coupon)
         return (
           applicable.length === 0 ||
-          applicable.includes(packId) ||
-          applicable.includes(selectedPackId)
+          idsToCheck.some((id) => applicable.includes(id))
         )
       })
     },
-    [coupons, selectedPackId]
+    [coupons, packs, selectedPackId]
   )
 
   // Helper: get default coupon code for a pack
   const getDefaultPromoForPack = useCallback(
     (packId) => {
+      const pack = packs.find((p) => p.id === packId || p.code === packId || p.packDbId === packId)
+      if (pack?.defaultPromoCode) return pack.defaultPromoCode
       const matching = getCouponsForPack(packId)
       return matching[0]?.code || ""
     },
-    [getCouponsForPack]
+    [getCouponsForPack, packs]
   )
 
   // Fetch dynamic packages and coupons from backend API
@@ -132,24 +144,27 @@ export default function ReportPacksModal({
 
         // Auto-select preferred pack: initialPackId -> diamond tier -> gold tier -> first pack
         const defaultPack =
-          reportPacks.find((p) => p.id === initialPackId || p.code === initialPackId) ||
+          reportPacks.find((p) => p.id === initialPackId || p.code === initialPackId || p.packDbId === initialPackId) ||
           reportPacks.find((p) => p.tier === "diamond" || p.id?.includes("diamond") || p.code?.includes("diamond")) ||
           reportPacks.find((p) => p.tier === "gold" || p.id?.includes("gold") || p.code?.includes("gold")) ||
           reportPacks[0]
 
         if (defaultPack) {
-          const packKey = defaultPack.id || defaultPack.code
+          const packKey = defaultPack.code || defaultPack.id || defaultPack.packDbId
           setSelectedPackId(packKey)
 
           if (initialPromoCode) {
             setAppliedPromo(initialPromoCode)
+          } else if (defaultPack.defaultPromoCode) {
+            setAppliedPromo(defaultPack.defaultPromoCode)
           } else {
             const matchingCoupons = availableCoupons.filter((c) => {
               const applicable = getApplicableProducts(c)
               return (
                 applicable.length === 0 ||
                 applicable.includes(defaultPack.id) ||
-                applicable.includes(defaultPack.code)
+                applicable.includes(defaultPack.code) ||
+                applicable.includes(defaultPack.packDbId)
               )
             })
             if (matchingCoupons.length > 0) {
@@ -196,9 +211,9 @@ export default function ReportPacksModal({
     onClose()
   }
 
-  // Selected pack resolution
+  // Selected pack resolution (supports code, id, or database packDbId)
   const selectedPack =
-    packs.find((p) => p.id === selectedPackId || p.code === selectedPackId) ||
+    packs.find((p) => p.id === selectedPackId || p.code === selectedPackId || p.packDbId === selectedPackId) ||
     packs[0] ||
     null
 
@@ -227,7 +242,8 @@ export default function ReportPacksModal({
     (
       getApplicableProducts(activeCoupon).length === 0 ||
       getApplicableProducts(activeCoupon).includes(selectedPack.id) ||
-      getApplicableProducts(activeCoupon).includes(selectedPack.code)
+      getApplicableProducts(activeCoupon).includes(selectedPack.code) ||
+      getApplicableProducts(activeCoupon).includes(selectedPack.packDbId)
     )
   )
 
@@ -237,7 +253,9 @@ export default function ReportPacksModal({
 
   const isServerBreakdownFresh =
     serverBreakdown &&
-    (serverBreakdown.packId === selectedPack?.id || serverBreakdown.packId === selectedPack?.code) &&
+    (serverBreakdown.packId === selectedPack?.id ||
+      serverBreakdown.packId === selectedPack?.code ||
+      serverBreakdown.packId === selectedPack?.packDbId) &&
     serverBreakdown.couponCode === appliedPromo &&
     serverBreakdown.currency === selectedPricing.currency &&
     serverBreakdown.billingState === (selectedPricing.currency === "INR" ? billingState : "International")
@@ -255,7 +273,7 @@ export default function ReportPacksModal({
   // Selecting a pack
   const handleSelectPack = (pkg) => {
     if (!pkg) return
-    const packKey = pkg.id || pkg.code
+    const packKey = pkg.code || pkg.id || pkg.packDbId
     setSelectedPackId(packKey)
     setServerBreakdown(null)
 
@@ -265,7 +283,7 @@ export default function ReportPacksModal({
       (c) => c.code?.toUpperCase() === appliedPromo?.toUpperCase()
     )
     if (!isCurrentStillValid) {
-      setAppliedPromo(packCoupons[0]?.code || "")
+      setAppliedPromo(pkg.defaultPromoCode || packCoupons[0]?.code || "")
     }
   }
 
@@ -283,7 +301,10 @@ export default function ReportPacksModal({
     const applicable = getApplicableProducts(matchedCoupon)
     const packMatches =
       applicable.length === 0 ||
-      (selectedPack && (applicable.includes(selectedPack.id) || applicable.includes(selectedPack.code)))
+      (selectedPack &&
+        (applicable.includes(selectedPack.id) ||
+          applicable.includes(selectedPack.code) ||
+          applicable.includes(selectedPack.packDbId)))
 
     if (!packMatches) {
       toast.error(`Coupon "${code}" is not valid for ${selectedPack.name} Pack.`)
@@ -603,15 +624,18 @@ export default function ReportPacksModal({
                 {!isLoadingPacks && !packsError && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
                     {packs.map((pkg) => {
-                      const isSelected = selectedPackId === pkg.id || selectedPackId === pkg.code
+                      const isSelected =
+                        selectedPackId === pkg.id ||
+                        selectedPackId === pkg.code ||
+                        selectedPackId === pkg.packDbId
                       const badge = getBadgeForPack(pkg)
                       const pkgPricing = getPackPricing(pkg, activeCurrency)
                       const unitPriceNum = Number(pkgPricing.offerPrice || 0) / Number(pkg.credits || 1)
-                      const defaultPromo = getDefaultPromoForPack(pkg.id || pkg.code)
+                      const defaultPromo = pkg.defaultPromoCode || getDefaultPromoForPack(pkg.id || pkg.code)
 
                       return (
                         <div
-                          key={pkg.id || pkg.code}
+                          key={pkg.packDbId || pkg.code || pkg.id}
                           onClick={() => handleSelectPack(pkg)}
                           className={`relative rounded-2xl p-5 sm:p-6 lg:p-7 border cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[350px] ${
                             isSelected
@@ -807,12 +831,15 @@ export default function ReportPacksModal({
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                         {packs.map((pkg) => {
-                          const isSelected = selectedPackId === pkg.id || selectedPackId === pkg.code
+                          const isSelected =
+                            selectedPackId === pkg.id ||
+                            selectedPackId === pkg.code ||
+                            selectedPackId === pkg.packDbId
                           const badge = getBadgeForPack(pkg)
                           const pPricing = getPackPricing(pkg, activeCurrency)
                           return (
                             <div
-                              key={pkg.id || pkg.code}
+                              key={pkg.packDbId || pkg.code || pkg.id}
                               onClick={() => handleSelectPack(pkg)}
                               className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer relative flex flex-col justify-between ${
                                 isSelected
@@ -1082,7 +1109,10 @@ export default function ReportPacksModal({
                 const applicable = getApplicableProducts(coupon)
                 const isApplicable =
                   applicable.length === 0 ||
-                  (selectedPack && (applicable.includes(selectedPack.id) || applicable.includes(selectedPack.code)))
+                  (selectedPack &&
+                    (applicable.includes(selectedPack.id) ||
+                      applicable.includes(selectedPack.code) ||
+                      applicable.includes(selectedPack.packDbId)))
 
                 return (
                   <div
