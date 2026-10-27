@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import {
-  CalendarDays,
-  Clock3,
   MapPin,
   Loader2,
   AlertCircle,
@@ -12,8 +10,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/api-client";
-
-const TODAY_ISO = new Date().toISOString().split("T")[0];
+import MeloohaDatePicker from "@/components/common/MeloohaDatePicker";
+import MeloohaTimePicker from "@/components/common/MeloohaTimePicker";
 
 function PartnerInputCard({
   partnerType, // 'boy' | 'girl'
@@ -140,28 +138,21 @@ function PartnerInputCard({
         </div>
 
         {/* Date of Birth */}
-        <div>
-          <label className="block text-[11px] font-mono uppercase tracking-wider text-mlh-muted mb-1">
-            Date of Birth
+        <div className="space-y-1">
+          <label className="block text-[11px] font-mono uppercase tracking-wider text-mlh-muted">
+            Date of Birth *
           </label>
-          <div
-            className={`flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3.5 py-2.5 ${borderColor} transition-colors`}
-          >
-            <CalendarDays className="w-4 h-4 text-mlh-muted shrink-0" />
-            <input
-              type="date"
-              required
-              value={data.dob}
-              onChange={(e) => onChange({ dob: e.target.value })}
-              max={TODAY_ISO}
-              className="w-full bg-transparent text-sm text-white placeholder:text-white/30 outline-none [color-scheme:dark]"
-            />
-          </div>
+          <MeloohaDatePicker
+            value={data.dob}
+            onChange={(newDob) => onChange({ dob: newDob })}
+            placeholder="Select date of birth"
+            className="bg-black/40 border-white/10"
+          />
         </div>
 
         {/* Time of Birth */}
-        <div>
-          <div className="flex items-center justify-between mb-1">
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
             <label className="text-[11px] font-mono uppercase tracking-wider text-mlh-muted">
               Time of Birth
             </label>
@@ -177,20 +168,13 @@ function PartnerInputCard({
               <span>Time Unknown</span>
             </label>
           </div>
-          <div
-            className={`flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3.5 py-2.5 ${
-              data.isTimeUnknown ? "opacity-50 pointer-events-none" : ""
-            } ${borderColor} transition-colors`}
-          >
-            <Clock3 className="w-4 h-4 text-mlh-muted shrink-0" />
-            <input
-              type="time"
-              disabled={data.isTimeUnknown}
-              value={data.isTimeUnknown ? "12:00" : data.tob}
-              onChange={(e) => onChange({ tob: e.target.value })}
-              className="w-full bg-transparent text-sm text-white outline-none [color-scheme:dark]"
-            />
-          </div>
+          <MeloohaTimePicker
+            value={data.isTimeUnknown ? "12:00" : data.tob}
+            onChange={(newTob) => onChange({ tob: newTob })}
+            disabled={data.isTimeUnknown}
+            placeholder="Select time of birth"
+            className="bg-black/40 border-white/10"
+          />
         </div>
 
         {/* Location Autocomplete */}

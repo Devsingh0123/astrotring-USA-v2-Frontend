@@ -6,6 +6,8 @@ import {
   AlertCircle,
   Search,
 } from "lucide-react";
+import MeloohaDatePicker from "@/components/common/MeloohaDatePicker";
+import MeloohaTimePicker from "@/components/common/MeloohaTimePicker";
 import {
   searchLocations,
   clearLocationSuggestions,
@@ -141,17 +143,13 @@ export default function BirthDetailsForm({
             <span className="block font-mono text-[9.5px] tracking-[0.22em] text-mlh-faint mb-1.5 uppercase">
               DATE OF BIRTH
             </span>
-            <div className="relative">
-              <input
-                type="date"
-                required
-                value={formData.dob}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, dob: e.target.value }))
-                }
-                className="border-mlh-plum-500/25 bg-mlh-bg/70 text-mlh-text placeholder:text-mlh-faint caret-mlh-plum-400 focus:border-mlh-plum-400/60 focus:bg-mlh-bg w-full rounded-xl border px-[13px] py-[11px] font-sans text-[15px] [color-scheme:dark] transition outline-none"
-              />
-            </div>
+            <MeloohaDatePicker
+              value={formData.dob}
+              onChange={(newDob) =>
+                setFormData((prev) => ({ ...prev, dob: newDob }))
+              }
+              placeholder="Select date of birth"
+            />
           </div>
 
           {/* TIME OF BIRTH */}
@@ -175,19 +173,14 @@ export default function BirthDetailsForm({
                 <span>Time unknown</span>
               </label>
             </div>
-            <div className="relative">
-              <input
-                type="time"
-                disabled={formData.isTimeUnknown}
-                value={formData.isTimeUnknown ? "12:00" : formData.tob}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, tob: e.target.value }))
-                }
-                className={`border-mlh-plum-500/25 bg-mlh-bg/70 text-mlh-text placeholder:text-mlh-faint caret-mlh-plum-400 focus:border-mlh-plum-400/60 focus:bg-mlh-bg w-full rounded-xl border px-[13px] py-[11px] font-sans text-[15px] [color-scheme:dark] transition outline-none ${
-                  formData.isTimeUnknown ? "opacity-40 cursor-not-allowed" : ""
-                }`}
-              />
-            </div>
+            <MeloohaTimePicker
+              value={formData.isTimeUnknown ? "12:00" : formData.tob}
+              onChange={(newTob) =>
+                setFormData((prev) => ({ ...prev, tob: newTob }))
+              }
+              disabled={formData.isTimeUnknown}
+              placeholder="Select time of birth"
+            />
           </div>
 
           {/* PLACE OF BIRTH */}
