@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
-import { Link, useNavigate, useSearchParams, useOutletContext } from "react-router-dom"
+import { Link, useNavigate, useOutletContext } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import {
   Sparkles,
   Coins,
@@ -12,21 +12,11 @@ import {
   Unlock,
   Check,
   Star,
-  ArrowRight,
-  ShieldCheck,
   Printer,
   BookOpen,
-  Layers,
   Award,
-  ChevronDown,
-  ChevronUp,
   Clock,
-  Gem,
-  Flame,
-  Building,
-  BarChart3,
   RefreshCw,
-  AlertCircle,
 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -157,12 +147,11 @@ const TWENTY_THREE_SECTIONS = [
 ]
 
 export default function ArthaSutramPage() {
-  const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const context = useOutletContext() || {}
 
-  const { activeSlugStatus, activeFullReport, generationState, unlocking } = useSelector(
+  const { activeSlugStatus, activeFullReport, generationState } = useSelector(
     (state) => state.reports || {}
   )
   const { user, isAuthenticated, birthDetails } = useSelector((state) => state.auth || {})

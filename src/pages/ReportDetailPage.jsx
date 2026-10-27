@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useParams, Link, useNavigate, useOutletContext } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import {
   ArrowLeft,
   Sparkles,
@@ -10,15 +10,10 @@ import {
   Check,
   X,
   MessageSquare,
-  ShieldCheck,
   Star,
   Clock,
   Compass,
   Printer,
-  ChevronRight,
-  BookOpen,
-  Calendar,
-  AlertCircle,
   RefreshCw,
 } from "lucide-react"
 import { toast } from "sonner"

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Link, useOutletContext } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
 import { motion } from "framer-motion"
-import { Lock, Unlock, Sparkles, ArrowRight, ShieldCheck, Tag } from "lucide-react"
+import { Lock, Unlock, Sparkles, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Footer from "@/components/layout/Footer"
 import ReportPacksModal from "@/features/reports/components/ReportPacksModal"
@@ -14,7 +14,7 @@ export default function ReportsListingPage() {
   const [isBuyReportsModalOpen, setIsBuyReportsModalOpen] = useState(false)
   const { reportQuota } = useSelector((state) => state.jyotish || {})
   const { user, isAuthenticated } = useSelector((state) => state.auth || {})
-  const { catalog, categories, myReports, loading } = useSelector((state) => state.reports || {})
+  const { catalog, categories, myReports } = useSelector((state) => state.reports || {})
 
   useEffect(() => {
     dispatch(fetchReportsCatalog())

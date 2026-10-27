@@ -8,7 +8,7 @@ import { REPORTS_CATALOG, REPORT_CATEGORIES } from "./reportsData";
  */
 export const fetchReportsCatalog = createAsyncThunk(
   "reports/fetchReportsCatalog",
-  async (_, { rejectWithValue }) => {
+  async () => {
     try {
       const response = await apiClient.get("/reports/catalog");
       if (response.data && response.data.success && response.data.data) {
@@ -30,14 +30,14 @@ export const fetchReportsCatalog = createAsyncThunk(
  */
 export const fetchMyReports = createAsyncThunk(
   "reports/fetchMyReports",
-  async (_, { rejectWithValue }) => {
+  async () => {
     try {
       const response = await apiClient.get("/reports/my-reports");
       if (response.data && response.data.success && response.data.data) {
         return response.data.data.reports || [];
       }
       return [];
-    } catch (err) {
+    } catch {
       return [];
     }
   }
@@ -49,7 +49,7 @@ export const fetchMyReports = createAsyncThunk(
  */
 export const checkReportSlugStatus = createAsyncThunk(
   "reports/checkReportSlugStatus",
-  async (slug, { rejectWithValue }) => {
+  async (slug) => {
     try {
       const response = await apiClient.get(`/reports/slug/${slug}`);
       if (response.data && response.data.success && response.data.data) {

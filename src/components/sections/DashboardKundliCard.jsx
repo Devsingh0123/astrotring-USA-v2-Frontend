@@ -3,16 +3,13 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import {
-  Compass,
   ArrowRight,
-  Sparkles,
   Calendar,
   Clock,
   MapPin,
   Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 export default function DashboardKundliCard() {
   const { isAuthenticated, user, birthDetails } = useSelector(

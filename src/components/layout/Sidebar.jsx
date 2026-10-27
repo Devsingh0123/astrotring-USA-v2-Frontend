@@ -11,14 +11,12 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   LogIn,
-  LogOut,
-  User,
   Compass,
   Trash2,
   Coins,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { logout, openAuthModal } from "@/features/auth"
+import { openAuthModal } from "@/features/auth"
 import { setActiveConversation, setActiveThreadId, clearActiveConversation, deleteConversation } from "@/features/jyotish"
 import { fetchUserThreads, fetchThreadById, deleteThread } from "@/features/jyotish/jyotishApi"
 import UserProfileMenu from "@/features/user/components/UserProfileMenu"

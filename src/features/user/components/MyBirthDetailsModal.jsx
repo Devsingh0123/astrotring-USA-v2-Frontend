@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { MapPin, Search, Calendar, Clock, User, Sparkles } from "lucide-react"
+import { MapPin, Calendar, Clock, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 import {
   Dialog,
@@ -92,7 +92,7 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
           res.data?.suggestions ||
           []
         setSuggestions(list)
-      } catch (err) {
+      } catch {
         // Fallback default cities
         const defaults = [
           { displayName: "Delhi, India", place: "Delhi", lat: 28.6139, lng: 77.209, timezone: 5.5 },

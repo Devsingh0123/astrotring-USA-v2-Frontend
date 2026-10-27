@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  CalendarDays,
-  Clock3,
   MapPin,
   Loader2,
   AlertCircle,

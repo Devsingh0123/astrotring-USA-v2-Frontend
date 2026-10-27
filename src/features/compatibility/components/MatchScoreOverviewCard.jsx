@@ -2,15 +2,9 @@ import React from "react";
 import { motion } from "framer-motion";
 import {
   Sparkles,
-  Heart,
-  ShieldCheck,
-  AlertTriangle,
   RotateCcw,
-  CheckCircle2,
-  XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 export default function MatchScoreOverviewCard({
   matchData,

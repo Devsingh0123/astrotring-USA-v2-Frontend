@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { ArrowRight, Compass } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 
 export default function RashiCard({ sign, timeframe = "Daily" }) {

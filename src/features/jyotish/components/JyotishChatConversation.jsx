@@ -28,7 +28,7 @@ function renderParagraph(text, isJyotish) {
       {lines.map((line, lIdx) => {
         const trimmed = line.trim()
         if (trimmed.startsWith("•") || trimmed.startsWith("-")) {
-          const bulletContent = trimmed.replace(/^[•\-]\s*/, "")
+          const bulletContent = trimmed.replace(/^[•-]\s*/, "")
           const match = bulletContent.match(/^\*\*(.*?)\*\*(.*)/)
           if (match) {
             return (

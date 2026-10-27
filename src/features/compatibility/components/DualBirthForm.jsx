@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   CalendarDays,
   Clock3,
   MapPin,
   Loader2,
   AlertCircle,
-  Search,
   Sparkles,
   Heart,
   User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/api-client";
+
+const TODAY_ISO = new Date().toISOString().split("T")[0];
 
 function PartnerInputCard({
   partnerType, // 'boy' | 'girl'
@@ -34,7 +35,7 @@ function PartnerInputCard({
     if (data.city && data.city !== locationInput) {
       setLocationInput(data.city);
     }
-  }, [data.city]);
+  }, [data.city, locationInput]);
 
   // Debounced location search
   useEffect(() => {
@@ -84,7 +85,6 @@ function PartnerInputCard({
   };
 
   const isBoy = partnerType === "boy";
-  const accentColor = isBoy ? "text-amber-300" : "text-mlh-plum-300";
   const borderColor = isBoy
     ? "focus-within:border-amber-400/50"
     : "focus-within:border-mlh-plum-400/50";
@@ -153,7 +153,7 @@ function PartnerInputCard({
               required
               value={data.dob}
               onChange={(e) => onChange({ dob: e.target.value })}
-              max={new Date().toISOString().split("T")[0]}
+              max={TODAY_ISO}
               className="w-full bg-transparent text-sm text-white placeholder:text-white/30 outline-none [color-scheme:dark]"
             />
           </div>

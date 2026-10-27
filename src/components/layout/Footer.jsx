@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Sparkles, QrCode } from "lucide-react"
+import { QrCode } from "lucide-react"
 
 export default function Footer() {
   return (

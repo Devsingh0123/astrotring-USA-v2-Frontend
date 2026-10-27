@@ -1,8 +1,10 @@
 import * as React from "react"
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X } from "lucide-react"
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react"
 import { format, parse, isValid } from "date-fns"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+
+const CURRENT_YEAR = new Date().getFullYear()
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -23,7 +25,7 @@ export default function MeloohaDatePicker({
   disabled = false,
   className,
   fromYear = 1920,
-  toYear = new Date().getFullYear(),
+  toYear = CURRENT_YEAR,
 }) {
   const [open, setOpen] = React.useState(false)
   const [viewMode, setViewMode] = React.useState("days") // "days" | "months" | "years"

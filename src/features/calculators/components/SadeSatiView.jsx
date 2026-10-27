@@ -1,15 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  Clock,
-  Calendar,
   Sparkles,
-  ShieldAlert,
   ShieldCheck,
-  CheckCircle2,
-  AlertTriangle,
   RotateCcw,
-  Compass,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import AskJyotishPromptCard from "./AskJyotishPromptCard";

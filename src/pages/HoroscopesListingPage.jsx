@@ -17,7 +17,7 @@ import {
 
 export default function HoroscopesListingPage() {
   const dispatch = useDispatch()
-  const { timeframe, searchQuery, signs, signsLoading } = useSelector(
+  const { timeframe, searchQuery, signs } = useSelector(
     (state) => state.horoscope || {}
   )
   const { onOpenAuthModal, onOpenBindModal } = useOutletContext() || {}

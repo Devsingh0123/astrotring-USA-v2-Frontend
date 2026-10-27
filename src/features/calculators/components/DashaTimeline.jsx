@@ -1,5 +1,4 @@
-import React from "react";
-import { Clock, Calendar, Sparkles } from "lucide-react";
+import { Clock, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function DashaTimeline({ dashas = {}, summary = {} }) {

@@ -70,7 +70,7 @@ function getFilteredFallbackBlogs({
  */
 export const fetchBlogs = createAsyncThunk(
   "blogs/fetchBlogs",
-  async (params = {}, { rejectWithValue }) => {
+  async (params = {}) => {
     try {
       const response = await apiClient.get("/blogs", { params });
       if (response.data && response.data.success && response.data.data) {
@@ -84,7 +84,7 @@ export const fetchBlogs = createAsyncThunk(
         }
       }
       return getFilteredFallbackBlogs(params);
-    } catch (err) {
+    } catch {
       // Graceful fallback to local articles if backend is still initializing
       return getFilteredFallbackBlogs(params);
     }
@@ -96,7 +96,7 @@ export const fetchBlogs = createAsyncThunk(
  */
 export const fetchBlogCategories = createAsyncThunk(
   "blogs/fetchBlogCategories",
-  async (_, { rejectWithValue }) => {
+  async () => {
     try {
       const response = await apiClient.get("/blogs/categories");
       if (response.data && response.data.success && response.data.data) {
@@ -130,7 +130,7 @@ export const fetchBlogCategories = createAsyncThunk(
  */
 export const fetchFeaturedBlogs = createAsyncThunk(
   "blogs/fetchFeaturedBlogs",
-  async (limit = 4, { rejectWithValue }) => {
+  async (limit = 4) => {
     try {
       const response = await apiClient.get("/blogs/featured", { params: { limit } });
       if (response.data && response.data.success && response.data.data?.blogs?.length) {

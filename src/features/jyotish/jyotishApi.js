@@ -280,7 +280,7 @@ export const fetchThreadById = createAsyncThunk(
  */
 export const submitMessageFeedback = createAsyncThunk(
   "jyotish/submitMessageFeedback",
-  async ({ messageId, feedback }, { rejectWithValue }) => {
+  async ({ messageId, feedback }) => {
     try {
       const response = await apiClient.patch(`/chat/messages/${messageId}/feedback`, {
         feedback,

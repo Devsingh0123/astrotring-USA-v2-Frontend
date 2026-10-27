@@ -2,7 +2,6 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import {
-  User,
   Compass,
   FileText,
   CreditCard,
@@ -16,7 +15,6 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover"
-import { Button } from "@/components/ui/button"
 import { logout } from "@/features/auth"
 
 export default function UserProfileMenu({

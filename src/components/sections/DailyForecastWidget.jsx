@@ -14,7 +14,6 @@ import {
   Activity,
   Compass,
   MessageSquare,
-  Clock,
   Palette,
   Hash,
 } from "lucide-react"
@@ -28,7 +27,7 @@ export default function DailyForecastWidget({ onOpenBindModal }) {
   const navigate = useNavigate()
   const [isCollapsed, setIsCollapsed] = useState(false)
 
-  const { isAuthenticated, birthDetails, user } = useSelector(
+  const { isAuthenticated, birthDetails } = useSelector(
     (state) => state.auth || {}
   )
   const { userKundli } = useSelector((state) => state.calculators || {})
@@ -47,7 +46,6 @@ export default function DailyForecastWidget({ onOpenBindModal }) {
 
   const signLatin = signMeta?.latin || (rawMoonSign ? rawMoonSign.charAt(0).toUpperCase() + rawMoonSign.slice(1) : "Aries")
   const signVedic = signMeta?.vedic || "Janma Rashi"
-  const signRuler = signMeta?.ruler || "Planetary Ruler"
   const signEmoji = signMeta?.emoji || "✦"
 
   // Check cached forecast in Redux store

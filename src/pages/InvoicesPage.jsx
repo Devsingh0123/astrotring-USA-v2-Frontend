@@ -3,36 +3,28 @@ import { Link, useOutletContext } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { Helmet } from "react-helmet-async"
 import {
-  CreditCard,
   FileText,
-  Download,
   Printer,
   ChevronRight,
-  ExternalLink,
   ShieldCheck,
   Sparkles,
-  ShoppingBag,
   Receipt,
   X,
   CheckCircle2,
-  Filter,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog"
 import Footer from "@/components/layout/Footer"
-import { toast } from "sonner"
 import { fetchUserInvoices } from "@/features/billing"
 
 export default function InvoicesPage() {
   const context = useOutletContext() || {}
   const onOpenBuyModal = context.onOpenBuyModal || (() => {})
 
-  const { user, birthDetails } = useSelector((state) => state.auth || {})
+  const { user } = useSelector((state) => state.auth || {})
   const { questionQuota, reportQuota } = useSelector((state) => state.jyotish || {})
 
   const realQuestionsCount =

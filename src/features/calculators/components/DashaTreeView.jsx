@@ -1,14 +1,10 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Clock,
-  Calendar,
   Sparkles,
   ChevronDown,
   ChevronUp,
   RotateCcw,
-  CheckCircle2,
-  Hourglass,
   Layers,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

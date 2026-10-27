@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp, Check, AlertCircle, HelpCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ChevronDown, ChevronUp, HelpCircle } from "lucide-react";
 
 export default function AshtakootBreakdownTable({ kootas = [] }) {
   const [expandedKey, setExpandedKey] = useState(null);

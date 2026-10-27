@@ -2,14 +2,11 @@ import { useState, useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import {
-  Sparkles,
   Check,
   X,
   ArrowLeft,
   Loader2,
   Mail,
-  Calendar,
-  Clock,
   MapPin,
 } from "lucide-react"
 import {
@@ -29,7 +26,6 @@ import {
   sendOtp,
   verifyOtp,
   submitOnboarding,
-  updateUserProfile,
 } from "./authSlice"
 
 export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }) {

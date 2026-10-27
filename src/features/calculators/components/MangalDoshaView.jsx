@@ -1,14 +1,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  Flame,
   ShieldCheck,
-  ShieldAlert,
   Sparkles,
   RotateCcw,
   CheckCircle2,
   AlertTriangle,
-  HelpCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import AskJyotishPromptCard from "./AskJyotishPromptCard";
@@ -37,7 +34,7 @@ const MANGAL_REMEDIES = [
 export default function MangalDoshaView({ kundliData, onReset }) {
   if (!kundliData) return null;
 
-  const { rasiChart = {}, summary = {} } = kundliData;
+  const { rasiChart = {} } = kundliData;
   const mars = rasiChart.Mars || rasiChart.mars || {};
   const moon = rasiChart.Moon || rasiChart.moon || {};
   const venus = rasiChart.Venus || rasiChart.venus || {};

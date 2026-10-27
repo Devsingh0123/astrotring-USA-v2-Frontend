@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
@@ -32,11 +32,25 @@ export default function BlogsListingPage() {
     featuredBlogs,
     filters,
     loading,
-    error,
   } = useSelector((state) => state.blogs || {});
 
   // Local search text for smooth debounce
   const [localSearch, setLocalSearch] = useState(searchParams.get("search") || "");
+
+  const updateUrlParams = useCallback((newParams) => {
+    const current = Object.fromEntries(searchParams.entries());
+    const merged = { ...current, ...newParams };
+
+    // Clean up defaults
+    if (merged.category === "all") delete merged.category;
+    if (!merged.tag) delete merged.tag;
+    if (!merged.search) delete merged.search;
+    if (merged.page === 1 || merged.page === "1") delete merged.page;
+    if (merged.sort_by === "published_at") delete merged.sort_by;
+    if (merged.order === "DESC") delete merged.order;
+
+    setSearchParams(merged);
+  }, [searchParams, setSearchParams]);
 
   // Initialize and synchronize URL query params with Redux filters
   useEffect(() => {
@@ -54,7 +68,7 @@ export default function BlogsListingPage() {
     if (urlSort !== filters.sort_by || urlOrder !== filters.order) {
       dispatch(setSort({ sort_by: urlSort, order: urlOrder }));
     }
-  }, [searchParams, dispatch]);
+  }, [searchParams, dispatch, filters.category, filters.tag, filters.search, filters.page, filters.sort_by, filters.order]);
 
   // Fetch blogs whenever active filters change
   useEffect(() => {
@@ -93,22 +107,7 @@ export default function BlogsListingPage() {
       }
     }, 350);
     return () => clearTimeout(timer);
-  }, [localSearch]);
-
-  const updateUrlParams = (newParams) => {
-    const current = Object.fromEntries(searchParams.entries());
-    const merged = { ...current, ...newParams };
-
-    // Clean up defaults
-    if (merged.category === "all") delete merged.category;
-    if (!merged.tag) delete merged.tag;
-    if (!merged.search) delete merged.search;
-    if (merged.page === 1 || merged.page === "1") delete merged.page;
-    if (merged.sort_by === "published_at") delete merged.sort_by;
-    if (merged.order === "DESC") delete merged.order;
-
-    setSearchParams(merged);
-  };
+  }, [localSearch, filters.search, updateUrlParams]);
 
   const handleSelectCategory = (catId) => {
     updateUrlParams({ category: catId, page: 1 });

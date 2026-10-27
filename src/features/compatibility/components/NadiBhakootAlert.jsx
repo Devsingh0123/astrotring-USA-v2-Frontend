@@ -1,5 +1,4 @@
-import React from "react";
-import { AlertCircle, ShieldAlert, HeartHandshake } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 
 export default function NadiBhakootAlert({ summary }) {
   if (!summary) return null;

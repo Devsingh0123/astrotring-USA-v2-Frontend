@@ -12,7 +12,6 @@ import {
   Tag,
   BookOpen,
   ChevronRight,
-  ExternalLink,
 } from "lucide-react";
 import { fetchBlogBySlug, clearCurrentBlog } from "@/features/blogs/blogsSlice";
 import BlogCard from "@/features/blogs/components/BlogCard";

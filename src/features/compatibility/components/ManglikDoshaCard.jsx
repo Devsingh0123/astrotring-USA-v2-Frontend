@@ -1,5 +1,4 @@
-import React from "react";
-import { ShieldCheck, AlertTriangle, CheckCircle2, Flame } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Flame } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function ManglikDoshaCard({ summary, partners }) {

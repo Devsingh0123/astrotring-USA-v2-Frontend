@@ -12,10 +12,8 @@ const DEFAULT_PROMPTS = [
 
 export default function AskJyotishPromptCard({
   chartSummary = {},
-  onSelectPrompt,
 }) {
   const ascendant = chartSummary?.ascendantSign || "your Lagna";
-  const moonSign = chartSummary?.moonSign || "your Moon sign";
 
   return (
     <div className="relative rounded-2xl border border-mlh-plum/40 bg-gradient-to-br from-mlh-surface via-mlh-surface to-mlh-plum-800/20 p-5 sm:p-7 shadow-2xl shadow-mlh-plum/10 overflow-hidden">

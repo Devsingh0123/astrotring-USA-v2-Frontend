@@ -5,12 +5,8 @@ import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import {
   FileText,
-  Sparkles,
-  Clock,
   ArrowRight,
   Printer,
-  CheckCircle2,
-  AlertCircle,
   Loader2,
   BookOpen,
   Plus,

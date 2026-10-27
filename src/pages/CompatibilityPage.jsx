@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Sparkles, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 import Footer from "@/components/layout/Footer";
 import DualBirthForm from "@/features/compatibility/components/DualBirthForm";
@@ -11,10 +11,7 @@ import AshtakootBreakdownTable from "@/features/compatibility/components/Ashtako
 import ManglikDoshaCard from "@/features/compatibility/components/ManglikDoshaCard";
 import NadiBhakootAlert from "@/features/compatibility/components/NadiBhakootAlert";
 import AskJyotishMarriageCTA from "@/features/compatibility/components/AskJyotishMarriageCTA";
-import {
-  calculateMarriageMatch,
-  clearMatch,
-} from "@/features/compatibility";
+import { calculateMarriageMatch } from "@/features/compatibility";
 
 export default function CompatibilityPage() {
   const dispatch = useDispatch();

@@ -8,20 +8,17 @@ import {
   Clock,
   MapPin,
   Compass,
-  ArrowRight,
   RefreshCw,
   Printer,
   ChevronRight,
   ShieldCheck,
   User,
   AlertCircle,
-  Share2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 import NorthIndianChart from "@/features/calculators/components/NorthIndianChart";
 import PlanetaryTable from "@/features/calculators/components/PlanetaryTable";
@@ -30,7 +27,6 @@ import DashaTimeline from "@/features/calculators/components/DashaTimeline";
 import AskJyotishPromptCard from "@/features/calculators/components/AskJyotishPromptCard";
 
 import { fetchUserChart } from "@/features/calculators";
-import { openAuthModal } from "@/features/auth";
 
 // Sanskrit & elemental lookup for 12 Signs
 const ZODIAC_METADATA = {
@@ -60,7 +56,7 @@ export default function KundliDisplayPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { isAuthenticated, user, birthDetails } = useSelector(
+  const { user, birthDetails } = useSelector(
     (state) => state.auth || {}
   );
   const { userKundli, userKundliStatus, userKundliError } = useSelector(

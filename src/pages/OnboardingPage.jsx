@@ -2,17 +2,12 @@ import { useState, useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import {
-  Sparkles,
   Check,
   ArrowLeft,
-  Calendar,
-  Clock,
   MapPin,
   Loader2,
-  Search,
   Compass,
   ShieldCheck,
-  Star,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -32,7 +27,6 @@ export default function OnboardingPage() {
 
   const {
     user,
-    isAuthenticated,
     onboardingStep,
     onboardingData,
     isOnboardingSubmitting,
@@ -67,7 +61,7 @@ export default function OnboardingPage() {
     if (user?.name && !name) {
       setName(user.name)
     }
-  }, [user?.name])
+  }, [user?.name, name])
 
   // Debounced Location Autocomplete (/vedic/location/autocomplete)
   useEffect(() => {
