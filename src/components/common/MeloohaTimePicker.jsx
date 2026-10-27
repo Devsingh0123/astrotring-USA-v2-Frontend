@@ -156,7 +156,7 @@ export default function MeloohaTimePicker({
                   className={cn(
                     "w-full h-8 rounded-lg text-xs font-mono font-medium flex items-center justify-center transition-all cursor-pointer",
                     isSelected
-                      ? "bg-[#b32b6e] text-white font-bold shadow-sm"
+                      ? "bg-[#ff7010] text-white font-bold shadow-sm"
                       : "text-white/70 hover:bg-white/10 hover:text-white"
                   )}
                 >
@@ -182,7 +182,7 @@ export default function MeloohaTimePicker({
                   className={cn(
                     "w-full h-8 rounded-lg text-xs font-mono font-medium flex items-center justify-center transition-all cursor-pointer",
                     isSelected
-                      ? "bg-[#b32b6e] text-white font-bold shadow-sm"
+                      ? "bg-[#ff7010] text-white font-bold shadow-sm"
                       : "text-white/70 hover:bg-white/10 hover:text-white"
                   )}
                 >
@@ -204,7 +204,7 @@ export default function MeloohaTimePicker({
                   className={cn(
                     "w-full h-9 rounded-lg text-xs font-semibold flex items-center justify-center transition-all cursor-pointer",
                     isSelected
-                      ? "bg-[#b32b6e] text-white font-bold shadow-sm"
+                      ? "bg-[#ff7010] text-white font-bold shadow-sm"
                       : "text-white/60 hover:bg-white/10 hover:text-white"
                   )}
                 >

@@ -8,7 +8,7 @@ export default function ElementGroupSection({ group, timeframe }) {
   return (
     <div className="space-y-5">
       {/* Group Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-[#252637]/70 text-xs">
+      <div className="flex items-center justify-between pb-2 border-b border-[#17384e]/70 text-xs">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-mlh-plum" />
           <h2 className="font-bold text-white text-base font-serif tracking-wide">

@@ -131,7 +131,7 @@ export default function NorthIndianChart({
             width="392"
             height="392"
             fill="var(--mlh-bg)"
-            stroke="oklab(0.5166 0.124799 -0.0321317 / 0.35)"
+            stroke="var(--mlh-border-hi)"
             strokeWidth="1.5"
             rx="8"
           />
@@ -142,7 +142,7 @@ export default function NorthIndianChart({
             y1="4"
             x2="396"
             y2="396"
-            stroke="oklab(0.5166 0.124799 -0.0321317 / 0.3)"
+            stroke="var(--mlh-border)"
             strokeWidth="1.2"
           />
           <line
@@ -150,7 +150,7 @@ export default function NorthIndianChart({
             y1="396"
             x2="396"
             y2="4"
-            stroke="oklab(0.5166 0.124799 -0.0321317 / 0.3)"
+            stroke="var(--mlh-border)"
             strokeWidth="1.2"
           />
 
@@ -158,7 +158,7 @@ export default function NorthIndianChart({
           <polygon
             points="200,4 396,200 200,396 4,200"
             fill="none"
-            stroke="oklab(0.5166 0.124799 -0.0321317 / 0.35)"
+            stroke="var(--mlh-border-hi)"
             strokeWidth="1.5"
           />
 

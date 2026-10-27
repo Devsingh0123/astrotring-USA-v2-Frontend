@@ -82,7 +82,7 @@ export default function DailyForecastWidget({ onOpenBindModal }) {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-3xl mb-6 relative z-10 rounded-2xl border border-mlh-plum/30 bg-gradient-to-r from-mlh-plum/15 via-[#181926]/90 to-[#12131c]/90 backdrop-blur-xl p-4 sm:p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4"
+        className="w-full max-w-3xl mb-6 relative z-10 rounded-2xl border border-mlh-plum/30 bg-gradient-to-r from-mlh-plum/15 via-[#0e344d]/90 to-[#07273c]/90 backdrop-blur-xl p-4 sm:p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4"
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-mlh-plum/20 border border-mlh-plum/40 flex items-center justify-center text-mlh-plum shrink-0">
@@ -132,7 +132,7 @@ export default function DailyForecastWidget({ onOpenBindModal }) {
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
-      className="shrink-0 w-full max-w-3xl mb-6 relative z-10 rounded-2xl sm:rounded-3xl border border-mlh-plum/30 bg-gradient-to-br from-[#1b1223]/95 via-[#13111d]/95 to-[#0d0b13]/95 backdrop-blur-xl p-4 sm:p-6 shadow-[0_16px_40px_rgba(0,0,0,0.55),0_0_25px_rgba(179,43,110,0.12)] overflow-hidden"
+      className="shrink-0 w-full max-w-3xl mb-6 relative z-10 rounded-2xl sm:rounded-3xl border border-mlh-plum/30 bg-gradient-to-br from-[#0e344d]/95 via-[#07273c]/95 to-[#041826]/95 backdrop-blur-xl p-4 sm:p-6 shadow-[0_16px_40px_rgba(0,0,0,0.55),0_0_25px_rgba(255,112,16,0.15)] overflow-hidden"
     >
       {/* Background celestial glow effect */}
       <div className="absolute -right-20 -top-20 w-48 h-48 bg-mlh-plum/10 rounded-full blur-3xl pointer-events-none" />

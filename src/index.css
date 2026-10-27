@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400..700;1,400..700&family=IBM+Plex+Mono:wght@400;500;600&family=Mulish:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -7,10 +7,10 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Typography Tokens */
-  --font-heading: "Bitter", Georgia, serif;
-  --font-serif: "Bitter", Georgia, serif;
-  --font-sans: "Mulish", "Geist Variable", system-ui, -apple-system, sans-serif;
+  /* Typography Tokens matching horoscopes.today */
+  --font-heading: "Philosopher", Georgia, serif;
+  --font-serif: "Philosopher", Georgia, serif;
+  --font-sans: "Inter", "Geist Variable", system-ui, -apple-system, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
   /* Core Semantic Color Tokens */
@@ -34,7 +34,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Melooha / AstroTring Custom Obsidian & Plum Surfaces */
+  /* AstroTring Cosmic Navy Surfaces */
   --color-mlh-bg: var(--mlh-bg);
   --color-mlh-sidebar: var(--mlh-sidebar);
   --color-mlh-surface: var(--mlh-surface);
@@ -42,7 +42,7 @@
   --color-mlh-border: var(--mlh-border);
   --color-mlh-border-hi: var(--mlh-border-hi);
 
-  /* Brand Plum Hierarchy */
+  /* Brand Solar Orange Hierarchy */
   --color-mlh-plum-800: var(--mlh-plum-800);
   --color-mlh-plum: var(--mlh-plum);
   --color-mlh-plum-500: var(--mlh-plum-500);
@@ -78,121 +78,122 @@
 
 /* ==========================================================================
    LIGHT MODE TOKENS (:root)
-   Refined celestial pearlescent alabaster with delicate plum accents
+   Clean solar celestial with amber-orange accents
    ========================================================================== */
 :root {
   /* Shadcn / Core Semantic Mappings */
-  --background: #faf7f9;
-  --foreground: #1c1319;
+  --background: #f4f8fb;
+  --foreground: #031d2e;
   --card: #ffffff;
-  --card-foreground: #1c1319;
+  --card-foreground: #031d2e;
   --popover: #ffffff;
-  --popover-foreground: #1c1319;
-  --primary: #811756;
+  --popover-foreground: #031d2e;
+  --primary: #ff7010;
   --primary-foreground: #ffffff;
-  --secondary: #f4edf3;
-  --secondary-foreground: #4d0e34;
-  --muted: #f2e9f0;
-  --muted-foreground: #6b6369;
-  --accent: #f4edf3;
-  --accent-foreground: #811756;
-  --destructive: #e2574a;
+  --secondary: #e5f0f5;
+  --secondary-foreground: #031d2e;
+  --muted: #e5f0f5;
+  --muted-foreground: #5d7785;
+  --accent: #e5f0f5;
+  --accent-foreground: #ff7010;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #e8dbe4;
-  --input: #e8dbe4;
-  --ring: #811756;
+  --border: #d0e0eb;
+  --input: #d0e0eb;
+  --ring: #ff7010;
   --radius: 0.625rem;
 
-  /* Melooha / AstroTring Surfaces (Light Canvas) */
-  --mlh-bg: #faf7f9;
-  --mlh-sidebar: #f5edf3;
+  /* Surfaces (Light Canvas) */
+  --mlh-bg: #f4f8fb;
+  --mlh-sidebar: #ebf3f7;
   --mlh-surface: #ffffff;
-  --mlh-surface-hi: #f7f0f6;
-  --mlh-border: #e8dbe4;
-  --mlh-border-hi: #d9c5d4;
+  --mlh-surface-hi: #f0f6fa;
+  --mlh-border: #d0e0eb;
+  --mlh-border-hi: #bcd2e0;
 
-  /* Brand Plum Hierarchy */
-  --mlh-plum-800: #4d0e34;
-  --mlh-plum: #811756;
-  --mlh-plum-500: #9a4578;
-  --mlh-plum-400: #b3749a;
-  --mlh-plum-300: #cda2bb;
-  --mlh-plum-100: #f2e8ee;
+  /* Brand Solar Orange Hierarchy */
+  --mlh-plum-800: #8a3600;
+  --mlh-plum: #ff7010;
+  --mlh-plum-500: #ff852e;
+  --mlh-plum-400: #ff9b52;
+  --mlh-plum-300: #ffbd8a;
+  --mlh-plum-100: #fff0e6;
 
   /* Celestial & Functional Accents */
-  --mlh-amber: #fc9918;
-  --mlh-orrery: #df8107;
-  --mlh-orrery-hi: #feb371;
-  --mlh-iris: #1877fc;
-  --mlh-iris-hi: #65a5ff;
-  --mlh-iris-ink: #f0f4fc;
-  --mlh-success: #4ec77e;
-  --mlh-danger: #e2574a;
+  --mlh-amber: #f59e0b;
+  --mlh-orrery: #ff7010;
+  --mlh-orrery-hi: #ff9b52;
+  --mlh-iris: #38bdf8;
+  --mlh-iris-hi: #7dd3fc;
+  --mlh-iris-ink: #031826;
+  --mlh-success: #10b981;
+  --mlh-danger: #ef4444;
 
   /* Text Hierarchy */
-  --mlh-text-hi: #12090f;
-  --mlh-text: #2c2029;
-  --mlh-muted: #6b6369;
-  --mlh-faint: #988e95;
+  --mlh-text-hi: #02121d;
+  --mlh-text: #042439;
+  --mlh-muted: #5d7785;
+  --mlh-faint: #8ba2b0;
 }
 
 /* ==========================================================================
    DARK MODE TOKENS (.dark)
-   Melooha Mystic Modern Glassmorphism (Deep Obsidian Plum & Midnight Slate)
+   Exact match to https://horoscopes.today/
+   Clean, Premium, Deep Cosmic Midnight Navy & Vibrant Solar Orange
    ========================================================================== */
 .dark {
   /* Shadcn / Core Semantic Mappings */
-  --background: #0f090c;
-  --foreground: #e7e6e7;
-  --card: #12131c;
-  --card-foreground: #e7e6e7;
-  --popover: #12131c;
+  --background: #031d2e;
+  --foreground: #e5f0f5;
+  --card: #07273c;
+  --card-foreground: #e5f0f5;
+  --popover: #07273c;
   --popover-foreground: #ffffff;
-  --primary: #811756;
-  --primary-foreground: #f2e8ee;
-  --secondary: #1c1d29;
-  --secondary-foreground: #cda2bb;
-  --muted: #1c1d29;
-  --muted-foreground: #9f9d9e;
-  --accent: #1c1d29;
+  --primary: #ff7010;
+  --primary-foreground: #ffffff;
+  --secondary: #0e344d;
+  --secondary-foreground: #e5f0f5;
+  --muted: #0e344d;
+  --muted-foreground: #9ab3c0;
+  --accent: #17384e;
   --accent-foreground: #ffffff;
-  --destructive: #e2574a;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #252637;
-  --input: #252637;
-  --ring: #fc9918;
+  --border: #17384e;
+  --input: #17384e;
+  --ring: #ff7010;
 
-  /* Melooha / AstroTring Surfaces (Deep Obsidian Void) */
-  --mlh-bg: #0f090c;
-  --mlh-sidebar: #0c070a;
-  --mlh-surface: #12131c;
-  --mlh-surface-hi: #1c1d29;
-  --mlh-border: #252637;
-  --mlh-border-hi: #2e3045;
+  /* AstroTring Surfaces (Deep Cosmic Midnight Navy) */
+  --mlh-bg: #031d2e;
+  --mlh-sidebar: #041826;
+  --mlh-surface: #07273c;
+  --mlh-surface-hi: #0e344d;
+  --mlh-border: #17384e;
+  --mlh-border-hi: #234966;
 
-  /* Brand Plum Hierarchy */
-  --mlh-plum-800: #4d0e34;
-  --mlh-plum: #811756;
-  --mlh-plum-500: #9a4578;
-  --mlh-plum-400: #b3749a;
-  --mlh-plum-300: #cda2bb;
-  --mlh-plum-100: #f2e8ee;
+  /* Brand Solar Orange Hierarchy (replacing legacy plum) */
+  --mlh-plum-800: #8a3600;
+  --mlh-plum: #ff7010;
+  --mlh-plum-500: #ff852e;
+  --mlh-plum-400: #ff9b52;
+  --mlh-plum-300: #ffbd8a;
+  --mlh-plum-100: #fff0e6;
 
   /* Celestial & Functional Accents */
-  --mlh-amber: #fc9918;
-  --mlh-orrery: #df8107;
-  --mlh-orrery-hi: #feb371;
-  --mlh-iris: #1877fc;
-  --mlh-iris-hi: #65a5ff;
-  --mlh-iris-ink: #090a0e;
-  --mlh-success: #4ec77e;
-  --mlh-danger: #e2574a;
+  --mlh-amber: #f59e0b;
+  --mlh-orrery: #ff7010;
+  --mlh-orrery-hi: #ff9b52;
+  --mlh-iris: #38bdf8;
+  --mlh-iris-hi: #7dd3fc;
+  --mlh-iris-ink: #041826;
+  --mlh-success: #10b981;
+  --mlh-danger: #ef4444;
 
   /* Text Hierarchy */
   --mlh-text-hi: #ffffff;
-  --mlh-text: #e7e6e7;
-  --mlh-muted: #9f9d9e;
-  --mlh-faint: #6f6b6d;
+  --mlh-text: #e5f0f5;
+  --mlh-muted: #9ab3c0;
+  --mlh-faint: #5d7785;
 }
 
 /* Base DOM Defaults */
@@ -208,40 +209,40 @@
   }
 }
 
-/* Glassmorphism & Neon Glow Utilities */
+/* Glassmorphism & Solar Glow Utilities */
 .mlh-card-glass {
   background: color-mix(in srgb, var(--mlh-surface) 92%, transparent);
   border: 1px solid var(--mlh-border);
   backdrop-filter: blur(12px);
   box-shadow: 
     0px 22px 60px 0px rgba(0, 0, 0, 0.55),
-    0px 0px 48px 0px rgba(129, 23, 86, 0.44),
+    0px 0px 48px 0px rgba(255, 112, 16, 0.22),
     inset 0px 1px 0px 0px rgba(255, 255, 255, 0.08);
 }
 
 .glow-plum {
-  box-shadow: 0px 0px 24px 0px rgba(129, 23, 86, 0.6);
+  box-shadow: 0px 0px 24px 0px rgba(255, 112, 16, 0.45);
 }
 
 .glow-plum:hover {
-  box-shadow: 0px 0px 40px 0px rgba(129, 23, 86, 1);
+  box-shadow: 0px 0px 40px 0px rgba(255, 112, 16, 0.75);
 }
 
 .glow-amber {
-  box-shadow: 0px 0px 20px 0px rgba(252, 153, 24, 0.35);
+  box-shadow: 0px 0px 20px 0px rgba(255, 112, 16, 0.35);
 }
 
 .mlh-cta-plum {
-  background: linear-gradient(160deg, #9a4578, #811756);
-  box-shadow: 0px 0px 26px 0px rgba(129, 23, 86, 0.42);
+  background: linear-gradient(160deg, #ff852e, #ff7010);
+  box-shadow: 0px 0px 26px 0px rgba(255, 112, 16, 0.35);
 }
 
 .mlh-cta-plum:hover {
-  background: linear-gradient(160deg, #aa4e85, #8f1a60);
-  box-shadow: 0px 0px 34px 0px rgba(129, 23, 86, 0.65);
+  background: linear-gradient(160deg, #ff9547, #ea650a);
+  box-shadow: 0px 0px 34px 0px rgba(255, 112, 16, 0.55);
 }
 
-/* Melooha Smooth Fade-Rise Micro-animation */
+/* Smooth Fade-Rise Micro-animation */
 @keyframes mlh-rise {
   from {
     opacity: 0;
@@ -257,9 +258,9 @@
   animation: mlh-rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Melooha Custom Delicate Scrollbar */
+/* Custom Delicate Scrollbar */
 .mlh-thin-scroll {
-  scrollbar-color: rgba(179, 116, 154, 0.35) transparent;
+  scrollbar-color: rgba(255, 112, 16, 0.35) transparent;
   scrollbar-width: thin;
 }
 
@@ -272,11 +273,10 @@
 }
 
 .mlh-thin-scroll::-webkit-scrollbar-thumb {
-  background: rgba(179, 116, 154, 0.3);
+  background: rgba(255, 112, 16, 0.3);
   border-radius: 9999px;
 }
 
 .mlh-thin-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(179, 116, 154, 0.55);
+  background: rgba(255, 112, 16, 0.55);
 }
-

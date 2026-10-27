@@ -47,7 +47,7 @@ export default function DashboardKundliCard() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="w-full max-w-[700px] mb-6 rounded-2xl border border-mlh-plum-700/50 bg-gradient-to-br from-[#1b1220]/90 via-[#15121e]/90 to-[#0e0c14]/90 backdrop-blur-xl p-5 sm:p-6 shadow-[0_16px_40px_rgba(0,0,0,0.5),0_0_30px_rgba(179,43,110,0.15)] relative overflow-hidden group"
+      className="w-full max-w-[700px] mb-6 rounded-2xl border border-mlh-plum-700/50 bg-gradient-to-br from-[#0e344d]/90 via-[#07273c]/90 to-[#041826]/90 backdrop-blur-xl p-5 sm:p-6 shadow-[0_16px_40px_rgba(0,0,0,0.5),0_0_30px_rgba(255,112,16,0.15)] relative overflow-hidden group"
     >
       {/* Decorative celestial background glow */}
       <div className="absolute -right-16 -top-16 w-44 h-44 bg-mlh-amber/10 rounded-full blur-3xl pointer-events-none" />

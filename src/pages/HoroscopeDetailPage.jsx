@@ -86,7 +86,7 @@ export default function HoroscopeDetailPage() {
   const periodTitle = activePeriod.charAt(0).toUpperCase() + activePeriod.slice(1)
 
   return (
-    <div className="min-h-full flex flex-col bg-[#0f090c] text-foreground">
+    <div className="min-h-full flex flex-col bg-[#031d2e] text-foreground">
       <Helmet>
         <title>
           {signTitle} ({vedicTitle}) {periodTitle} Horoscope | AstroTring Vedic Astrology

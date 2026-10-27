@@ -65,7 +65,7 @@ export default function HoroscopesListingPage() {
   }, [searchQuery, signs])
 
   return (
-    <div className="min-h-full flex flex-col bg-[#0f090c] text-foreground">
+    <div className="min-h-full flex flex-col bg-[#031d2e] text-foreground">
       <Helmet>
         <title>Vedic Horoscopes by Moon Sign (Rashi) | AstroTring</title>
         <meta
@@ -96,9 +96,9 @@ export default function HoroscopesListingPage() {
         </div>
 
         {/* Controls: Timeframe Tabs + Search Filter */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pb-2 border-b border-[#252637]/60">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pb-2 border-b border-[#17384e]/60">
           {/* Segmented Timeframe Switcher */}
-          <div className="inline-flex items-center bg-[#181926] p-1 rounded-xl border border-[#252637]">
+          <div className="inline-flex items-center bg-[#07273c] p-1 rounded-xl border border-[#17384e]">
             {["Daily", "Monthly", "Yearly"].map((tab) => {
               const active = timeframe === tab
               return (
@@ -126,13 +126,13 @@ export default function HoroscopesListingPage() {
               placeholder="Search a sign or Rashi..."
               value={searchQuery}
               onChange={(e) => dispatch(setSearchQuery(e.target.value))}
-              className="pl-9 h-10 bg-[#141522] border-[#252637] text-xs text-white placeholder:text-mlh-faint rounded-xl focus:border-mlh-plum focus:ring-1 focus:ring-mlh-plum transition-all"
+              className="pl-9 h-10 bg-[#041826] border-[#17384e] text-xs text-white placeholder:text-mlh-faint rounded-xl focus:border-mlh-plum focus:ring-1 focus:ring-mlh-plum transition-all"
             />
           </div>
         </div>
 
         {/* Vedic Rashi Explanation Banner */}
-        <div className="rounded-2xl border border-mlh-plum/30 bg-gradient-to-r from-mlh-plum/15 via-[#181926] to-[#12131c] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="rounded-2xl border border-mlh-plum/30 bg-gradient-to-r from-mlh-plum/15 via-[#0e344d] to-[#07273c] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <div className="w-9 h-9 rounded-xl bg-mlh-plum/20 border border-mlh-plum/40 flex items-center justify-center shrink-0 text-mlh-plum">
               <Moon className="w-4 h-4" />
@@ -171,7 +171,7 @@ export default function HoroscopesListingPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => dispatch(setSearchQuery(""))}
-                className="text-xs border-[#252637] cursor-pointer"
+                className="text-xs border-[#17384e] cursor-pointer"
               >
                 Clear filter
               </Button>

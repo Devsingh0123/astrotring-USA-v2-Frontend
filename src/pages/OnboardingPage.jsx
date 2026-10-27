@@ -214,28 +214,28 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] md:min-h-screen bg-[#0f090c] flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden font-sans">
+    <div className="min-h-[calc(100vh-3.5rem)] md:min-h-screen bg-[#031d2e] flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden font-sans">
       {/* Background Celestial Glowing Orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#b32b6e]/15 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#ff7010]/15 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Main Glassmorphic Onboarding Card */}
-      <div className="w-full max-w-4xl bg-[#161220]/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-5 relative z-10 animate-in fade-in duration-300">
+      <div className="w-full max-w-4xl bg-[#07273c]/95 backdrop-blur-xl border border-[#17384e] rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-5 relative z-10 animate-in fade-in duration-300">
         {/* ================= LEFT HERO COLUMN ================= */}
-        <div className="md:col-span-2 p-6 sm:p-8 bg-gradient-to-b from-[#221321] via-[#1a0f1b] to-[#120a15] border-b md:border-b-0 md:border-r border-white/10 flex flex-col justify-between relative overflow-hidden">
+        <div className="md:col-span-2 p-6 sm:p-8 bg-gradient-to-b from-[#07273c] via-[#051e30] to-[#031d2e] border-b md:border-b-0 md:border-r border-[#17384e] flex flex-col justify-between relative overflow-hidden">
           <div className="space-y-6 relative z-10">
             {/* Brand Logo & Name */}
             <div className="flex items-center gap-2.5">
               <img
                 src="/logo-192.jpg"
                 alt="AstroTring"
-                className="w-9 h-9 rounded-full object-cover shrink-0 border border-white/10 shadow-lg shadow-purple-900/30"
+                className="w-9 h-9 rounded-full object-cover shrink-0 border border-white/10 shadow-lg shadow-black/40"
               />
               <div>
                 <span className="font-serif font-bold text-xl tracking-tight text-white block">
                   AstroTring
                 </span>
-                <span className="text-[10px] font-mono text-mlh-plum-200 uppercase tracking-widest block">
+                <span className="text-[10px] font-mono text-[#ff852e] uppercase tracking-widest block">
                   Vedic Astrology Engine
                 </span>
               </div>
@@ -245,7 +245,7 @@ export default function OnboardingPage() {
             <div className="pt-2">
               <h2 className="text-2xl sm:text-3xl font-serif font-normal text-white leading-tight">
                 This needs your{" "}
-                <span className="text-[#e273a7] italic font-serif">
+                <span className="text-[#ff852e] italic font-serif">
                   birth chart
                 </span>
               </h2>
@@ -284,18 +284,18 @@ export default function OnboardingPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Swiss Ephemeris 2.10
             </span>
-            <span className="text-[#e273a7]">Lahiri Ayanamsa</span>
+            <span className="text-[#ff852e]">Lahiri Ayanamsa</span>
           </div>
         </div>
 
         {/* ================= RIGHT INTERACTIVE FORM COLUMN ================= */}
-        <div className="md:col-span-3 p-6 sm:p-8 sm:py-10 flex flex-col justify-between bg-[#130f1b]">
+        <div className="md:col-span-3 p-6 sm:p-8 sm:py-10 flex flex-col justify-between bg-[#041826]">
           <div>
             {/* Top Step Progress Bar */}
             <div className="mb-6">
               <div className="flex items-center justify-between text-[10px] font-mono tracking-[0.2em] mb-2.5">
-                <span className="text-[#e273a7] font-semibold flex items-center gap-1.5">
-                  <Compass className="w-3 h-3 text-[#e273a7]" />
+                <span className="text-[#ff852e] font-semibold flex items-center gap-1.5">
+                  <Compass className="w-3 h-3 text-[#ff852e]" />
                   {onboardingStep === 1
                     ? "STEP 1 OF 2: ABOUT YOU"
                     : "STEP 2 OF 2: YOUR BIRTH DETAILS"}
@@ -307,12 +307,12 @@ export default function OnboardingPage() {
               <div className="grid grid-cols-2 gap-2">
                 <div
                   className={`h-1 rounded-full transition-all duration-300 ${
-                    onboardingStep >= 1 ? "bg-[#b32b6e]" : "bg-white/10"
+                    onboardingStep >= 1 ? "bg-[#ff7010]" : "bg-white/10"
                   }`}
                 />
                 <div
                   className={`h-1 rounded-full transition-all duration-300 ${
-                    onboardingStep >= 2 ? "bg-[#b32b6e]" : "bg-white/10"
+                    onboardingStep >= 2 ? "bg-[#ff7010]" : "bg-white/10"
                   }`}
                 />
               </div>
@@ -347,7 +347,7 @@ export default function OnboardingPage() {
                     placeholder="Enter your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-2xl border border-white/10 bg-[#1a1424] px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus-visible:ring-1 focus-visible:ring-[#b32b6e] focus-visible:border-[#b32b6e] transition-all h-auto"
+                    className="w-full rounded-2xl border border-[#17384e] bg-[#07273c] px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus-visible:ring-1 focus-visible:ring-[#ff7010] focus-visible:border-[#ff7010] transition-all h-auto"
                     autoFocus
                     required
                   />
@@ -373,8 +373,8 @@ export default function OnboardingPage() {
                           onClick={() => setGender(item.key)}
                           className={`rounded-2xl py-3 px-4 text-xs sm:text-sm font-medium transition-all text-center cursor-pointer border ${
                             isSelected
-                              ? "border-[#b32b6e] bg-[#2d152b] text-white shadow-md shadow-[#b32b6e]/20"
-                              : "border-white/10 bg-[#161220] text-white/70 hover:border-white/20 hover:text-white"
+                              ? "border-[#ff7010] bg-[#ff7010]/15 text-white shadow-md shadow-[#ff7010]/20 font-semibold"
+                              : "border-[#17384e] bg-[#07273c] text-white/70 hover:border-white/20 hover:text-white"
                           }`}
                         >
                           {item.label}
@@ -388,7 +388,7 @@ export default function OnboardingPage() {
                   <Button
                     type="submit"
                     disabled={!name.trim()}
-                    className="w-full bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white font-medium py-3.5 rounded-full transition shadow-lg shadow-[#b32b6e]/20 disabled:opacity-40 cursor-pointer text-sm h-auto"
+                    className="w-full bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#d55905] hover:to-[#ea650a] text-white font-semibold py-3.5 rounded-full transition shadow-lg shadow-[#ff7010]/25 disabled:opacity-40 cursor-pointer text-sm h-auto"
                   >
                     Continue to Birth Details
                   </Button>
@@ -454,7 +454,7 @@ export default function OnboardingPage() {
                     type="checkbox"
                     checked={isTimeUnknown}
                     onChange={(e) => setIsTimeUnknown(e.target.checked)}
-                    className="w-4 h-4 rounded border-white/20 accent-[#b32b6e] cursor-pointer"
+                    className="w-4 h-4 rounded border-white/20 accent-[#ff7010] cursor-pointer"
                   />
                   <span>I don&apos;t know my exact time of birth</span>
                 </label>
@@ -491,18 +491,18 @@ export default function OnboardingPage() {
                           setShowLocationDropdown(true)
                         }
                       }}
-                      className="w-full rounded-2xl border border-white/10 bg-[#1a1424] pl-10 pr-10 py-3 text-xs sm:text-sm text-white placeholder:text-white/30 focus-visible:ring-1 focus-visible:ring-[#b32b6e] focus-visible:border-[#b32b6e] transition-all h-auto"
+                      className="w-full rounded-2xl border border-[#17384e] bg-[#07273c] pl-10 pr-10 py-3 text-xs sm:text-sm text-white placeholder:text-white/30 focus-visible:ring-1 focus-visible:ring-[#ff7010] focus-visible:border-[#ff7010] transition-all h-auto"
                       required
                     />
 
                     {isSearchingLocation && (
-                      <Loader2 className="w-4 h-4 text-mlh-plum-300 absolute right-3.5 top-3.5 animate-spin" />
+                      <Loader2 className="w-4 h-4 text-[#ff852e] absolute right-3.5 top-3.5 animate-spin" />
                     )}
                   </div>
 
                   {/* Autocomplete Dropdown Menu */}
                   {showLocationDropdown && locationSuggestions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-[#1c1427] border border-white/15 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-56 overflow-y-auto no-scrollbar">
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-[#07273c] border border-[#17384e] rounded-2xl shadow-2xl overflow-hidden z-50 max-h-56 overflow-y-auto no-scrollbar">
                       {locationSuggestions.map((loc, idx) => {
                         const displayName =
                           loc.displayName ||
@@ -523,7 +523,7 @@ export default function OnboardingPage() {
                             className="w-full text-left px-4 py-2.5 hover:bg-white/10 transition-colors border-b border-white/5 last:border-0 flex items-center justify-between group cursor-pointer"
                           >
                             <div className="flex items-center gap-2.5 overflow-hidden">
-                              <MapPin className="w-3.5 h-3.5 text-mlh-plum-300 shrink-0 group-hover:scale-110 transition-transform" />
+                              <MapPin className="w-3.5 h-3.5 text-[#ff852e] shrink-0 group-hover:scale-110 transition-transform" />
                               <span className="text-xs text-white truncate font-medium">
                                 {displayName}
                               </span>
@@ -547,7 +547,7 @@ export default function OnboardingPage() {
                       !selectedLocation ||
                       isOnboardingSubmitting
                     }
-                    className="w-full bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white font-medium py-3.5 rounded-full transition shadow-lg shadow-[#b32b6e]/20 disabled:opacity-40 cursor-pointer text-sm h-auto"
+                    className="w-full bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#d55905] hover:to-[#ea650a] text-white font-semibold py-3.5 rounded-full transition shadow-lg shadow-[#ff7010]/25 disabled:opacity-40 cursor-pointer text-sm h-auto"
                   >
                     {isOnboardingSubmitting ? (
                       <span className="inline-flex items-center gap-2">

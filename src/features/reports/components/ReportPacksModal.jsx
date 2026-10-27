@@ -501,7 +501,7 @@ export default function ReportPacksModal({
       <Dialog open={isOpen} onOpenChange={(open) => !open && handleModalClose()}>
         <DialogContent
           showCloseButton={false}
-          className="w-[96vw] sm:max-w-[860px] md:max-w-[920px] lg:max-w-[980px] max-h-[92vh] flex flex-col p-0 overflow-hidden border border-white/10 bg-[#140f1d] text-foreground rounded-2xl sm:rounded-3xl shadow-2xl"
+          className="w-[96vw] sm:max-w-[860px] md:max-w-[920px] lg:max-w-[980px] max-h-[92vh] flex flex-col p-0 overflow-hidden border border-white/10 bg-[#07273c] text-foreground rounded-2xl sm:rounded-3xl shadow-2xl"
           aria-describedby={undefined}
         >
           {/* ================= STEP 1: PACK SELECTION ================= */}
@@ -546,7 +546,7 @@ export default function ReportPacksModal({
                           disabled={isLoadingPacks}
                           className={`px-2.5 py-1 text-[11px] font-mono rounded-full transition cursor-pointer disabled:opacity-50 ${
                             isCurrActive
-                              ? "bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] text-white font-semibold shadow-sm"
+                              ? "bg-gradient-to-r from-[#ea650a] to-[#ff7010] text-white font-semibold shadow-sm"
                               : "text-white/60 hover:text-white hover:bg-white/5"
                           }`}
                         >
@@ -575,7 +575,7 @@ export default function ReportPacksModal({
                     {[1, 2, 3].map((idx) => (
                       <div
                         key={idx}
-                        className="rounded-2xl p-6 sm:p-7 border border-white/10 bg-[#1b1726]/60 flex flex-col justify-between min-h-[340px]"
+                        className="rounded-2xl p-6 sm:p-7 border border-white/10 bg-[#07273c]/60 flex flex-col justify-between min-h-[340px]"
                       >
                         <div>
                           <div className="flex items-center justify-between">
@@ -639,8 +639,8 @@ export default function ReportPacksModal({
                           onClick={() => handleSelectPack(pkg)}
                           className={`relative rounded-2xl p-5 sm:p-6 lg:p-7 border cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[350px] ${
                             isSelected
-                              ? "border-2 border-[#b32b6e] bg-gradient-to-b from-[#23152c] to-[#181122] ring-1 ring-[#b32b6e]/50 shadow-[0_0_35px_rgba(179,43,110,0.3)]"
-                              : "border-white/10 bg-[#1a1426]/70 hover:border-white/20 hover:bg-[#1a1426]"
+                              ? "border-2 border-[#ff7010] bg-gradient-to-b from-[#0e344d] to-[#07273c] ring-1 ring-[#ff7010]/50 shadow-[0_0_35px_rgba(255,112,16,0.3)]"
+                              : "border-white/10 bg-[#07273c]/70 hover:border-white/20 hover:bg-[#07273c]"
                           }`}
                         >
                           {/* Floating Badge (Popular / Best Value) */}
@@ -749,7 +749,7 @@ export default function ReportPacksModal({
               </div>
 
               {/* Dark Footer Bar */}
-              <div className="shrink-0 bg-[#0f0b15] px-5 sm:px-8 py-4 sm:py-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="shrink-0 bg-[#041826] px-5 sm:px-8 py-4 sm:py-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <span className="text-[11px] font-mono tracking-[0.2em] uppercase text-white/40 text-center sm:text-left">
                   SECURE PAYMENT · {selectedPricing.currency === "INR" ? "GST INVOICE" : "TAX INVOICE"} · INSTANT UNLOCK
                 </span>
@@ -758,7 +758,7 @@ export default function ReportPacksModal({
                   type="button"
                   disabled={!selectedPack || isLoadingPacks}
                   onClick={() => setStep(2)}
-                  className="w-full sm:w-auto bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white px-8 py-3.5 rounded-full font-medium shadow-lg shadow-[#b32b6e]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer disabled:opacity-50"
+                  className="w-full sm:w-auto bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#f07015] hover:to-[#ff832b] text-white px-8 py-3.5 rounded-full font-medium shadow-lg shadow-[#ff7010]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer disabled:opacity-50"
                 >
                   {selectedPack ? (
                     <>
@@ -905,7 +905,7 @@ export default function ReportPacksModal({
                           <button
                             type="button"
                             onClick={() => setIsStateDropdownOpen(!isStateDropdownOpen)}
-                            className="w-full rounded-2xl border border-white/10 bg-[#1b1726] px-5 py-3.5 text-sm text-white flex items-center justify-between hover:border-white/20 transition cursor-pointer"
+                            className="w-full rounded-2xl border border-white/10 bg-[#07273c] px-5 py-3.5 text-sm text-white flex items-center justify-between hover:border-white/20 transition cursor-pointer"
                           >
                             <span>{billingState}</span>
                             <ChevronDown
@@ -916,7 +916,7 @@ export default function ReportPacksModal({
                           </button>
 
                           {isStateDropdownOpen && (
-                            <div className="absolute z-40 left-0 right-0 mt-1.5 max-h-52 overflow-y-auto rounded-2xl border border-white/10 bg-[#181424] p-2 shadow-2xl">
+                            <div className="absolute z-40 left-0 right-0 mt-1.5 max-h-52 overflow-y-auto rounded-2xl border border-white/10 bg-[#07273c] p-2 shadow-2xl">
                               {INDIAN_GST_STATES.map((state) => (
                                 <div
                                   key={state}
@@ -926,7 +926,7 @@ export default function ReportPacksModal({
                                   }}
                                   className={`px-4 py-2.5 text-xs rounded-xl cursor-pointer transition flex items-center justify-between ${
                                     billingState === state
-                                      ? "bg-[#b32b6e]/30 text-white font-semibold"
+                                      ? "bg-[#ff7010]/30 text-white font-semibold"
                                       : "text-white/70 hover:bg-white/5 hover:text-white"
                                   }`}
                                 >
@@ -940,7 +940,7 @@ export default function ReportPacksModal({
                           )}
                         </div>
                       ) : (
-                        <div className="w-full rounded-2xl border border-white/10 bg-[#1b1726] px-5 py-3.5 text-sm text-white/80 font-mono">
+                        <div className="w-full rounded-2xl border border-white/10 bg-[#07273c] px-5 py-3.5 text-sm text-white/80 font-mono">
                           International ({selectedPricing.currency}) · GST Exempt
                         </div>
                       )}
@@ -998,7 +998,7 @@ export default function ReportPacksModal({
                                 handleApplyPromo()
                               }
                             }}
-                            className="flex-1 rounded-2xl border border-white/10 bg-[#1b1726] px-5 py-3 text-xs text-white uppercase placeholder:text-white/30 focus:outline-none focus:border-[#b32b6e] font-mono"
+                            className="flex-1 rounded-2xl border border-white/10 bg-[#07273c] px-5 py-3 text-xs text-white uppercase placeholder:text-white/30 focus:outline-none focus:border-[#ff7010] font-mono"
                           />
                           <Button
                             type="button"
@@ -1060,7 +1060,7 @@ export default function ReportPacksModal({
                           type="button"
                           disabled={isInitiating}
                           onClick={handleProceedToRazorpay}
-                          className="w-full bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white py-3.5 sm:py-4 rounded-full font-medium shadow-lg shadow-[#b32b6e]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-base cursor-pointer disabled:opacity-60"
+                          className="w-full bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#f07015] hover:to-[#ff832b] text-white py-3.5 sm:py-4 rounded-full font-medium shadow-lg shadow-[#ff7010]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-base cursor-pointer disabled:opacity-60"
                         >
                           {isInitiating ? (
                             <span>Connecting to Gateway...</span>

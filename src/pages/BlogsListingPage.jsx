@@ -155,7 +155,7 @@ export default function BlogsListingPage() {
   const topFeatured = showFeaturedHero ? featuredBlogs[0] : null;
 
   return (
-    <div className="min-h-full flex flex-col justify-between bg-[#0f090c] text-white">
+    <div className="min-h-full flex flex-col justify-between bg-[#031d2e] text-white">
       <Helmet>
         <title>Vedic Astrology Blogs, Transits & Ancient Upayas | AstroTring</title>
         <meta
@@ -239,9 +239,9 @@ export default function BlogsListingPage() {
                 onChange={handleSortChange}
                 className="h-10 rounded-xl border border-white/10 bg-white/[0.04] px-3 font-mono text-xs text-white/80 focus:border-mlh-plum-400 focus:outline-none cursor-pointer"
               >
-                <option value="latest" className="bg-[#141522] text-white">Latest First</option>
-                <option value="views_desc" className="bg-[#141522] text-white">Most Viewed</option>
-                <option value="oldest" className="bg-[#141522] text-white">Oldest First</option>
+                <option value="latest" className="bg-[#07273c] text-white">Latest First</option>
+                <option value="views_desc" className="bg-[#07273c] text-white">Most Viewed</option>
+                <option value="oldest" className="bg-[#07273c] text-white">Oldest First</option>
               </select>
             </div>
           </div>

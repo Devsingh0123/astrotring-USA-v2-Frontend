@@ -471,7 +471,7 @@ export default function QuestionPacksModal({
       <Dialog open={isOpen} onOpenChange={(open) => !open && handleModalClose()}>
         <DialogContent
           showCloseButton={false}
-          className="sm:max-w-[880px] md:max-w-[900px] w-[95vw] p-0 overflow-hidden border border-white/10 bg-[#161220] text-foreground rounded-2xl sm:rounded-3xl shadow-2xl"
+          className="sm:max-w-[880px] md:max-w-[900px] w-[95vw] p-0 overflow-hidden border border-white/10 bg-[#07273c] text-foreground rounded-2xl sm:rounded-3xl shadow-2xl"
         >
           {/* ================= STEP 1: PACKAGES POPUP ================= */}
           {step === 1 && (
@@ -510,7 +510,7 @@ export default function QuestionPacksModal({
                           disabled={isLoadingPacks}
                           className={`px-2.5 py-1 text-[11px] font-mono rounded-full transition cursor-pointer disabled:opacity-50 ${
                             isCurrActive
-                              ? "bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] text-white font-semibold shadow-sm"
+                              ? "bg-gradient-to-r from-[#ea650a] to-[#ff7010] text-white font-semibold shadow-sm"
                               : "text-white/60 hover:text-white hover:bg-white/5"
                           }`}
                         >
@@ -595,8 +595,8 @@ export default function QuestionPacksModal({
                           onClick={() => handleSelectPack(pkg)}
                           className={`relative rounded-2xl p-6 sm:p-7 border cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[300px] sm:min-h-[320px] ${
                             isSelected
-                              ? "border-2 border-[#b32b6e] bg-[#22162a] ring-1 ring-[#b32b6e]/50 shadow-[0_0_30px_rgba(179,43,110,0.25)]"
-                              : "border-white/10 bg-[#1b1726]/60 hover:border-white/20 hover:bg-[#1b1726]"
+                              ? "border-2 border-[#ff7010] bg-[#0e344d] ring-1 ring-[#ff7010]/50 shadow-[0_0_30px_rgba(255,112,16,0.25)]"
+                              : "border-white/10 bg-[#07273c]/60 hover:border-white/20 hover:bg-[#07273c]"
                           }`}
                         >
                           {/* Floating Badge (Popular / Best Value) */}
@@ -615,7 +615,7 @@ export default function QuestionPacksModal({
                               <div
                                 className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
                                   isSelected
-                                    ? "border-[#b32b6e] bg-[#b32b6e] text-white"
+                                    ? "border-[#ff7010] bg-[#ff7010] text-white"
                                     : "border-white/25 bg-transparent"
                                 }`}
                               >
@@ -667,7 +667,7 @@ export default function QuestionPacksModal({
               </div>
 
               {/* Dark Footer Bar */}
-              <div className="bg-[#100c17] px-7 sm:px-9 py-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="bg-[#041826] px-7 sm:px-9 py-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <span className="text-[11px] font-mono tracking-[0.2em] uppercase text-white/40">
                   SECURE PAYMENT · {selectedPricing.currency === "INR" ? "GST INVOICE" : "TAX INVOICE"} · INSTANT CREDIT
                 </span>
@@ -676,7 +676,7 @@ export default function QuestionPacksModal({
                   type="button"
                   disabled={!selectedPack || isLoadingPacks}
                   onClick={() => setStep(2)}
-                  className="w-full sm:w-auto bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white px-8 py-3.5 rounded-full font-medium shadow-lg shadow-[#b32b6e]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer disabled:opacity-50"
+                  className="w-full sm:w-auto bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#f07015] hover:to-[#ff832b] text-white px-8 py-3.5 rounded-full font-medium shadow-lg shadow-[#ff7010]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer disabled:opacity-50"
                 >
                   {selectedPack ? (
                     <>
@@ -819,7 +819,7 @@ export default function QuestionPacksModal({
                         <button
                           type="button"
                           onClick={() => setIsStateDropdownOpen(!isStateDropdownOpen)}
-                          className="w-full rounded-2xl border border-white/10 bg-[#1b1726] px-5 py-3.5 text-sm text-white flex items-center justify-between hover:border-white/20 transition cursor-pointer"
+                          className="w-full rounded-2xl border border-white/10 bg-[#07273c] px-5 py-3.5 text-sm text-white flex items-center justify-between hover:border-white/20 transition cursor-pointer"
                         >
                           <span>{billingState}</span>
                           <ChevronDown
@@ -830,7 +830,7 @@ export default function QuestionPacksModal({
                         </button>
 
                         {isStateDropdownOpen && (
-                          <div className="absolute z-30 left-0 right-0 mt-1.5 max-h-52 overflow-y-auto rounded-2xl border border-white/10 bg-[#181424] p-2 shadow-2xl">
+                          <div className="absolute z-30 left-0 right-0 mt-1.5 max-h-52 overflow-y-auto rounded-2xl border border-white/10 bg-[#07273c] p-2 shadow-2xl">
                             {INDIAN_GST_STATES.map((state) => (
                               <div
                                 key={state}
@@ -840,7 +840,7 @@ export default function QuestionPacksModal({
                                 }}
                                 className={`px-4 py-2.5 text-xs rounded-xl cursor-pointer transition flex items-center justify-between ${
                                   billingState === state
-                                    ? "bg-[#b32b6e]/30 text-white font-semibold"
+                                    ? "bg-[#ff7010]/30 text-white font-semibold"
                                     : "text-white/70 hover:bg-white/5 hover:text-white"
                                 }`}
                               >
@@ -854,7 +854,7 @@ export default function QuestionPacksModal({
                         )}
                       </div>
                     ) : (
-                      <div className="w-full rounded-2xl border border-white/10 bg-[#1b1726] px-5 py-3.5 text-sm text-white/80 font-mono">
+                      <div className="w-full rounded-2xl border border-white/10 bg-[#07273c] px-5 py-3.5 text-sm text-white/80 font-mono">
                         International ({selectedPricing.currency}) · GST Exempt
                       </div>
                     )}
@@ -912,7 +912,7 @@ export default function QuestionPacksModal({
                               handleApplyPromo()
                             }
                           }}
-                          className="flex-1 rounded-2xl border border-white/10 bg-[#1b1726] px-5 py-3 text-xs text-white uppercase placeholder:text-white/30 focus:outline-none focus:border-[#b32b6e] font-mono"
+                          className="flex-1 rounded-2xl border border-white/10 bg-[#07273c] px-5 py-3 text-xs text-white uppercase placeholder:text-white/30 focus:outline-none focus:border-[#ff7010] font-mono"
                         />
                         <Button
                           type="button"
@@ -975,7 +975,7 @@ export default function QuestionPacksModal({
                       type="button"
                       disabled={isInitiating}
                       onClick={handleProceedToRazorpay}
-                      className="w-full bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white py-4 rounded-full font-medium shadow-lg shadow-[#b32b6e]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-base cursor-pointer disabled:opacity-60"
+                      className="w-full bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#f07015] hover:to-[#ff832b] text-white py-4 rounded-full font-medium shadow-lg shadow-[#ff7010]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-base cursor-pointer disabled:opacity-60"
                     >
                       {isInitiating ? (
                         <span>Connecting to Gateway...</span>

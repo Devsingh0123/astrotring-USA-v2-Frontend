@@ -82,7 +82,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`h-screen sticky top-0 bg-[#0c070a] border-r border-[#252637] flex flex-col justify-between transition-all duration-300 z-40 shrink-0 ${isCollapsed ? "w-[72px]" : "w-[260px] lg:w-[280px]"
+      className={`h-screen sticky top-0 bg-[#041826] border-r border-[#17384e] flex flex-col justify-between transition-all duration-300 z-40 shrink-0 ${isCollapsed ? "w-[72px]" : "w-[260px] lg:w-[280px]"
         }`}
     >
       {/* Top Header & Navigation Rail */}
@@ -205,7 +205,7 @@ export default function Sidebar({
 
         {/* Recent Readings Filter & History */}
         {!isCollapsed && (
-          <div className="pt-3 border-t border-[#252637] space-y-3">
+          <div className="pt-3 border-t border-[#17384e] space-y-3">
             <div className="flex items-center gap-1 text-[10px] font-mono">
               {["ALL", "VAANI", "ASTROPEDIA"].map((filter) => (
                 <button
@@ -391,7 +391,7 @@ export default function Sidebar({
       </div>
 
       {/* Sticky Bottom Log In / User Profile Popover */}
-      <div className="p-3 border-t border-[#252637] bg-[#0c070a]">
+      <div className="p-3 border-t border-[#17384e] bg-[#041826]">
         {isAuthenticated ? (
           <UserProfileMenu
             isCollapsed={isCollapsed}

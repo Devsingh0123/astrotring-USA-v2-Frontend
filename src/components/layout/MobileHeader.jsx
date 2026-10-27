@@ -33,7 +33,7 @@ export default function MobileHeader({ onOpenBindModal }) {
 
   return (
     <>
-      <header className="md:hidden sticky top-0 z-50 w-full h-14 bg-[#0c070a]/90 backdrop-blur-md border-b border-[#252637] px-4 flex items-center justify-between">
+      <header className="md:hidden sticky top-0 z-50 w-full h-14 bg-[#07273c]/90 backdrop-blur-md border-b border-[#17384e] px-4 flex items-center justify-between">
         <Button
           variant="ghost"
           size="icon"
@@ -90,9 +90,9 @@ export default function MobileHeader({ onOpenBindModal }) {
             onClick={() => setIsOpen(false)}
           />
 
-          <div className="relative w-[280px] max-w-[80%] bg-[#0c070a] border-r border-[#252637] p-4 flex flex-col justify-between h-full z-10 animate-in slide-in-from-left duration-200">
+          <div className="relative w-[280px] max-w-[80%] bg-[#041826] border-r border-[#17384e] p-4 flex flex-col justify-between h-full z-10 animate-in slide-in-from-left duration-200">
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#252637]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#17384e]">
                 <div className="flex items-center gap-2">
                   <img
                     src="/logo-192.jpg"
@@ -173,7 +173,7 @@ export default function MobileHeader({ onOpenBindModal }) {
               </nav>
             </div>
 
-            <div className="pt-4 border-t border-[#252637]">
+            <div className="pt-4 border-t border-[#17384e]">
               {isAuthenticated ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/10 text-xs overflow-hidden">

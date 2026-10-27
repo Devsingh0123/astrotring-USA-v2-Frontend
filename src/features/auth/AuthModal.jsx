@@ -242,13 +242,13 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
         showCloseButton={false}
-        className="sm:max-w-[760px] md:max-w-[820px] w-[95vw] p-0 overflow-hidden border border-white/10 bg-[#161220] text-foreground rounded-2xl sm:rounded-3xl shadow-2xl"
+        className="sm:max-w-[760px] md:max-w-[820px] w-[95vw] p-0 overflow-hidden border border-white/10 bg-[#07273c] text-foreground rounded-2xl sm:rounded-3xl shadow-2xl"
       >
         <div className="grid grid-cols-1 md:grid-cols-5 min-h-[460px]">
           {/* ================= LEFT HERO COLUMN ================= */}
-          <div className="md:col-span-2 p-6 md:p-8 bg-gradient-to-b from-[#221321] via-[#1a0f1b] to-[#120a15] border-b md:border-b-0 md:border-r border-white/10 flex flex-col justify-between relative overflow-hidden">
+          <div className="md:col-span-2 p-6 md:p-8 bg-gradient-to-b from-[#07273c] via-[#051e30] to-[#031d2e] border-b md:border-b-0 md:border-r border-white/10 flex flex-col justify-between relative overflow-hidden">
             {/* Subtle celestial radial aura */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-[#b32b6e]/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-[#ff7010]/20 rounded-full blur-3xl pointer-events-none" />
 
             <div className="space-y-6 relative z-10">
               {/* Logo */}
@@ -297,7 +297,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
           </div>
 
           {/* ================= RIGHT FORM COLUMN ================= */}
-          <div className="md:col-span-3 p-6 sm:p-8 flex flex-col justify-between relative bg-[#130f1b]">
+          <div className="md:col-span-3 p-6 sm:p-8 flex flex-col justify-between relative bg-[#041826]">
             {/* Top Close Button */}
             <button
               onClick={() => handleClose(false)}
@@ -313,11 +313,11 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                 {/* 4-Step Progress Bar */}
                 <div>
                   <div className="flex items-center justify-between text-[10px] font-mono tracking-[0.2em] mb-2">
-                    <span className="text-[#e273a7] font-semibold">YOUR EMAIL</span>
+                    <span className="text-[#ff7010] font-semibold">YOUR EMAIL</span>
                     <span className="text-white/40">STEP 1 OF 4</span>
                   </div>
                   <div className="grid grid-cols-4 gap-1.5">
-                    <div className="h-0.5 rounded-full bg-[#b32b6e]" />
+                    <div className="h-0.5 rounded-full bg-[#ff7010]" />
                     <div className="h-0.5 rounded-full bg-white/10" />
                     <div className="h-0.5 rounded-full bg-white/10" />
                     <div className="h-0.5 rounded-full bg-white/10" />
@@ -340,7 +340,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                 )}
 
                 {/* Email Input */}
-                <div className="flex items-center rounded-2xl border border-white/10 bg-[#1a1424] px-4 py-3 focus-within:border-[#b32b6e] transition-all">
+                <div className="flex items-center rounded-2xl border border-white/10 bg-[#07273c] px-4 py-3 focus-within:border-[#ff7010] transition-all">
                   <Mail className="w-4 h-4 text-white/40 shrink-0 mr-3" />
                   <Input
                     type="email"
@@ -356,7 +356,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                 <Button
                   type="submit"
                   disabled={!isValidEmail(localEmail) || loading}
-                  className="w-full bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white font-medium py-3.5 rounded-full transition shadow-lg shadow-[#b32b6e]/20 disabled:opacity-40 cursor-pointer text-sm"
+                  className="w-full bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#f07015] hover:to-[#ff832b] text-white font-medium py-3.5 rounded-full transition shadow-lg shadow-[#ff7010]/20 disabled:opacity-40 cursor-pointer text-sm"
                 >
                   {loading ? (
                     <span className="inline-flex items-center gap-2">
@@ -387,8 +387,8 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                     <span className="text-white/40">STEP 2 OF 4</span>
                   </div>
                   <div className="grid grid-cols-4 gap-1.5">
-                    <div className="h-0.5 rounded-full bg-[#b32b6e]" />
-                    <div className="h-0.5 rounded-full bg-[#b32b6e]" />
+                    <div className="h-0.5 rounded-full bg-[#ff7010]" />
+                    <div className="h-0.5 rounded-full bg-[#ff7010]" />
                     <div className="h-0.5 rounded-full bg-white/10" />
                     <div className="h-0.5 rounded-full bg-white/10" />
                   </div>
@@ -422,7 +422,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                         value={digit}
                         onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
                         onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                        className="w-11 h-14 sm:w-12 sm:h-14 rounded-2xl bg-[#1a1424] border border-white/10 text-center font-mono text-xl sm:text-2xl font-semibold text-white focus:outline-none focus:border-[#b32b6e] focus:ring-1 focus:ring-[#b32b6e] transition-all"
+                        className="w-11 h-14 sm:w-12 sm:h-14 rounded-2xl bg-[#07273c] border border-white/10 text-center font-mono text-xl sm:text-2xl font-semibold text-white focus:outline-none focus:border-[#ff7010] focus:ring-1 focus:ring-[#ff7010] transition-all"
                       />
                     ))}
                   </div>
@@ -433,7 +433,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                       type="button"
                       onClick={handleResend}
                       disabled={resendTimer > 0 || loading}
-                      className="text-[#e273a7] hover:underline disabled:opacity-40 disabled:no-underline font-medium cursor-pointer ml-1"
+                      className="text-[#ff7010] hover:underline disabled:opacity-40 disabled:no-underline font-medium cursor-pointer ml-1"
                     >
                       {resendTimer > 0 ? `Resend code in 0:${resendTimer < 10 ? `0${resendTimer}` : resendTimer}` : "Resend code"}
                     </button>
@@ -443,7 +443,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                 <Button
                   type="submit"
                   disabled={fullOtp.length !== 6 || loading}
-                  className="w-full bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white font-medium py-3.5 rounded-full transition shadow-lg shadow-[#b32b6e]/20 disabled:opacity-40 cursor-pointer text-sm"
+                  className="w-full bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#f07015] hover:to-[#ff832b] text-white font-medium py-3.5 rounded-full transition shadow-lg shadow-[#ff7010]/20 disabled:opacity-40 cursor-pointer text-sm"
                 >
                   {loading ? (
                     <span className="inline-flex items-center gap-2">
@@ -463,13 +463,13 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                 {/* 4-Step Progress Bar */}
                 <div>
                   <div className="flex items-center justify-between text-[10px] font-mono tracking-[0.2em] mb-2">
-                    <span className="text-[#e273a7] font-semibold">ABOUT YOU</span>
+                    <span className="text-[#ff7010] font-semibold">ABOUT YOU</span>
                     <span className="text-white/40">STEP 3 OF 4</span>
                   </div>
                   <div className="grid grid-cols-4 gap-1.5">
-                    <div className="h-0.5 rounded-full bg-[#b32b6e]" />
-                    <div className="h-0.5 rounded-full bg-[#b32b6e]" />
-                    <div className="h-0.5 rounded-full bg-[#b32b6e]" />
+                    <div className="h-0.5 rounded-full bg-[#ff7010]" />
+                    <div className="h-0.5 rounded-full bg-[#ff7010]" />
+                    <div className="h-0.5 rounded-full bg-[#ff7010]" />
                     <div className="h-0.5 rounded-full bg-white/10" />
                   </div>
                 </div>
@@ -493,7 +493,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                     placeholder="Your name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full rounded-2xl border border-white/10 bg-[#1a1424] px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#b32b6e] transition-all"
+                    className="w-full rounded-2xl border border-white/10 bg-[#07273c] px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#ff7010] transition-all"
                     autoFocus
                     required
                   />
@@ -512,8 +512,8 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                         onClick={() => setGender(item)}
                         className={`rounded-full px-5 py-2 text-xs sm:text-sm transition-all cursor-pointer ${
                           gender === item
-                            ? "border border-[#b32b6e] bg-[#2d152b] text-white font-medium shadow-md shadow-[#b32b6e]/20"
-                            : "border border-white/10 bg-[#161220] text-white/70 hover:border-white/20 hover:text-white"
+                            ? "border border-[#ff7010] bg-[#0e344d] text-white font-medium shadow-md shadow-[#ff7010]/20"
+                            : "border border-white/10 bg-[#07273c] text-white/70 hover:border-white/20 hover:text-white"
                         }`}
                       >
                         {item}
@@ -525,7 +525,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                 <Button
                   type="submit"
                   disabled={!fullName.trim()}
-                  className="w-full bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white font-medium py-3.5 rounded-full transition shadow-lg shadow-[#b32b6e]/20 disabled:opacity-40 cursor-pointer text-sm"
+                  className="w-full bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#f07015] hover:to-[#ff832b] text-white font-medium py-3.5 rounded-full transition shadow-lg shadow-[#ff7010]/20 disabled:opacity-40 cursor-pointer text-sm"
                 >
                   Continue
                 </Button>
@@ -549,10 +549,10 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                     <span className="text-white/40">STEP 4 OF 4</span>
                   </div>
                   <div className="grid grid-cols-4 gap-1.5">
-                    <div className="h-0.5 rounded-full bg-[#b32b6e]" />
-                    <div className="h-0.5 rounded-full bg-[#b32b6e]" />
-                    <div className="h-0.5 rounded-full bg-[#b32b6e]" />
-                    <div className="h-0.5 rounded-full bg-[#b32b6e]" />
+                    <div className="h-0.5 rounded-full bg-[#ff7010]" />
+                    <div className="h-0.5 rounded-full bg-[#ff7010]" />
+                    <div className="h-0.5 rounded-full bg-[#ff7010]" />
+                    <div className="h-0.5 rounded-full bg-[#ff7010]" />
                   </div>
                 </div>
 
@@ -597,7 +597,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                     type="checkbox"
                     checked={unknownTime}
                     onChange={(e) => setUnknownTime(e.target.checked)}
-                    className="w-4 h-4 rounded-full border-white/20 accent-[#b32b6e] cursor-pointer"
+                    className="w-4 h-4 rounded-full border-white/20 accent-[#ff7010] cursor-pointer"
                   />
                   <span>I don&apos;t know my time of birth</span>
                 </label>
@@ -614,7 +614,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                       placeholder="City, State, Country"
                       value={birthPlace}
                       onChange={(e) => setBirthPlace(e.target.value)}
-                      className="w-full rounded-2xl border border-white/10 bg-[#1a1424] pl-10 pr-4 py-3 text-xs sm:text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#b32b6e] transition-all"
+                      className="w-full rounded-2xl border border-white/10 bg-[#07273c] pl-10 pr-4 py-3 text-xs sm:text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#ff7010] transition-all"
                       required
                     />
                   </div>
@@ -623,7 +623,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                 <Button
                   type="submit"
                   disabled={!birthDate || !birthPlace.trim()}
-                  className="w-full bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] hover:from-[#a82064] hover:to-[#c23277] text-white font-medium py-3.5 rounded-full transition shadow-lg shadow-[#b32b6e]/20 disabled:opacity-40 cursor-pointer text-sm"
+                  className="w-full bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#f07015] hover:to-[#ff832b] text-white font-medium py-3.5 rounded-full transition shadow-lg shadow-[#ff7010]/20 disabled:opacity-40 cursor-pointer text-sm"
                 >
                   Continue
                 </Button>

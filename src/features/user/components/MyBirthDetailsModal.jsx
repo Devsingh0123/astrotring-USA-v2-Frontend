@@ -180,7 +180,7 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[480px] bg-[#12131c] border border-white/10 text-white p-6 space-y-5 rounded-2xl shadow-2xl">
+      <DialogContent className="sm:max-w-[480px] bg-[#07273c] border border-[#17384e] text-white p-6 space-y-5 rounded-2xl shadow-2xl">
         <DialogHeader className="space-y-1.5">
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-mlh-plum/20 border border-mlh-plum/40 flex items-center justify-center text-amber-300">
@@ -283,7 +283,7 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
 
             {/* Suggestions dropdown */}
             {suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-[68px] z-50 rounded-xl border border-white/15 bg-[#171825] shadow-2xl p-1.5 space-y-1 max-h-44 overflow-y-auto no-scrollbar">
+              <div className="absolute left-0 right-0 top-[68px] z-50 rounded-xl border border-[#17384e] bg-[#041826] shadow-2xl p-1.5 space-y-1 max-h-44 overflow-y-auto no-scrollbar">
                 {suggestions.map((item, idx) => (
                   <button
                     key={idx}

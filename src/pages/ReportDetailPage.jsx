@@ -175,7 +175,7 @@ export default function ReportDetailPage() {
     "Synthesizing foundational chapters and divisional analysis..."
 
   return (
-    <div className="flex-1 flex flex-col justify-between min-h-screen bg-[#0f090c] text-foreground">
+    <div className="flex-1 flex flex-col justify-between min-h-screen bg-[#031d2e] text-foreground">
       <div className="w-full max-w-4xl mx-auto px-4 py-8 sm:py-12 space-y-10">
         {/* Navigation Breadcrumb */}
         <Link
@@ -360,7 +360,7 @@ export default function ReportDetailPage() {
 
             {/* Table of Contents */}
             {Array.isArray(activeFullReport.table_of_contents) && (
-              <div className="rounded-2xl border border-white/10 bg-[#12131c] p-6 space-y-3">
+              <div className="rounded-2xl border border-white/10 bg-[#07273c] p-6 space-y-3">
                 <span className="text-[11px] font-mono uppercase tracking-widest text-mlh-muted">
                   Reading Chapters
                 </span>
@@ -538,7 +538,7 @@ export default function ReportDetailPage() {
 
               {/* 4 Proof Metric Badges */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
-                <div className="p-4 rounded-xl border border-white/5 bg-[#12131c] text-center space-y-1">
+                <div className="p-4 rounded-xl border border-white/5 bg-[#07273c] text-center space-y-1">
                   <div className="text-xl sm:text-2xl font-serif font-bold text-amber-300">
                     1L+
                   </div>
@@ -547,7 +547,7 @@ export default function ReportDetailPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl border border-white/5 bg-[#12131c] text-center space-y-1">
+                <div className="p-4 rounded-xl border border-white/5 bg-[#07273c] text-center space-y-1">
                   <div className="text-xl sm:text-2xl font-serif font-bold text-white flex items-center justify-center gap-1">
                     <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                     <span>4.8</span>
@@ -557,7 +557,7 @@ export default function ReportDetailPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl border border-white/5 bg-[#12131c] text-center space-y-1">
+                <div className="p-4 rounded-xl border border-white/5 bg-[#07273c] text-center space-y-1">
                   <div className="text-xl sm:text-2xl font-serif font-bold text-white flex items-center justify-center gap-1">
                     <Clock className="w-4 h-4 text-emerald-400" />
                     <span>Minutes</span>
@@ -567,7 +567,7 @@ export default function ReportDetailPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl border border-white/5 bg-[#12131c] text-center space-y-1">
+                <div className="p-4 rounded-xl border border-white/5 bg-[#07273c] text-center space-y-1">
                   <div className="text-xl sm:text-2xl font-serif font-bold text-white flex items-center justify-center gap-1">
                     <Compass className="w-4 h-4 text-mlh-plum-300" />
                     <span>Your chart</span>
@@ -586,7 +586,7 @@ export default function ReportDetailPage() {
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-5 rounded-2xl border border-white/10 bg-[#12131c] space-y-2">
+                <div className="p-5 rounded-2xl border border-white/10 bg-[#07273c] space-y-2">
                   <div className="text-xs font-mono font-bold text-amber-400">01</div>
                   <h3 className="text-base font-semibold text-white">Astrological depth</h3>
                   <p className="text-xs text-mlh-muted font-sans leading-relaxed">
@@ -594,7 +594,7 @@ export default function ReportDetailPage() {
                   </p>
                 </div>
 
-                <div className="p-5 rounded-2xl border border-white/10 bg-[#12131c] space-y-2">
+                <div className="p-5 rounded-2xl border border-white/10 bg-[#07273c] space-y-2">
                   <div className="text-xs font-mono font-bold text-amber-400">02</div>
                   <h3 className="text-base font-semibold text-white">Life themes</h3>
                   <p className="text-xs text-mlh-muted font-sans leading-relaxed">
@@ -602,7 +602,7 @@ export default function ReportDetailPage() {
                   </p>
                 </div>
 
-                <div className="p-5 rounded-2xl border border-white/10 bg-[#12131c] space-y-2">
+                <div className="p-5 rounded-2xl border border-white/10 bg-[#07273c] space-y-2">
                   <div className="text-xs font-mono font-bold text-amber-400">03</div>
                   <h3 className="text-base font-semibold text-white">Practical remedies</h3>
                   <p className="text-xs text-mlh-muted font-sans leading-relaxed">
@@ -618,7 +618,7 @@ export default function ReportDetailPage() {
                 Why this beats a generic report
               </h2>
 
-              <div className="rounded-2xl border border-white/10 bg-[#12131c] overflow-hidden text-xs sm:text-sm font-sans">
+              <div className="rounded-2xl border border-white/10 bg-[#07273c] overflow-hidden text-xs sm:text-sm font-sans">
                 <div className="grid grid-cols-2 p-4 bg-white/5 border-b border-white/10 font-mono uppercase tracking-wider text-mlh-muted text-[11px]">
                   <div>Other reports</div>
                   <div className="text-amber-300 font-bold">AstroTring</div>
@@ -683,7 +683,7 @@ export default function ReportDetailPage() {
                 </span>
               </div>
 
-              <div className="p-6 rounded-2xl border border-white/10 bg-[#12131c] space-y-4 font-sans text-xs sm:text-sm text-white/85 leading-relaxed relative overflow-hidden">
+              <div className="p-6 rounded-2xl border border-white/10 bg-[#07273c] space-y-4 font-sans text-xs sm:text-sm text-white/85 leading-relaxed relative overflow-hidden">
                 <p>
                   "Your 7th house cusp is energized by Jupiter's transit while Saturn maintains discipline over the partnership axis. Rather than precipitous romantic decisions, your chart favors alliances formed through shared intellectual values and structured collaboration."
                 </p>

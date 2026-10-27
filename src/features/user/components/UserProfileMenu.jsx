@@ -134,7 +134,7 @@ export default function UserProfileMenu({
         side="top"
         align="start"
         sideOffset={10}
-        className="w-[280px] p-0 bg-[#12131c]/98 border border-white/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-xl overflow-hidden font-sans text-xs"
+        className="w-[280px] p-0 bg-[#07273c]/98 border border-white/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-xl overflow-hidden font-sans text-xs"
       >
         {/* User Identity Header Card */}
         <div className="p-4 space-y-2.5 bg-gradient-to-b from-white/5 to-transparent border-b border-white/10">

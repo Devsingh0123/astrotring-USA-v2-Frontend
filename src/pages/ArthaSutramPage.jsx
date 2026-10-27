@@ -630,7 +630,7 @@ export default function ArthaSutramPage() {
             {TWENTY_THREE_SECTIONS.map((module, idx) => (
               <div
                 key={idx}
-                className="rounded-2xl border border-white/10 bg-[#12131c]/80 p-5 space-y-3"
+                className="rounded-2xl border border-white/10 bg-[#07273c]/80 p-5 space-y-3"
               >
                 <div className="flex items-center gap-2 pb-2 border-b border-white/10">
                   <span className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-300 font-mono text-xs flex items-center justify-center font-bold">
@@ -755,7 +755,7 @@ export default function ArthaSutramPage() {
             </h2>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-[#12131c]/90 overflow-hidden">
+          <div className="rounded-2xl border border-white/10 bg-[#07273c]/90 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs font-sans">
                 <thead className="bg-white/5 border-b border-white/10 text-white font-mono uppercase text-[10.5px]">
@@ -823,7 +823,7 @@ export default function ArthaSutramPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-5 rounded-2xl border border-white/10 bg-[#12131c]/80 space-y-3">
+            <div className="p-5 rounded-2xl border border-white/10 bg-[#07273c]/80 space-y-3">
               <div className="flex items-center gap-1 text-amber-400">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
@@ -838,7 +838,7 @@ export default function ArthaSutramPage() {
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl border border-white/10 bg-[#12131c]/80 space-y-3">
+            <div className="p-5 rounded-2xl border border-white/10 bg-[#07273c]/80 space-y-3">
               <div className="flex items-center gap-1 text-amber-400">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
@@ -853,7 +853,7 @@ export default function ArthaSutramPage() {
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl border border-white/10 bg-[#12131c]/80 space-y-3">
+            <div className="p-5 rounded-2xl border border-white/10 bg-[#07273c]/80 space-y-3">
               <div className="flex items-center gap-1 text-amber-400">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />

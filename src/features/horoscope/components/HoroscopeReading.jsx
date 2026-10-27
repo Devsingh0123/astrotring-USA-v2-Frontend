@@ -63,7 +63,7 @@ export default function HoroscopeReading({ forecast, timeframe = "daily" }) {
 
       {/* Astrological Potency Scores Grid */}
       {scoreItems.length > 0 && (
-        <div className="rounded-2xl border border-[#252637] bg-[#12131c]/90 p-6 space-y-5">
+        <div className="rounded-2xl border border-[#17384e] bg-[#07273c]/90 p-6 space-y-5">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-mono font-bold tracking-widest text-mlh-muted uppercase flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5 text-mlh-amber" />
@@ -105,7 +105,7 @@ export default function HoroscopeReading({ forecast, timeframe = "daily" }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* 1. CAREER */}
             {categories.career && (
-              <div className="rounded-2xl border border-[#252637] bg-[#12131c]/80 p-5 space-y-2.5 hover:border-amber-500/30 transition-colors">
+              <div className="rounded-2xl border border-[#17384e] bg-[#07273c]/80 p-5 space-y-2.5 hover:border-amber-500/30 transition-colors">
                 <div className="flex items-center gap-2">
                   <Briefcase className="w-4 h-4 text-amber-400" />
                   <span className="text-[11px] font-mono font-bold tracking-widest text-amber-400 uppercase">
@@ -120,7 +120,7 @@ export default function HoroscopeReading({ forecast, timeframe = "daily" }) {
 
             {/* 2. LOVE */}
             {categories.love && (
-              <div className="rounded-2xl border border-[#252637] bg-[#12131c]/80 p-5 space-y-2.5 hover:border-pink-500/30 transition-colors">
+              <div className="rounded-2xl border border-[#17384e] bg-[#07273c]/80 p-5 space-y-2.5 hover:border-pink-500/30 transition-colors">
                 <div className="flex items-center gap-2">
                   <Heart className="w-4 h-4 text-pink-400" />
                   <span className="text-[11px] font-mono font-bold tracking-widest text-pink-400 uppercase">
@@ -135,7 +135,7 @@ export default function HoroscopeReading({ forecast, timeframe = "daily" }) {
 
             {/* 3. WEALTH */}
             {categories.wealth && (
-              <div className="rounded-2xl border border-[#252637] bg-[#12131c]/80 p-5 space-y-2.5 hover:border-emerald-500/30 transition-colors">
+              <div className="rounded-2xl border border-[#17384e] bg-[#07273c]/80 p-5 space-y-2.5 hover:border-emerald-500/30 transition-colors">
                 <div className="flex items-center gap-2">
                   <Coins className="w-4 h-4 text-emerald-400" />
                   <span className="text-[11px] font-mono font-bold tracking-widest text-emerald-400 uppercase">
@@ -150,7 +150,7 @@ export default function HoroscopeReading({ forecast, timeframe = "daily" }) {
 
             {/* 4. HEALTH */}
             {categories.health && (
-              <div className="rounded-2xl border border-[#252637] bg-[#12131c]/80 p-5 space-y-2.5 hover:border-cyan-500/30 transition-colors">
+              <div className="rounded-2xl border border-[#17384e] bg-[#07273c]/80 p-5 space-y-2.5 hover:border-cyan-500/30 transition-colors">
                 <div className="flex items-center gap-2">
                   <Activity className="w-4 h-4 text-cyan-400" />
                   <span className="text-[11px] font-mono font-bold tracking-widest text-cyan-400 uppercase">
@@ -168,7 +168,7 @@ export default function HoroscopeReading({ forecast, timeframe = "daily" }) {
 
       {/* Key Gochara Transits Section */}
       {Array.isArray(keyTransits) && keyTransits.length > 0 && (
-        <div className="rounded-2xl border border-mlh-plum/30 bg-[#141522] p-6 space-y-4">
+        <div className="rounded-2xl border border-[#17384e] bg-[#07273c] p-6 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-white/5">
             <h3 className="text-xs font-mono font-bold tracking-widest text-mlh-plum uppercase flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5" />

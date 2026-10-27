@@ -3,7 +3,7 @@ import { Sparkles, QrCode } from "lucide-react"
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-[#252637]/70 bg-[#0a0608] text-mlh-muted mt-12 sm:mt-16">
+    <footer className="w-full border-t border-[#17384e] bg-[#041826] text-mlh-muted mt-12 sm:mt-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand & Socials Column */}
@@ -95,15 +95,15 @@ export default function Footer() {
               Mobile App
             </p>
             <div className="flex items-center gap-3">
-              <div className="w-16 h-16 rounded-xl bg-white/5 border border-[#252637] flex items-center justify-center text-mlh-muted">
-                <QrCode className="w-10 h-10 text-mlh-plum-300" />
+              <div className="w-16 h-16 rounded-xl bg-white/5 border border-[#17384e] flex items-center justify-center text-mlh-muted">
+                <QrCode className="w-10 h-10 text-[#ff852e]" />
               </div>
               <div className="space-y-2">
                 <a
                   href="https://apps.apple.com"
                   target="_blank"
                   rel="noreferrer"
-                  className="block px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-[#252637] text-[10px] text-white transition-colors"
+                  className="block px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-[#17384e] text-[10px] text-white transition-colors"
                 >
                   <span className="block text-[8px] text-mlh-faint uppercase">Download From</span>
                   <span className="font-semibold">App Store</span>
@@ -112,7 +112,7 @@ export default function Footer() {
                   href="https://play.google.com"
                   target="_blank"
                   rel="noreferrer"
-                  className="block px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-[#252637] text-[10px] text-white transition-colors"
+                  className="block px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-[#17384e] text-[10px] text-white transition-colors"
                 >
                   <span className="block text-[8px] text-mlh-faint uppercase">Download From</span>
                   <span className="font-semibold">Play Store</span>
@@ -123,7 +123,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Copyright */}
-        <div className="mt-12 pt-6 border-t border-[#252637] text-center text-xs text-mlh-faint font-mono">
+        <div className="mt-12 pt-6 border-t border-[#17384e] text-center text-xs text-mlh-faint font-mono">
           © 2026 AstroTring Technologies Private Limited
         </div>
       </div>

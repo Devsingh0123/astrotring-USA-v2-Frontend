@@ -33,7 +33,7 @@ export default function ReportsListingPage() {
       : 0
 
   return (
-    <div className="flex-1 flex flex-col justify-between min-h-screen bg-[#0f090c] text-foreground">
+    <div className="flex-1 flex flex-col justify-between min-h-screen bg-[#031d2e] text-foreground">
       <div className="w-full max-w-6xl mx-auto px-4 py-8 sm:py-12 space-y-10">
         {/* Page Breadcrumb & Header */}
         <div className="space-y-3">
@@ -52,7 +52,7 @@ export default function ReportsListingPage() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-white/10 bg-gradient-to-r from-[#1f101d] via-[#151120] to-[#12131c] p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl"
+          className="rounded-2xl border border-white/10 bg-gradient-to-r from-[#0e344d] via-[#07273c] to-[#041826] p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl"
         >
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -83,7 +83,7 @@ export default function ReportsListingPage() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-3xl border border-amber-500/40 bg-gradient-to-br from-[#24170d]/90 via-[#16121e]/90 to-[#0e0c15]/95 p-6 sm:p-8 space-y-4 shadow-[0_16px_40px_rgba(0,0,0,0.5),0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group"
+          className="rounded-3xl border border-amber-500/40 bg-gradient-to-br from-[#0e344d]/90 via-[#07273c]/90 to-[#041826]/95 p-6 sm:p-8 space-y-4 shadow-[0_16px_40px_rgba(0,0,0,0.5),0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group"
         >
           <div className="absolute -right-20 -top-20 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -153,8 +153,8 @@ export default function ReportsListingPage() {
                         to={`/reports/${report.slug}`}
                         className={`group rounded-2xl border p-5 transition-all duration-300 flex flex-col justify-between gap-4 shadow-sm relative overflow-hidden ${
                           isUnlocked
-                            ? "border-emerald-500/40 bg-[#121c17]/90 hover:bg-[#16241e] hover:border-emerald-400"
-                            : "border-white/10 bg-[#12131c]/90 hover:bg-[#1a1b28] hover:border-mlh-plum/50"
+                            ? "border-emerald-500/40 bg-[#07273c]/90 hover:bg-[#0e344d] hover:border-emerald-400"
+                            : "border-white/10 bg-[#07273c]/90 hover:bg-[#0e344d] hover:border-mlh-plum/50"
                         }`}
                       >
                         {/* Badge if present or Unlocked status */}

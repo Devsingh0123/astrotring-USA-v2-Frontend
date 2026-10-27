@@ -73,7 +73,7 @@ export default function HoroscopeHeader({
       </div>
 
       {/* Rashi Advisory Notice with action */}
-      <div className="rounded-2xl border border-mlh-plum/30 bg-gradient-to-r from-mlh-plum/15 via-[#181926] to-[#12131c] p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div className="rounded-2xl border border-mlh-plum/30 bg-gradient-to-r from-mlh-plum/15 via-[#0e344d] to-[#07273c] p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 text-xs sm:text-sm text-mlh-muted">
           <Moon className="w-4 h-4 text-mlh-plum shrink-0" />
           <span>
@@ -91,8 +91,8 @@ export default function HoroscopeHeader({
       </div>
 
       {/* Timeframe Switcher & Date Badge */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2 border-b border-[#252637]/70 pb-4">
-        <div className="inline-flex items-center bg-[#181926] p-1 rounded-xl border border-[#252637]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2 border-b border-[#17384e]/70 pb-4">
+        <div className="inline-flex items-center bg-[#07273c] p-1 rounded-xl border border-[#17384e]">
           {["daily", "monthly", "yearly"].map((period) => {
             const active = (activePeriod || "daily").toLowerCase() === period
             return (
@@ -112,7 +112,7 @@ export default function HoroscopeHeader({
           })}
         </div>
 
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#181926] border border-[#252637] text-[11px] font-mono text-mlh-muted">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#07273c] border border-[#17384e] text-[11px] font-mono text-mlh-muted">
           <span className="font-semibold text-mlh-plum">{displayPeriodLabel}</span>
           <span className="text-white/20">·</span>
           <span>{displayPeriodDate}</span>

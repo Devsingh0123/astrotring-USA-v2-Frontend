@@ -21,7 +21,7 @@ export default function HoroscopeSidebar({
   return (
     <aside className="space-y-6">
       {/* 1. Astrological Glance Card (Lucky Elements & Muhurta) */}
-      <div className="rounded-2xl border border-[#252637] bg-[#141522] p-5 space-y-4">
+      <div className="rounded-2xl border border-[#17384e] bg-[#07273c] p-5 space-y-4">
         <h3 className="text-xs font-mono font-bold tracking-widest text-mlh-muted uppercase flex items-center justify-between">
           <span>COSMIC PARAMETERS</span>
           <span className="text-emerald-400 font-sans text-[10px]">Live Vedic</span>
@@ -92,7 +92,7 @@ export default function HoroscopeSidebar({
       </div>
 
       {/* 2. Upsell / Vaani Card */}
-      <div className="rounded-2xl border border-mlh-plum/30 bg-gradient-to-b from-mlh-plum/15 via-[#181926] to-[#12131c] p-5 space-y-3">
+      <div className="rounded-2xl border border-mlh-plum/30 bg-gradient-to-b from-mlh-plum/15 via-[#0e344d] to-[#07273c] p-5 space-y-3">
         <div className="w-8 h-8 rounded-lg bg-mlh-plum/20 flex items-center justify-center text-mlh-plum">
           <Sparkles className="w-4 h-4" />
         </div>
@@ -110,8 +110,8 @@ export default function HoroscopeSidebar({
       </div>
 
       {/* 3. Other Signs Navigation List */}
-      <div className="rounded-2xl border border-[#252637] bg-[#141522] p-5 space-y-3">
-        <h3 className="text-sm font-serif font-bold text-white pb-2 border-b border-[#252637]/70">
+      <div className="rounded-2xl border border-[#17384e] bg-[#07273c] p-5 space-y-3">
+        <h3 className="text-sm font-serif font-bold text-white pb-2 border-b border-[#17384e]/70">
           Other Moon Signs (Rashis)
         </h3>
         <div className="space-y-1">

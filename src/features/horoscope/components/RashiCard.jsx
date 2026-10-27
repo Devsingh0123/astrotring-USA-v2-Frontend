@@ -21,7 +21,7 @@ export default function RashiCard({ sign, timeframe = "Daily" }) {
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
       onClick={() => navigate(targetUrl)}
-      className="cursor-pointer relative overflow-hidden rounded-2xl border border-[#252637] bg-[#12131c]/90 hover:bg-[#1a1b28] hover:border-mlh-plum/50 p-5 flex flex-col justify-between transition-all group min-h-[200px] shadow-sm hover:shadow-md"
+      className="cursor-pointer relative overflow-hidden rounded-2xl border border-[#17384e] bg-[#07273c]/90 hover:bg-[#0e344d] hover:border-mlh-plum/50 p-5 flex flex-col justify-between transition-all group min-h-[200px] shadow-sm hover:shadow-md"
     >
       {/* Astrological Watermark Glyph in background */}
       <span className="absolute right-3 bottom-2 text-6xl font-serif text-white/[0.04] select-none pointer-events-none group-hover:text-mlh-plum/[0.09] transition-colors">
@@ -54,7 +54,7 @@ export default function RashiCard({ sign, timeframe = "Daily" }) {
       </div>
 
       {/* Card Footer: Ruler & Action */}
-      <div className="pt-4 border-t border-[#252637]/50 flex items-center justify-between text-[10px] font-mono relative z-10">
+      <div className="pt-4 border-t border-[#17384e]/50 flex items-center justify-between text-[10px] font-mono relative z-10">
         <span className="text-mlh-plum font-semibold tracking-wider uppercase">
           RULED BY {signRuler}
         </span>

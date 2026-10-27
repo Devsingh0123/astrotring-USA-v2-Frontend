@@ -193,10 +193,10 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1, duration: 0.4 }}
-        className={`w-full rounded-[22px] border bg-[#12131c]/92 backdrop-blur-[7px] p-4 sm:p-5 shadow-[0_22px_60px_rgba(0,0,0,0.55)] space-y-4 transition-all ${
+        className={`w-full rounded-[22px] border bg-[#07273c]/92 backdrop-blur-[7px] p-4 sm:p-5 shadow-[0_22px_60px_rgba(0,0,0,0.55)] space-y-4 transition-all ${
           engine === "astropedia"
             ? "border-amber-500/45 focus-within:border-amber-500/85 shadow-[0_22px_60px_rgba(0,0,0,.55),0_0_48px_rgba(223,129,7,.34),inset_0_1px_0_rgba(255,255,255,.08)]"
-            : "border-mlh-plum-400/45 focus-within:border-mlh-plum-400/85 shadow-[0_22px_60px_rgba(0,0,0,.55),0_0_48px_rgba(129,23,86,.34),inset_0_1px_0_rgba(255,255,255,.08)]"
+            : "border-mlh-plum-400/45 focus-within:border-mlh-plum-400/85 shadow-[0_22px_60px_rgba(0,0,0,.55),0_0_48px_rgba(255,112,16,.22),inset_0_1px_0_rgba(255,255,255,.08)]"
         }`}
       >
         {/* Multi-line Query Textarea */}
@@ -209,12 +209,12 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
         />
 
         {/* Bottom Action Controls */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2 border-t border-[#252637]/60">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2 border-t border-[#17384e]/60">
           {/* Engine Selector Segmented Pill (radiogroup "Answer source" in Melooha) */}
           <div
             role="radiogroup"
             aria-label="Answer source"
-            className="inline-flex items-center rounded-full border border-[#2e3045] bg-[#0c070a] p-1 self-start sm:self-auto"
+            className="inline-flex items-center rounded-full border border-[#17384e] bg-[#041826] p-1 self-start sm:self-auto"
           >
             <button
               type="button"
@@ -253,7 +253,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
                 <div
                   className={`flex items-center gap-2 pl-3 pr-1 py-1 rounded-full text-xs transition-all shadow-xs ${
                     activeQuestionQuota > 0
-                      ? "bg-[#18101e]/90 border border-[#3d2449]"
+                      ? "bg-[#041826]/90 border border-[#17384e]"
                       : "bg-[#231206]/90 border border-amber-900/60"
                   }`}
                 >

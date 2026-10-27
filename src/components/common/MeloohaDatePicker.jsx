@@ -273,9 +273,9 @@ export default function MeloohaDatePicker({
                       "w-8 h-8 rounded-xl text-xs font-normal transition-all flex items-center justify-center cursor-pointer",
                       !item.isCurrentMonth && "text-white/20 hover:text-white/40",
                       item.isCurrentMonth && "text-white/85 hover:bg-white/10 hover:text-white",
-                      isCurrentToday && !isSelected && "border border-[#b32b6e]/60 font-medium",
+                      isCurrentToday && !isSelected && "border border-[#ff7010]/60 font-medium",
                       isSelected &&
-                        "!bg-gradient-to-r !from-[#9b1c5c] !to-[#b32b6e] !text-white !font-bold shadow-md shadow-[#9b1c5c]/40",
+                        "!bg-gradient-to-r !from-[#ea650a] !to-[#ff7010] !text-white !font-bold shadow-md shadow-[#ff7010]/30",
                       isFuture && "opacity-20 cursor-not-allowed pointer-events-none"
                     )}
                   >
@@ -317,7 +317,7 @@ export default function MeloohaDatePicker({
                     className={cn(
                       "py-2 px-1 text-xs rounded-xl font-medium transition-all cursor-pointer text-center",
                       isSelected
-                        ? "bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] text-white font-bold shadow-sm"
+                        ? "bg-gradient-to-r from-[#ea650a] to-[#ff7010] text-white font-bold shadow-sm"
                         : "text-white/80 hover:bg-white/10 hover:text-white"
                     )}
                   >
@@ -363,7 +363,7 @@ export default function MeloohaDatePicker({
                     className={cn(
                       "py-1.5 px-2 text-xs rounded-xl font-medium transition-all cursor-pointer text-center font-mono",
                       isSelected
-                        ? "bg-gradient-to-r from-[#9b1c5c] to-[#b32b6e] text-white font-bold shadow-sm"
+                        ? "bg-gradient-to-r from-[#ea650a] to-[#ff7010] text-white font-bold shadow-sm"
                         : "text-white/75 hover:bg-white/10 hover:text-white"
                     )}
                   >

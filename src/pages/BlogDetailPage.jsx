@@ -279,7 +279,7 @@ export default function BlogDetailPage() {
   // Loading skeleton
   if (detailLoading) {
     return (
-      <div className="min-h-full flex flex-col justify-between bg-[#0f090c] text-white">
+      <div className="min-h-full flex flex-col justify-between bg-[#031d2e] text-white">
         <div className="max-w-4xl w-full mx-auto px-4 sm:px-6 py-10 space-y-6">
           <Skeleton className="h-4 w-40 bg-white/5" />
           <Skeleton className="h-12 w-full bg-white/5" />
@@ -299,7 +299,7 @@ export default function BlogDetailPage() {
   // Not found / error state
   if (detailError || (!blog && !detailLoading)) {
     return (
-      <div className="min-h-full flex flex-col justify-between bg-[#0f090c] text-white">
+      <div className="min-h-full flex flex-col justify-between bg-[#031d2e] text-white">
         <div className="max-w-lg w-full mx-auto px-4 py-24 text-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-mlh-plum/20 border border-mlh-plum/40 flex items-center justify-center mx-auto text-mlh-plum-300">
             <BookOpen className="w-8 h-8" />
@@ -329,7 +329,7 @@ export default function BlogDetailPage() {
     blog.meta_description || blog.excerpt || "In-depth Vedic astrology publication by AstroTring.";
 
   return (
-    <div className="min-h-full flex flex-col justify-between bg-[#0f090c] text-white">
+    <div className="min-h-full flex flex-col justify-between bg-[#031d2e] text-white">
       {/* Top Reading Progress Bar */}
       <BlogReadingProgress />
 
@@ -420,7 +420,7 @@ export default function BlogDetailPage() {
               alt={blog.title}
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0f090c] via-transparent to-transparent opacity-60" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#031d2e] via-transparent to-transparent opacity-60" />
           </div>
         )}
 
@@ -451,7 +451,7 @@ export default function BlogDetailPage() {
         {/* Interactive "Ask Vaani" Consultation Card */}
         <section
           aria-label="Ask Vaani on this topic"
-          className="my-10 rounded-2xl border border-amber-500/40 bg-gradient-to-br from-[#811756]/25 via-[#23121d] to-[#0f090c] p-6 sm:p-8 shadow-[0_16px_50px_rgba(129,23,86,0.35)] relative overflow-hidden"
+          className="my-10 rounded-2xl border border-amber-500/40 bg-gradient-to-br from-[#ff7010]/20 via-[#0e344d] to-[#031d2e] p-6 sm:p-8 shadow-[0_16px_50px_rgba(255,112,16,0.18)] relative overflow-hidden"
         >
           <div className="absolute -right-8 -bottom-8 w-48 h-48 rounded-full bg-mlh-plum/20 blur-3xl pointer-events-none" />
 

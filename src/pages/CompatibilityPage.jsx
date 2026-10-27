@@ -40,7 +40,7 @@ export default function CompatibilityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d0914] text-foreground flex flex-col justify-between">
+    <div className="min-h-screen bg-[#031d2e] text-foreground flex flex-col justify-between">
       <Helmet>
         <title>Kundli Milan & Marriage Compatibility (36 Gunas) | AstroTring</title>
         <meta

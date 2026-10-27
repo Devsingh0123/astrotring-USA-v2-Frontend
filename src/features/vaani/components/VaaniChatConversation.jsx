@@ -280,7 +280,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                     <div
                       className={`rounded-[18px_18px_4px_18px] border px-[18px] py-3 font-sans text-[15.5px] sm:text-[18px] leading-[1.4] text-pretty shadow-[0_10px_30px_rgba(0,0,0,.35)] ${
                         readingIsVaani
-                          ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#811756]/25 to-[#4d0e34]/15 text-white/95"
+                          ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#ff7010]/20 to-[#8a3600]/15 text-white/95"
                           : "border-amber-500/35 bg-gradient-to-br from-[#df8107]/25 to-[#92400e]/15 text-white/95"
                       }`}
                     >
@@ -578,7 +578,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                   <div
                     className={`rounded-[18px_18px_4px_18px] border px-[18px] py-3 font-sans text-[15.5px] sm:text-[18px] leading-[1.4] text-pretty shadow-[0_10px_30px_rgba(0,0,0,.35)] ${
                       isVaani
-                        ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#811756]/25 to-[#4d0e34]/15 text-white/95"
+                        ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#ff7010]/20 to-[#8a3600]/15 text-white/95"
                         : "border-amber-500/35 bg-gradient-to-br from-[#df8107]/25 to-[#92400e]/15 text-white/95"
                     }`}
                   >
@@ -671,8 +671,8 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
             <div
               className={`relative overflow-hidden rounded-[22px] border transition-[border-color,box-shadow] duration-300 ${
                 isVaani
-                  ? "border-mlh-plum-400/40 focus-within:border-mlh-plum-400/80 shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_34px_rgba(129,23,86,.32),inset_0_1px_0_rgba(255,255,255,.05)] focus-within:shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_44px_rgba(129,23,86,.5),inset_0_1px_0_rgba(255,255,255,.06)] bg-[linear-gradient(rgba(129,23,86,0.1),rgba(15,9,12,0.94))]"
-                  : "border-amber-500/40 focus-within:border-amber-500/80 shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_34px_rgba(223,129,7,.24),inset_0_1px_0_rgba(255,255,255,.05)] focus-within:shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_44px_rgba(223,129,7,.45),inset_0_1px_0_rgba(255,255,255,.06)] bg-[linear-gradient(rgba(223,129,7,0.1),rgba(15,9,12,0.94))]"
+                  ? "border-mlh-plum-400/40 focus-within:border-mlh-plum-400/80 shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_34px_rgba(255,112,16,.25),inset_0_1px_0_rgba(255,255,255,.05)] focus-within:shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_44px_rgba(255,112,16,.45),inset_0_1px_0_rgba(255,255,255,.06)] bg-[linear-gradient(rgba(255,112,16,0.08),rgba(3,29,46,0.96))]"
+                  : "border-amber-500/40 focus-within:border-amber-500/80 shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_34px_rgba(223,129,7,.24),inset_0_1px_0_rgba(255,255,255,.05)] focus-within:shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_44px_rgba(223,129,7,.45),inset_0_1px_0_rgba(255,255,255,.06)] bg-[linear-gradient(rgba(223,129,7,0.08),rgba(3,29,46,0.96))]"
               }`}
             >
               <div className="relative flex gap-3.5 px-4 pt-4 sm:px-5 sm:pt-[18px]">
@@ -726,8 +726,8 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                     aria-label="Send question"
                     className={`grid h-11 w-11 flex-none place-items-center rounded-full transition-all duration-200 sm:h-[46px] sm:w-[46px] cursor-pointer disabled:opacity-40 ${
                       isVaani
-                        ? "text-white bg-[linear-gradient(160deg,#9a4578,#811756_62%,#6b0f47)] shadow-[0_0_24px_rgba(129,23,86,.6)] hover:shadow-[0_0_40px_rgba(129,23,86,1)] hover:-translate-y-0.5"
-                        : "text-[#0f090c] bg-[linear-gradient(160deg,#feb371,#df8107_62%,#b45309)] shadow-[0_0_24px_rgba(223,129,7,.6)] hover:shadow-[0_0_40px_rgba(223,129,7,1)] hover:-translate-y-0.5"
+                        ? "text-white bg-[linear-gradient(160deg,#ff852e,#ff7010_62%,#e65c00)] shadow-[0_0_24px_rgba(255,112,16,.5)] hover:shadow-[0_0_40px_rgba(255,112,16,.85)] hover:-translate-y-0.5"
+                        : "text-[#031d2e] bg-[linear-gradient(160deg,#feb371,#df8107_62%,#b45309)] shadow-[0_0_24px_rgba(223,129,7,.6)] hover:shadow-[0_0_40px_rgba(223,129,7,1)] hover:-translate-y-0.5"
                     }`}
                   >
                     <ArrowUp className="w-[19px] h-[19px] stroke-[2.5]" />
