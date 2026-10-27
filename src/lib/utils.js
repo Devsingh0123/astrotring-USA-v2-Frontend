@@ -8,17 +8,12 @@ export function cn(...inputs) {
 export const CURRENCY_SYMBOLS = {
   INR: "₹",
   USD: "$",
-  GBP: "£",
-  EUR: "€",
-  CAD: "CA$",
-  AUD: "A$",
-  AED: "AED ",
 }
 
 /**
  * Format currency with proper symbol and locale formatting
  * @param {number|string} amount - price
- * @param {string} currency - "INR", "USD", "GBP", "EUR", etc.
+ * @param {string} currency - "INR", "USD"
  * @param {Object} [options]
  * @param {boolean} [options.showDecimals] - force displaying decimals
  * @returns {string} e.g. "₹799", "$9.99", "£8.50"

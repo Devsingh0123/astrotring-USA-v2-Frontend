@@ -2,7 +2,7 @@ import apiClient from "@/lib/api-client";
 
 /**
  * Fetch packages & coupons catalog from backend
- * @param {string} currency - e.g. "INR", "USD", "GBP", "EUR"
+ * @param {string} currency - e.g. "INR", "USD"
  */
 export const fetchBillingCatalog = async (currency = "INR") => {
   const response = await apiClient.get(`/billing/packs?currency=${currency}`);

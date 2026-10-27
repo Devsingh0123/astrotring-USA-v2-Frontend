@@ -41,7 +41,7 @@ export default function QuestionPacksModal({
 
   // Dynamic backend catalog & currency state
   const [activeCurrency, setActiveCurrency] = useState(currency || "INR")
-  const [supportedCurrencies, setSupportedCurrencies] = useState(["INR", "USD", "GBP", "EUR"])
+  const [supportedCurrencies, setSupportedCurrencies] = useState(["INR", "USD"])
   const [packs, setPacks] = useState([])
   const [coupons, setCoupons] = useState([])
   const [isLoadingPacks, setIsLoadingPacks] = useState(false)
@@ -122,7 +122,7 @@ export default function QuestionPacksModal({
         const questionPacks = catalogData?.questionPacks || []
         const availableCoupons = catalogData?.coupons || []
         const backendCurrency = catalogData?.currency || targetCurrency
-        const availableCurrencies = catalogData?.supportedCurrencies || ["INR", "USD", "GBP", "EUR"]
+        const availableCurrencies = catalogData?.supportedCurrencies || ["INR", "USD"]
 
         setActiveCurrency(backendCurrency)
         setSupportedCurrencies(availableCurrencies)
@@ -492,16 +492,7 @@ export default function QuestionPacksModal({
                   <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-full p-1">
                     {supportedCurrencies.map((curr) => {
                       const isCurrActive = activeCurrency === curr
-                      const label =
-                        curr === "INR"
-                          ? "₹ INR"
-                          : curr === "USD"
-                          ? "$ USD"
-                          : curr === "GBP"
-                          ? "£ GBP"
-                          : curr === "EUR"
-                          ? "€ EUR"
-                          : curr
+                      const label = curr === "INR" ? "₹ INR" : "$ USD"
                       return (
                         <button
                           key={curr}

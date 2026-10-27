@@ -31,4 +31,4 @@ export const INDIAN_GST_STATES = [
   "Other Indian State / UT",
 ];
 
-export const SUPPORTED_CURRENCIES = ["INR", "USD", "GBP", "EUR"];
+export const SUPPORTED_CURRENCIES = ["INR", "USD"];
