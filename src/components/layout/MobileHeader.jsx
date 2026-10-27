@@ -116,20 +116,20 @@ export default function MobileHeader({ onOpenBindModal }) {
               {/* Engine Links */}
               <div className="space-y-2">
                 <Link
-                  to="/?engine=vaani"
+                  to="/?engine=jyotish"
                   onClick={() => setIsOpen(false)}
                   className="w-full flex items-center gap-2.5 rounded-xl border border-mlh-plum-800 bg-[#1f0b18] px-3.5 py-2.5 text-mlh-plum-100 text-xs font-medium"
                 >
                   <Sparkles className="w-4 h-4 text-mlh-plum-300" />
-                  <span>Ask Vaani</span>
+                  <span>Ask Jyotish</span>
                 </Link>
                 <Link
-                  to="/?engine=astropedia"
+                  to="/?engine=shastra"
                   onClick={() => setIsOpen(false)}
                   className="w-full flex items-center gap-2.5 rounded-xl border border-mlh-orrery/30 bg-[#1c1206] px-3.5 py-2.5 text-mlh-orrery-hi text-xs font-medium"
                 >
                   <Sparkles className="w-4 h-4 text-mlh-orrery" />
-                  <span>Ask Astropedia</span>
+                  <span>Ask Shastra</span>
                 </Link>
 
                 <Link

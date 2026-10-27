@@ -4,10 +4,10 @@ import {
   fetchThreadById,
   submitMessageFeedback,
   deleteThread,
-} from "./vaaniApi";
+} from "./jyotishApi";
 import { getStoredAccessToken } from "@/lib/api-client";
 
-const STORAGE_KEY = "astrotring_vaani_conversations";
+const STORAGE_KEY = "astrotring_jyotish_conversations";
 
 const loadStoredConversations = () => {
   try {
@@ -70,16 +70,16 @@ const initialState = {
   thinkingStep: "",
   thinkingSteps: [],
   pendingQuestion: "",
-  pendingEngine: "vaani",
+  pendingEngine: "jyotish",
   questionQuota: initialQuotas.questionQuota,
   reportQuota: initialQuotas.reportQuota,
-  filter: "ALL", // "ALL" | "VAANI" | "ASTROPEDIA"
+  filter: "ALL", // "ALL" | "JYOTISH" | "SHASTRA"
   isLoadingHistory: false,
   historyError: null,
 };
 
-export const vaaniSlice = createSlice({
-  name: "vaani",
+export const jyotishSlice = createSlice({
+  name: "jyotish",
   initialState,
   reducers: {
     setFilter: (state, action) => {
@@ -103,7 +103,7 @@ export const vaaniSlice = createSlice({
       } else if (action.payload && typeof action.payload === "object") {
         initialStep = action.payload.step || initialStep;
         state.pendingQuestion = action.payload.query || "";
-        state.pendingEngine = action.payload.engine || "vaani";
+        state.pendingEngine = action.payload.engine || "jyotish";
       }
       state.thinkingStep = initialStep;
       state.thinkingSteps = initialStep ? [initialStep] : [];
@@ -151,7 +151,7 @@ export const vaaniSlice = createSlice({
             localStorage.setItem("astrotring_user", JSON.stringify(user));
           }
         } catch {}
-      } else if (reading?.engine !== "astropedia" && state.questionQuota > 0) {
+      } else if (reading?.engine !== "shastra" && state.questionQuota > 0) {
         state.questionQuota -= 1;
         try {
           const raw = localStorage.getItem("astrotring_user");
@@ -384,6 +384,6 @@ export const {
   setReportQuota,
   addReportQuota,
   deleteConversation,
-} = vaaniSlice.actions;
+} = jyotishSlice.actions;
 
-export default vaaniSlice.reducer;
+export default jyotishSlice.reducer;

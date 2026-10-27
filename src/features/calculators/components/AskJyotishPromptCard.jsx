@@ -10,7 +10,7 @@ const DEFAULT_PROMPTS = [
   "Explain my Gajakesari Yoga and its manifestation in my life.",
 ];
 
-export default function AskVaaniPromptCard({
+export default function AskJyotishPromptCard({
   chartSummary = {},
   onSelectPrompt,
 }) {
@@ -34,14 +34,14 @@ export default function AskVaaniPromptCard({
           </h3>
 
           <p className="text-xs sm:text-sm text-mlh-muted leading-relaxed">
-            Vaani synthesizes your planetary degrees, active Dasha periods, and 12 Bhavas to deliver hyper-personalized Vedic guidance in seconds. First question is free.
+            Jyotish synthesizes your planetary degrees, active Dasha periods, and 12 Bhavas to deliver hyper-personalized Vedic guidance in seconds. First question is free.
           </p>
         </div>
 
-        <Link to="/?engine=vaani">
+        <Link to="/?engine=jyotish">
           <Button className="h-11 px-6 bg-gradient-to-r from-mlh-amber to-amber-600 hover:from-amber-500 hover:to-amber-600 text-black font-semibold text-xs font-mono uppercase tracking-wider rounded-xl shadow-lg shadow-mlh-amber/20 hover:shadow-mlh-amber/30 transition-all flex items-center gap-2 shrink-0 cursor-pointer">
             <MessageSquare className="w-4 h-4 text-black" />
-            <span>Consult Vaani</span>
+            <span>Consult Jyotish</span>
             <ArrowRight className="w-4 h-4 text-black" />
           </Button>
         </Link>
@@ -56,7 +56,7 @@ export default function AskVaaniPromptCard({
           {DEFAULT_PROMPTS.map((prompt, idx) => (
             <Link
               key={idx}
-              to={`/?engine=vaani&q=${encodeURIComponent(prompt)}`}
+              to={`/?engine=jyotish&q=${encodeURIComponent(prompt)}`}
               className="px-3 py-1.5 rounded-lg border border-mlh-border/80 bg-mlh-bg/60 hover:bg-mlh-surface hover:border-mlh-amber/50 text-xs text-mlh-text hover:text-mlh-text-hi transition-all text-left flex items-center gap-2 group cursor-pointer"
             >
               <Sparkles className="w-3 h-3 text-mlh-amber/60 group-hover:text-mlh-amber shrink-0" />

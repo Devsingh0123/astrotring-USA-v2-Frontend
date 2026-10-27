@@ -193,7 +193,7 @@ export default function BlogsListingPage() {
             {/* Quick Engine Switcher Hint */}
             <div className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs font-mono text-white/60">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Questions about a blog? Ask <strong>Vaani</strong> anytime.</span>
+              <span>Questions about a blog? Ask <strong>Jyotish</strong> anytime.</span>
             </div>
           </div>
         </div>

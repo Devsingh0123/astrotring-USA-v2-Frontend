@@ -267,13 +267,13 @@ export default function OnboardingPage() {
                 <span className="p-1 rounded-full bg-emerald-500/20 text-emerald-400 shrink-0 mt-0.5">
                   <Check className="w-3 h-3 stroke-[3]" />
                 </span>
-                <span>Vaani AI remembers your planetary transits and dashas</span>
+                <span>Jyotish AI remembers your planetary transits and dashas</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <span className="p-1 rounded-full bg-emerald-500/20 text-emerald-400 shrink-0 mt-0.5">
                   <Check className="w-3 h-3 stroke-[3]" />
                 </span>
-                <span>Calculators and Astropedia stay free & unbounded</span>
+                <span>Calculators and Shastra stay free & unbounded</span>
               </li>
             </ul>
           </div>
@@ -333,7 +333,7 @@ export default function OnboardingPage() {
                     A little about you
                   </h3>
                   <p className="text-xs text-white/50 leading-relaxed font-sans">
-                    This helps Vaani address you with personal astrological precision.
+                    This helps Jyotish address you with personal astrological precision.
                   </p>
                 </div>
 

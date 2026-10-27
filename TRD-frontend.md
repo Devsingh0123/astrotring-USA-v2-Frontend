@@ -18,7 +18,7 @@ This document specifies the technical architecture, component standards, data pi
 ```text
 src/
 ├── app/              # store.js & rootReducer.js
-├── features/         # auth/, vaani/, reports/, horoscope/, compatibility/, user/
+├── features/         # auth/, jyotish/, reports/, horoscope/, compatibility/, user/
 │   ├── [feature]Slice.js
 │   ├── [feature]Api.js (or [feature]Thunks.js)
 │   └── components/
@@ -50,9 +50,9 @@ src/
 - `POST /api/v1/kundli/calculate` — `{ dob, tob, lat, lng, timezone, isTimeUnknown }`
 - `POST /api/v1/kundli/bind` — Links generated chart metadata to the authenticated user account.
 
-### 3.3 Conversational AI Engines (`features/vaani`)
-- `POST /api/v1/chat/vaani` — Streamed chart-grounded consultation `{ query, threadId, chartId }`.
-- `POST /api/v1/chat/astropedia` — Public Vedic knowledge query `{ query, threadId }`.
+### 3.3 Conversational AI Engines (`features/jyotish`)
+- `POST /api/v1/chat/jyotish` — Streamed chart-grounded consultation `{ query, threadId, chartId }`.
+- `POST /api/v1/chat/shastra` — Public Vedic knowledge query `{ query, threadId }`.
 - `GET /api/v1/chat/threads` — Retrieves past conversations and categorized question history.
 
 ### 3.4 Vedic Calculators (`features/calculators`)

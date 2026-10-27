@@ -29,7 +29,7 @@ export default function MyReportsPage() {
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
 
   const { user, isAuthenticated } = useSelector((state) => state.auth || {});
-  const { reportQuota } = useSelector((state) => state.vaani || {});
+  const { reportQuota } = useSelector((state) => state.jyotish || {});
   const { myReports = [], loading } = useSelector((state) => state.reports || {});
 
   const realReportCredits =

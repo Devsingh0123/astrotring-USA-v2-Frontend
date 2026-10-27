@@ -19,8 +19,8 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { logout, openAuthModal } from "@/features/auth"
-import { setActiveConversation, setActiveThreadId, clearActiveConversation, deleteConversation } from "@/features/vaani"
-import { fetchUserThreads, fetchThreadById, deleteThread } from "@/features/vaani/vaaniApi"
+import { setActiveConversation, setActiveThreadId, clearActiveConversation, deleteConversation } from "@/features/jyotish"
+import { fetchUserThreads, fetchThreadById, deleteThread } from "@/features/jyotish/jyotishApi"
 import UserProfileMenu from "@/features/user/components/UserProfileMenu"
 import { isToday, isYesterday, differenceInCalendarDays, format } from "date-fns"
 
@@ -59,14 +59,14 @@ export default function Sidebar({
   const dispatch = useDispatch()
   const { isAuthenticated, user, birthDetails } = useSelector((state) => state.auth || {})
   const { conversations = [], serverThreads = [], activeConversationId, activeThreadId } =
-    useSelector((state) => state.vaani || {})
+    useSelector((state) => state.jyotish || {})
   const [searchParams] = useSearchParams()
   const location = useLocation()
   const navigate = useNavigate()
   const isHomePage = location.pathname === "/"
-  const currentEngine = searchParams.get("engine") || "vaani"
-  const isVaaniActive = isHomePage && !activeConversationId && currentEngine === "vaani"
-  const isAstropediaActive = isHomePage && !activeConversationId && currentEngine === "astropedia"
+  const currentEngine = searchParams.get("engine") || "jyotish"
+  const isJyotishActive = isHomePage && !activeConversationId && currentEngine === "jyotish"
+  const isShastraActive = isHomePage && !activeConversationId && currentEngine === "shastra"
 
   const handleEngineClick = (e, targetEngine) => {
     e?.preventDefault()
@@ -117,42 +117,42 @@ export default function Sidebar({
           </Button>
         </div>
 
-        {/* Engine Quick Action Cards matching Melooha mlh-vaani-card & mlh-pedia-card */}
+        {/* Engine Quick Action Cards for Jyotish & Shastra */}
         <div className="space-y-1.5 pt-1">
           <Link
-            to="/?engine=vaani"
-            onClick={(e) => handleEngineClick(e, "vaani")}
+            to="/?engine=jyotish"
+            onClick={(e) => handleEngineClick(e, "jyotish")}
             className={`-mx-1 flex items-center gap-3 rounded-[14px] p-1 text-left transition-all duration-200 ${
-              isVaaniActive
+              isJyotishActive
                 ? "bg-mlh-plum-500/25 border border-mlh-plum-400/70 text-white shadow-[0_0_22px_rgba(154,69,120,0.36)]"
                 : "bg-mlh-plum-500/10 border border-mlh-plum-400/25 text-mlh-plum-300 hover:bg-mlh-plum-500/20 hover:border-mlh-plum-400/50 hover:text-white"
             } ${isCollapsed ? "justify-center" : ""}`}
           >
             <span className="grid h-[36px] w-[40px] flex-none place-items-center">
-              <Sparkles className={`w-4 h-4 ${isVaaniActive ? "text-amber-300" : "text-mlh-plum-300"}`} />
+              <Sparkles className={`w-4 h-4 ${isJyotishActive ? "text-amber-300" : "text-mlh-plum-300"}`} />
             </span>
             {!isCollapsed && (
               <span className="font-sans text-[15px] sm:text-[16px] leading-tight font-medium">
-                Ask Vaani
+                Ask Jyotish
               </span>
             )}
           </Link>
 
           <Link
-            to="/?engine=astropedia"
-            onClick={(e) => handleEngineClick(e, "astropedia")}
+            to="/?engine=shastra"
+            onClick={(e) => handleEngineClick(e, "shastra")}
             className={`-mx-1 flex items-center gap-3 rounded-[14px] p-1 text-left transition-all duration-200 ${
-              isAstropediaActive
+              isShastraActive
                 ? "bg-amber-500/22 border border-amber-400/60 text-amber-300 shadow-[0_0_22px_rgba(223,129,7,0.26)]"
                 : "bg-amber-500/10 border border-amber-500/25 text-amber-200/80 hover:bg-amber-500/20 hover:border-amber-400/50 hover:text-white"
             } ${isCollapsed ? "justify-center" : ""}`}
           >
             <span className="grid h-[36px] w-[40px] flex-none place-items-center">
-              <BookOpen className={`w-4 h-4 ${isAstropediaActive ? "text-amber-300" : "text-amber-400/80"}`} />
+              <BookOpen className={`w-4 h-4 ${isShastraActive ? "text-amber-300" : "text-amber-400/80"}`} />
             </span>
             {!isCollapsed && (
               <span className="font-sans text-[15px] sm:text-[16px] leading-tight font-medium">
-                Ask Astropedia
+                Ask Shastra
               </span>
             )}
           </Link>
@@ -207,7 +207,7 @@ export default function Sidebar({
         {!isCollapsed && (
           <div className="pt-3 border-t border-[#17384e] space-y-3">
             <div className="flex items-center gap-1 text-[10px] font-mono">
-              {["ALL", "VAANI", "ASTROPEDIA"].map((filter) => (
+              {["ALL", "JYOTISH", "SHASTRA"].map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
@@ -257,7 +257,7 @@ export default function Sidebar({
                     id: c.id,
                     threadId: c.threadId || c.id,
                     question: c.question || "Untitled Reading",
-                    engine: c.engine || "vaani",
+                    engine: c.engine || "jyotish",
                     createdAt: c.createdAt,
                     isServerThread: Boolean(c.threadId),
                   })
@@ -267,8 +267,8 @@ export default function Sidebar({
               const allReadings = Array.from(threadMap.values())
 
               const filtered = allReadings.filter((item) => {
-                if (activeFilter === "VAANI") return item.engine === "vaani"
-                if (activeFilter === "ASTROPEDIA") return item.engine === "astropedia"
+                if (activeFilter === "JYOTISH") return item.engine === "jyotish"
+                if (activeFilter === "SHASTRA") return item.engine === "shastra"
                 return true
               })
 
@@ -311,7 +311,7 @@ export default function Sidebar({
                   dispatch(fetchThreadById(targetThreadId))
                 }
                 if (location.pathname !== "/") {
-                  navigate(`/?engine=${item.engine || "vaani"}`)
+                  navigate(`/?engine=${item.engine || "jyotish"}`)
                 }
               }
 
@@ -350,14 +350,14 @@ export default function Sidebar({
                                   onClick={() => handleItemClick(item)}
                                   className={`w-full text-left p-2 rounded-xl text-xs font-sans transition-all cursor-pointer flex items-start gap-2 pr-7 ${
                                     isSelected
-                                      ? item.engine === "astropedia"
+                                      ? item.engine === "shastra"
                                         ? "bg-amber-500/15 text-white border border-amber-500/40 shadow-xs"
                                         : "bg-mlh-plum/20 text-white border border-mlh-plum/50 shadow-xs"
                                       : "text-white/70 hover:text-white hover:bg-white/5 border border-transparent"
                                   }`}
                                 >
                                   <span className="flex-none pt-0.5">
-                                    {item.engine === "astropedia" ? (
+                                    {item.engine === "shastra" ? (
                                       <BookOpen className="w-3.5 h-3.5 text-amber-400" />
                                     ) : (
                                       <Sparkles className="w-3.5 h-3.5 text-mlh-plum-300" />

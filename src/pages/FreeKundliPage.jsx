@@ -322,14 +322,14 @@ export default function FreeKundliPage() {
               </div>
 
               <p className="text-xs text-mlh-muted leading-relaxed">
-                Vaani reads this result against the rest of your chart, not in isolation.
+                Jyotish reads this result against the rest of your chart, not in isolation.
               </p>
 
               <Link
-                to="/?engine=vaani"
+                to="/?engine=jyotish"
                 className="block w-full text-center py-2.5 rounded-full border border-mlh-plum-400/40 text-mlh-plum-300 hover:bg-mlh-plum-500/20 font-sans text-sm font-medium transition cursor-pointer"
               >
-                Ask Vaani
+                Ask Jyotish
               </Link>
             </div>
           </aside>

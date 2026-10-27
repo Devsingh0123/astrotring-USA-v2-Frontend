@@ -10,34 +10,34 @@ const MARRIAGE_QUESTIONS = [
   "How will our joint financial karma unfold after marriage?",
 ];
 
-export default function AskVaaniMarriageCTA({
+export default function AskJyotishMarriageCTA({
   boyName = "Partner 1",
   girlName = "Partner 2",
 }) {
   const navigate = useNavigate();
 
   const handleAskQuestion = (question) => {
-    // Navigate to Vaani chat with preloaded question query
+    // Navigate to Jyotish chat with preloaded question query
     const encoded = encodeURIComponent(
       `Based on our Kundli Milan between ${boyName} and ${girlName}: ${question}`
     );
-    navigate(`/?engine=vaani&q=${encoded}`);
+    navigate(`/?engine=jyotish&q=${encoded}`);
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Ask Vaani AI Box */}
+      {/* Ask Jyotish AI Box */}
       <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-[#1b1424] to-[#120f1a] p-6 space-y-4 shadow-xl flex flex-col justify-between">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-amber-300 font-mono text-xs uppercase tracking-wider">
             <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>Consult Vaani AI</span>
+            <span>Consult Jyotish AI</span>
           </div>
           <h4 className="text-base font-semibold text-white">
             Ask specific follow-up questions
           </h4>
           <p className="text-xs text-mlh-muted leading-relaxed">
-            Take these matching parameters directly to Vaani for timing insights, Dasha compatibility, and personalized remedies.
+            Take these matching parameters directly to Jyotish for timing insights, Dasha compatibility, and personalized remedies.
           </p>
         </div>
 

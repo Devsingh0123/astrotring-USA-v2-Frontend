@@ -8,8 +8,8 @@ import {
   startGenerating,
   setThinkingStep,
   stopGenerating,
-} from "../vaaniSlice"
-import { streamChatTurn, submitMessageFeedback } from "../vaaniApi"
+} from "../jyotishSlice"
+import { streamChatTurn, submitMessageFeedback } from "../jyotishApi"
 import { toast } from "sonner"
 
 // Formats seconds into MM:SS left
@@ -20,7 +20,7 @@ function formatCountdown(secs) {
 }
 
 // Renders markdown bolding and bullet points faithfully
-function renderParagraph(text, isVaani) {
+function renderParagraph(text, isJyotish) {
   if (!text) return null
   const lines = text.split("\n")
   return (
@@ -33,11 +33,11 @@ function renderParagraph(text, isVaani) {
           if (match) {
             return (
               <div key={lIdx} className="flex items-start gap-2 pl-1">
-                <span className={`text-[13px] pt-1 leading-none ${isVaani ? "text-mlh-plum-300" : "text-amber-400"}`}>
+                <span className={`text-[13px] pt-1 leading-none ${isJyotish ? "text-mlh-plum-300" : "text-amber-400"}`}>
                   •
                 </span>
                 <p className="flex-1">
-                  <span className={`font-semibold ${isVaani ? "text-mlh-plum-100" : "text-amber-200"}`}>
+                  <span className={`font-semibold ${isJyotish ? "text-mlh-plum-100" : "text-amber-200"}`}>
                     {match[1]}
                   </span>
                   <span className="text-white/85">{match[2]}</span>
@@ -47,7 +47,7 @@ function renderParagraph(text, isVaani) {
           }
           return (
             <div key={lIdx} className="flex items-start gap-2 pl-1">
-              <span className={`text-[13px] pt-1 leading-none ${isVaani ? "text-mlh-plum-300" : "text-amber-400"}`}>
+              <span className={`text-[13px] pt-1 leading-none ${isJyotish ? "text-mlh-plum-300" : "text-amber-400"}`}>
                 •
               </span>
               <p className="flex-1 text-white/85">{bulletContent}</p>
@@ -75,7 +75,7 @@ function renderParagraph(text, isVaani) {
   )
 }
 
-export default function VaaniChatConversation({ onOpenBuyModal }) {
+export default function JyotishChatConversation({ onOpenBuyModal }) {
   const dispatch = useDispatch()
   const {
     conversations = [],
@@ -87,7 +87,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
     pendingQuestion,
     pendingEngine,
     questionQuota,
-  } = useSelector((state) => state.vaani || {})
+  } = useSelector((state) => state.jyotish || {})
   const { user, birthDetails } = useSelector((state) => state.auth || {})
 
   const activeQuestionQuota =
@@ -126,7 +126,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
   const latestReading =
     displayReadings.length > 0 ? displayReadings[displayReadings.length - 1] : null
 
-  const isVaani = (latestReading?.engine || pendingEngine || "vaani") === "vaani"
+  const isJyotish = (latestReading?.engine || pendingEngine || "jyotish") === "jyotish"
 
   const [followUpQuery, setFollowUpQuery] = useState("")
   const [inFlightQuery, setInFlightQuery] = useState("")
@@ -160,11 +160,11 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
     const text = (queryToSend || followUpQuery).trim()
     if (!text || isGenerating) return
 
-    const currentEngine = latestReading?.engine || pendingEngine || "vaani"
+    const currentEngine = latestReading?.engine || pendingEngine || "jyotish"
 
-    if (currentEngine === "vaani") {
+    if (currentEngine === "jyotish") {
       if (activeQuestionQuota <= 0) {
-        toast.error("Your question balance is empty. Top up to consult Vaani.")
+        toast.error("Your question balance is empty. Top up to consult Jyotish.")
         if (onOpenBuyModal) {
           onOpenBuyModal({ promoCode: "QUICKGOLD", packId: "pack_gold_12" })
         }
@@ -176,7 +176,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
     setFollowUpQuery("")
 
     const initialStep =
-      currentEngine === "vaani"
+      currentEngine === "jyotish"
         ? "Reviewing your core birth profile and selecting chart tools..."
         : "Searching Brihat Parashara Hora Shastra & classical treatises..."
 
@@ -242,8 +242,8 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
         <div className="flex items-center gap-1.5">
           <span>AstroTring</span>
           <span>/</span>
-          <span className={isVaani ? "text-mlh-plum-300/85" : "text-amber-400/90"}>
-            {isVaani ? "Ask Vaani" : "Ask Astropedia"}
+          <span className={isJyotish ? "text-mlh-plum-300/85" : "text-amber-400/90"}>
+            {isJyotish ? "Ask Jyotish" : "Ask Shastra"}
           </span>
         </div>
 
@@ -266,7 +266,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
           {/* Render All Completed Turns for this Thread */}
           {displayReadings.map((reading, rIdx) => {
             const isLastReading = rIdx === displayReadings.length - 1
-            const readingIsVaani = (reading.engine || "vaani") === "vaani"
+            const readingIsJyotish = (reading.engine || "jyotish") === "jyotish"
             const isExpanded = Boolean(expandedAstrologyMap[reading.id || rIdx])
 
             return (
@@ -279,7 +279,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                     </span>
                     <div
                       className={`rounded-[18px_18px_4px_18px] border px-[18px] py-3 font-sans text-[15.5px] sm:text-[18px] leading-[1.4] text-pretty shadow-[0_10px_30px_rgba(0,0,0,.35)] ${
-                        readingIsVaani
+                        readingIsJyotish
                           ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#ff7010]/20 to-[#8a3600]/15 text-white/95"
                           : "border-amber-500/35 bg-gradient-to-br from-[#df8107]/25 to-[#92400e]/15 text-white/95"
                       }`}
@@ -292,7 +292,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                 {/* Engine Reading Bubble (Open consult scroll with Left Accent Border) */}
                 <div
                   className={`animate-mlh-rise max-w-[840px] border-l pl-4 sm:pl-[22px] ${
-                    readingIsVaani ? "border-mlh-plum-400/28" : "border-amber-500/30"
+                    readingIsJyotish ? "border-mlh-plum-400/28" : "border-amber-500/30"
                   }`}
                 >
                   {/* Engine Header */}
@@ -300,12 +300,12 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                     <span
                       aria-hidden="true"
                       className={`relative grid h-[26px] w-[26px] flex-none place-items-center rounded-[9px] border ${
-                        readingIsVaani
+                        readingIsJyotish
                           ? "border-mlh-plum-400/45 text-mlh-plum-300 shadow-[0_0_14px_rgba(154,69,120,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(154,69,120,0.42),rgba(154,69,120,0.08))]"
                           : "border-amber-500/45 text-amber-300 shadow-[0_0_14px_rgba(223,129,7,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(223,129,7,0.42),rgba(223,129,7,0.08))]"
                       }`}
                     >
-                      {readingIsVaani ? (
+                      {readingIsJyotish ? (
                         <Sparkles className="w-3.5 h-3.5 text-mlh-plum-300" />
                       ) : (
                         <BookOpen className="w-3.5 h-3.5 text-amber-300" />
@@ -313,12 +313,12 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                     </span>
                     <span
                       className={`font-mono text-[9px] tracking-[0.2em] uppercase sm:text-[9.5px] ${
-                        readingIsVaani ? "text-mlh-plum-300/85" : "text-amber-400/90"
+                        readingIsJyotish ? "text-mlh-plum-300/85" : "text-amber-400/90"
                       }`}
                     >
-                      {readingIsVaani
-                        ? "Vaani · reading from your birth chart"
-                        : "Vaani · Astropedia"}
+                      {readingIsJyotish
+                        ? "Jyotish · reading from your birth chart"
+                        : "Shastra · Universal Vedic Encyclopedia"}
                     </span>
                   </div>
 
@@ -334,7 +334,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                           <span
                             key={tbIdx}
                             className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] tracking-wide ${
-                              readingIsVaani
+                              readingIsJyotish
                                 ? "border-mlh-plum-400/25 bg-mlh-plum-500/8 text-mlh-plum-200/90"
                                 : "border-amber-500/25 bg-amber-500/8 text-amber-200/90"
                             }`}
@@ -357,13 +357,13 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                     <div className="text-white/86 font-sans text-[17px] leading-[1.6] text-pretty sm:text-[20px]">
                       {reading.paragraphs?.map((p, idx) => (
                         <div key={idx} className="mb-4 last:mb-0">
-                          {renderParagraph(p, readingIsVaani)}
+                          {renderParagraph(p, readingIsJyotish)}
                         </div>
                       ))}
                     </div>
 
                     {/* Promotional Offer Banner (Melooha Ref 15 exact structure, shown on latest reading) */}
-                    {readingIsVaani && isLastReading && (reading.offer || activeQuestionQuota <= 0) && (
+                    {readingIsJyotish && isLastReading && (reading.offer || activeQuestionQuota <= 0) && (
                       <div className="border-amber-500/20 bg-gradient-to-b from-[#24131b]/60 to-[#120a10]/80 relative mt-4 overflow-hidden rounded-[16px] border p-4 sm:p-5 shadow-lg">
                         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
                           <div className="text-amber-300/85 flex items-center gap-2 font-mono text-[9px] tracking-[0.22em] uppercase">
@@ -415,7 +415,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                             aria-expanded={isExpanded}
                             onClick={() => toggleExpandedAstrology(reading.id || rIdx)}
                             className={`flex cursor-pointer items-center gap-2.5 rounded-full border px-4 py-2 font-sans text-[15px] sm:text-[16px] transition-[color,background-color,border-color] duration-200 ${
-                              readingIsVaani
+                              readingIsJyotish
                                 ? "border-mlh-plum-400/28 bg-mlh-plum-500/8 text-white/75 hover:border-mlh-plum-400/52 hover:text-white"
                                 : "border-amber-500/28 bg-amber-500/8 text-white/75 hover:border-amber-500/52 hover:text-white"
                             }`}
@@ -423,13 +423,13 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                             <span
                               aria-hidden="true"
                               className={`text-[12px] leading-none ${
-                                readingIsVaani ? "text-mlh-plum-300" : "text-amber-400"
+                                readingIsJyotish ? "text-mlh-plum-300" : "text-amber-400"
                               }`}
                             >
                               ✦
                             </span>
                             <span>
-                              {readingIsVaani ? "The astrology behind this" : "Classical references & citations"}
+                              {readingIsJyotish ? "The astrology behind this" : "Classical references & citations"}
                             </span>
                             <ChevronDown
                               className={`w-3.5 h-3.5 transition-transform duration-200 ${
@@ -442,17 +442,17 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                         {isExpanded && (
                           <div
                             className={`mt-3 overflow-hidden rounded-2xl border p-5 sm:px-[22px] ${
-                              readingIsVaani
+                              readingIsJyotish
                                 ? "border-mlh-plum-400/22 bg-mlh-plum-500/6"
                                 : "border-amber-500/22 bg-amber-500/6"
                             }`}
                           >
                             <div
                               className={`font-mono text-[9.5px] tracking-[0.22em] uppercase ${
-                                readingIsVaani ? "text-mlh-plum-300/85" : "text-amber-400/85"
+                                readingIsJyotish ? "text-mlh-plum-300/85" : "text-amber-400/85"
                               }`}
                             >
-                              {readingIsVaani ? "What I read from your chart" : "Citations & Classical Treatises"}
+                              {readingIsJyotish ? "What I read from your chart" : "Citations & Classical Treatises"}
                             </div>
                             <div className="mt-3.5 space-y-2.5 font-sans text-[15px] sm:text-[16px] leading-relaxed">
                               {reading.astrologyBehind.map((item, aIdx) => {
@@ -460,7 +460,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                                 if (match) {
                                   return (
                                     <div key={aIdx} className="flex items-start gap-2 text-white/85">
-                                      <span className={`font-semibold shrink-0 ${readingIsVaani ? "text-mlh-plum-200" : "text-amber-200"}`}>
+                                      <span className={`font-semibold shrink-0 ${readingIsJyotish ? "text-mlh-plum-200" : "text-amber-200"}`}>
                                         {match[1]}
                                       </span>
                                       <span className="text-white/75">{match[2]}</span>
@@ -492,7 +492,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                           className={`grid h-[30px] w-[30px] cursor-pointer place-items-center rounded-lg border transition-colors ${
                             reading.feedback === "yes"
                               ? "border-emerald-500/80 bg-emerald-500/20 text-emerald-300"
-                              : readingIsVaani
+                              : readingIsJyotish
                               ? "border-mlh-plum-400/40 bg-mlh-plum-500/8 text-white/65 hover:border-mlh-plum-400/70 hover:text-white"
                               : "border-amber-500/40 bg-amber-500/8 text-white/65 hover:border-amber-500/70 hover:text-white"
                           }`}
@@ -506,7 +506,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                           className={`grid h-[30px] w-[30px] cursor-pointer place-items-center rounded-lg border transition-colors ${
                             reading.feedback === "no"
                               ? "border-rose-500/80 bg-rose-500/20 text-rose-300"
-                              : readingIsVaani
+                              : readingIsJyotish
                               ? "border-mlh-plum-400/40 bg-mlh-plum-500/8 text-white/65 hover:border-mlh-plum-400/70 hover:text-white"
                               : "border-amber-500/40 bg-amber-500/8 text-white/65 hover:border-amber-500/70 hover:text-white"
                           }`}
@@ -520,16 +520,16 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                     {isLastReading && reading.suggestedQuestions && reading.suggestedQuestions.length > 0 && (
                       <div
                         className={`mt-[22px] border-t pt-[18px] ${
-                          readingIsVaani ? "border-mlh-plum-400/18" : "border-amber-500/20"
+                          readingIsJyotish ? "border-mlh-plum-400/18" : "border-amber-500/20"
                         }`}
                       >
                         <div className="flex items-center justify-between">
                           <div
                             className={`font-mono text-[9.5px] tracking-[0.22em] uppercase ${
-                              readingIsVaani ? "text-mlh-plum-300/85" : "text-amber-400/85"
+                              readingIsJyotish ? "text-mlh-plum-300/85" : "text-amber-400/85"
                             }`}
                           >
-                            {readingIsVaani ? "Suggested Follow-ups & Questions" : "Keep exploring"}
+                            {readingIsJyotish ? "Suggested Follow-ups & Questions" : "Keep exploring"}
                           </div>
                           <span className="font-mono text-[9px] text-white/35 uppercase tracking-wider hidden sm:inline">
                             Click to ask instantly
@@ -542,7 +542,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                               type="button"
                               onClick={() => handleSendFollowUp(q)}
                               className={`group flex cursor-pointer items-center gap-2.5 rounded-full border px-4 py-2.5 text-left font-sans text-[15px] sm:text-[16px] transition-[color,background-color,border-color,transform,box-shadow] duration-200 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,.35)] ${
-                                readingIsVaani
+                                readingIsJyotish
                                   ? "border-white/15 bg-mlh-plum-500/[.05] text-white/75 hover:border-mlh-plum-400/60 hover:bg-mlh-plum-500/14 hover:text-white"
                                   : "border-white/15 bg-amber-500/[.05] text-white/75 hover:border-amber-500/60 hover:bg-amber-500/14 hover:text-white"
                               }`}
@@ -551,7 +551,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                               <span
                                 aria-hidden="true"
                                 className={`ml-auto pl-1 font-mono text-[11px] transition-transform duration-200 group-hover:translate-x-0.5 ${
-                                  readingIsVaani ? "text-mlh-plum-300/70" : "text-amber-300/70"
+                                  readingIsJyotish ? "text-mlh-plum-300/70" : "text-amber-300/70"
                                 }`}
                               >
                                 →
@@ -577,7 +577,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                   </span>
                   <div
                     className={`rounded-[18px_18px_4px_18px] border px-[18px] py-3 font-sans text-[15.5px] sm:text-[18px] leading-[1.4] text-pretty shadow-[0_10px_30px_rgba(0,0,0,.35)] ${
-                      isVaani
+                      isJyotish
                         ? "border-mlh-plum-400/32 bg-gradient-to-br from-[#ff7010]/20 to-[#8a3600]/15 text-white/95"
                         : "border-amber-500/35 bg-gradient-to-br from-[#df8107]/25 to-[#92400e]/15 text-white/95"
                     }`}
@@ -589,19 +589,19 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
 
               <div
                 className={`animate-mlh-rise max-w-[840px] border-l pl-4 sm:pl-[22px] ${
-                  isVaani ? "border-mlh-plum-400/28" : "border-amber-500/30"
+                  isJyotish ? "border-mlh-plum-400/28" : "border-amber-500/30"
                 }`}
               >
                 <div className="mb-2.5 flex items-center gap-2.5">
                   <span
                     aria-hidden="true"
                     className={`relative grid h-[26px] w-[26px] flex-none place-items-center rounded-[9px] border ${
-                      isVaani
+                      isJyotish
                         ? "border-mlh-plum-400/45 text-mlh-plum-300 shadow-[0_0_14px_rgba(154,69,120,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(154,69,120,0.42),rgba(154,69,120,0.08))]"
                         : "border-amber-500/45 text-amber-300 shadow-[0_0_14px_rgba(223,129,7,.3)] bg-[radial-gradient(circle_at_35%_28%,rgba(223,129,7,0.42),rgba(223,129,7,0.08))]"
                     }`}
                   >
-                    {isVaani ? (
+                    {isJyotish ? (
                       <Sparkles className="w-3.5 h-3.5 text-mlh-plum-300" />
                     ) : (
                       <BookOpen className="w-3.5 h-3.5 text-amber-300" />
@@ -609,12 +609,12 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                   </span>
                   <span
                     className={`font-mono text-[9px] tracking-[0.2em] uppercase sm:text-[9.5px] ${
-                      isVaani ? "text-mlh-plum-300/85" : "text-amber-400/90"
+                      isJyotish ? "text-mlh-plum-300/85" : "text-amber-400/90"
                     }`}
                   >
-                    {isVaani
-                      ? "Vaani · reading from your birth chart"
-                      : "Vaani · Astropedia"}
+                    {isJyotish
+                      ? "Jyotish · reading from your birth chart"
+                      : "Shastra · Universal Vedic Encyclopedia"}
                   </span>
                 </div>
 
@@ -628,7 +628,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                             key={sIdx}
                             className={`flex items-center gap-2.5 rounded-full px-3.5 py-1.5 font-mono text-xs sm:text-[12.5px] tracking-wide transition-all ${
                               isLatest
-                                ? isVaani
+                                ? isJyotish
                                   ? "border border-mlh-plum-400/50 bg-mlh-plum-500/15 text-mlh-plum-200 shadow-[0_0_16px_rgba(154,69,120,0.25)] animate-pulse"
                                   : "border border-amber-500/50 bg-amber-500/15 text-amber-200 shadow-[0_0_16px_rgba(223,129,7,0.25)] animate-pulse"
                                 : "border border-white/10 bg-white/[0.03] text-white/50"
@@ -646,13 +646,13 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                     ) : (
                       <div
                         className={`flex items-center gap-2.5 font-mono text-xs sm:text-[13px] tracking-wide animate-pulse ${
-                          isVaani ? "text-mlh-plum-200" : "text-amber-200"
+                          isJyotish ? "text-mlh-plum-200" : "text-amber-200"
                         }`}
                       >
                         <Sparkles className="w-4 h-4 animate-spin text-amber-300 shrink-0" />
                         <span>
                           {thinkingStep ||
-                            (isVaani
+                            (isJyotish
                               ? "Reading your birth chart..."
                               : "Consulting classical Vedic texts...")}
                         </span>
@@ -670,7 +670,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
           <div>
             <div
               className={`relative overflow-hidden rounded-[22px] border transition-[border-color,box-shadow] duration-300 ${
-                isVaani
+                isJyotish
                   ? "border-mlh-plum-400/40 focus-within:border-mlh-plum-400/80 shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_34px_rgba(255,112,16,.25),inset_0_1px_0_rgba(255,255,255,.05)] focus-within:shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_44px_rgba(255,112,16,.45),inset_0_1px_0_rgba(255,255,255,.06)] bg-[linear-gradient(rgba(255,112,16,0.08),rgba(3,29,46,0.96))]"
                   : "border-amber-500/40 focus-within:border-amber-500/80 shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_34px_rgba(223,129,7,.24),inset_0_1px_0_rgba(255,255,255,.05)] focus-within:shadow-[0_22px_60px_rgba(0,0,0,.65),0_0_44px_rgba(223,129,7,.45),inset_0_1px_0_rgba(255,255,255,.06)] bg-[linear-gradient(rgba(223,129,7,0.08),rgba(3,29,46,0.96))]"
               }`}
@@ -679,7 +679,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                 <span
                   aria-hidden="true"
                   className={`shrink-0 pt-1 text-[16px] leading-none ${
-                    isVaani ? "text-mlh-plum-300/85 animate-pulse" : "text-amber-400/85 animate-pulse"
+                    isJyotish ? "text-mlh-plum-300/85 animate-pulse" : "text-amber-400/85 animate-pulse"
                   }`}
                 >
                   ✦
@@ -690,7 +690,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                   onChange={(e) => setFollowUpQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder={
-                    isVaani
+                    isJyotish
                       ? "Ask a follow-up: a date you are weighing, a decision, a what-if…"
                       : "Search another topic: a term, a yoga, a doṣa…"
                   }
@@ -701,7 +701,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
 
               <div className="relative flex flex-wrap items-center gap-3 px-3 pt-3 pb-3 sm:gap-3.5 sm:px-3.5 sm:pt-3 sm:pb-3.5 sm:pl-5">
                 <div className="ml-auto flex items-center gap-2.5 sm:gap-3">
-                  {isVaani && (
+                  {isJyotish && (
                     <div className="flex items-stretch overflow-hidden rounded-full border font-mono text-[10.5px] font-medium tracking-[0.14em] whitespace-nowrap uppercase border-amber-500/50 bg-amber-500/12 text-amber-300">
                       <span className="px-3.5 py-[7px]">
                         <span>{activeQuestionQuota}</span> {activeQuestionQuota === 1 ? "question" : "questions"} left
@@ -725,7 +725,7 @@ export default function VaaniChatConversation({ onOpenBuyModal }) {
                     onClick={() => handleSendFollowUp()}
                     aria-label="Send question"
                     className={`grid h-11 w-11 flex-none place-items-center rounded-full transition-all duration-200 sm:h-[46px] sm:w-[46px] cursor-pointer disabled:opacity-40 ${
-                      isVaani
+                      isJyotish
                         ? "text-white bg-[linear-gradient(160deg,#ff852e,#ff7010_62%,#e65c00)] shadow-[0_0_24px_rgba(255,112,16,.5)] hover:shadow-[0_0_40px_rgba(255,112,16,.85)] hover:-translate-y-0.5"
                         : "text-[#031d2e] bg-[linear-gradient(160deg,#feb371,#df8107_62%,#b45309)] shadow-[0_0_24px_rgba(223,129,7,.6)] hover:shadow-[0_0_40px_rgba(223,129,7,1)] hover:-translate-y-0.5"
                     }`}

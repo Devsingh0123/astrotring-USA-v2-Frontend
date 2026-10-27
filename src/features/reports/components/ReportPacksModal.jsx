@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 import { openAuthModal, updateUserProfile } from "@/features/auth"
-import { addReportQuota, setReportQuota } from "@/features/vaani"
+import { addReportQuota, setReportQuota } from "@/features/jyotish"
 import {
   fetchBillingCatalog,
   validateCoupon,

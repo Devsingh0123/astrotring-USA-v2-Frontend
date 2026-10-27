@@ -33,7 +33,7 @@ export default function InvoicesPage() {
   const onOpenBuyModal = context.onOpenBuyModal || (() => {})
 
   const { user, birthDetails } = useSelector((state) => state.auth || {})
-  const { questionQuota, reportQuota } = useSelector((state) => state.vaani || {})
+  const { questionQuota, reportQuota } = useSelector((state) => state.jyotish || {})
 
   const realQuestionsCount =
     typeof questionQuota === "number"
@@ -179,7 +179,7 @@ export default function InvoicesPage() {
           </div>
 
           <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex flex-col justify-between">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-white/50">Vaani Questions Left</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider text-white/50">Jyotish Questions Left</span>
             <div className="mt-2 text-2xl font-mono font-bold text-amber-300">{realQuestionsCount}</div>
           </div>
 

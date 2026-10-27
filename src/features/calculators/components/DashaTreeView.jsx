@@ -12,7 +12,7 @@ import {
   Layers,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import AskVaaniPromptCard from "./AskVaaniPromptCard";
+import AskJyotishPromptCard from "./AskJyotishPromptCard";
 
 const PLANET_CYCLES = [
   { planet: "Ketu", years: 7, element: "Spiritual Detachment, Intuition, Ancestral Karma" },
@@ -255,8 +255,8 @@ export default function DashaTreeView({ kundliData, onReset }) {
         </div>
       </div>
 
-      {/* Ask Vaani AI CTA */}
-      <AskVaaniPromptCard
+      {/* Ask Jyotish AI CTA */}
+      <AskJyotishPromptCard
         prompts={[
           `How does my active ${majorDasha}-${subDasha} Dasha affect my career breakthrough?`,
           `What are the most favorable months during my ${majorDasha} Mahadasha?`,

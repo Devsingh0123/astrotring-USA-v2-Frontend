@@ -91,7 +91,7 @@ export default function HoroscopeSidebar({
         )}
       </div>
 
-      {/* 2. Upsell / Vaani Card */}
+      {/* 2. Upsell / Jyotish Card */}
       <div className="rounded-2xl border border-mlh-plum/30 bg-gradient-to-b from-mlh-plum/15 via-[#0e344d] to-[#07273c] p-5 space-y-3">
         <div className="w-8 h-8 rounded-lg bg-mlh-plum/20 flex items-center justify-center text-mlh-plum">
           <Sparkles className="w-4 h-4" />
@@ -100,11 +100,11 @@ export default function HoroscopeSidebar({
           Want deeper personal guidance?
         </h3>
         <p className="text-xs text-mlh-muted leading-relaxed">
-          Ask Vaani for precision answers calculated from your exact birth chart and planetary dasha cycles.
+          Ask Jyotish for precision answers calculated from your exact birth chart and planetary dasha cycles.
         </p>
-        <Link to="/?engine=vaani" className="block pt-1">
+        <Link to="/?engine=jyotish" className="block pt-1">
           <Button className="w-full bg-mlh-plum hover:bg-mlh-plum/90 text-white font-semibold text-xs rounded-xl h-10 shadow-xs cursor-pointer">
-            Ask Vaani
+            Ask Jyotish
           </Button>
         </Link>
       </div>

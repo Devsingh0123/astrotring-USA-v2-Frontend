@@ -11,7 +11,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import AskVaaniPromptCard from "./AskVaaniPromptCard";
+import AskJyotishPromptCard from "./AskJyotishPromptCard";
 
 const MANGAL_HOUSES = [1, 2, 4, 7, 8, 12];
 
@@ -330,8 +330,8 @@ export default function MangalDoshaView({ kundliData, onReset }) {
         </div>
       </div>
 
-      {/* Ask Vaani AI CTA */}
-      <AskVaaniPromptCard
+      {/* Ask Jyotish AI CTA */}
+      <AskJyotishPromptCard
         prompts={[
           "Does my Mangal Dosha cause delays in marriage or professional conflicts?",
           "Can I marry a non-Manglik person according to my specific chart?",

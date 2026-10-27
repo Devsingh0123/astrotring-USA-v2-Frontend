@@ -166,7 +166,7 @@ export default function ArthaSutramPage() {
     (state) => state.reports || {}
   )
   const { user, isAuthenticated, birthDetails } = useSelector((state) => state.auth || {})
-  const { reportQuota } = useSelector((state) => state.vaani || {})
+  const { reportQuota } = useSelector((state) => state.jyotish || {})
 
   const [activeTab, setActiveTab] = useState("indu-lagna")
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
@@ -275,9 +275,9 @@ export default function ArthaSutramPage() {
     }
   }
 
-  const handleAskVaani = () => {
+  const handleAskJyotish = () => {
     const prompt = "What are the most auspicious wealth windows and Dhana Yogas in my birth chart?"
-    navigate(`/?engine=vaani&q=${encodeURIComponent(prompt)}`)
+    navigate(`/?engine=jyotish&q=${encodeURIComponent(prompt)}`)
   }
 
   const selectedChapter = SAMPLE_CHAPTERS.find((c) => c.id === activeTab) || SAMPLE_CHAPTERS[0]
@@ -450,12 +450,12 @@ export default function ArthaSutramPage() {
             </Button>
 
             <Button
-              onClick={handleAskVaani}
+              onClick={handleAskJyotish}
               variant="outline"
               size="lg"
               className="w-full sm:w-auto h-12 px-6 rounded-2xl border-white/15 bg-white/5 hover:bg-white/10 text-white font-mono text-xs tracking-wider uppercase transition-colors cursor-pointer"
             >
-              Ask Vaani About Wealth
+              Ask Jyotish About Wealth
             </Button>
           </div>
         </section>

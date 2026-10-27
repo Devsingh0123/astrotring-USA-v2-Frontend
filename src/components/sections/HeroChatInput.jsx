@@ -6,20 +6,20 @@ import { Sparkles, BookOpen, ArrowUp, Lock } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { openAuthModal } from "@/features/auth/authSlice"
-import { startGenerating, setThinkingStep, stopGenerating, addConversation } from "@/features/vaani/vaaniSlice"
-import { streamChatTurn } from "@/features/vaani/vaaniApi"
+import { startGenerating, setThinkingStep, stopGenerating, addConversation } from "@/features/jyotish/jyotishSlice"
+import { streamChatTurn } from "@/features/jyotish/jyotishApi"
 import { toast } from "sonner"
 
-// Exact Melooha 4 Prompts for Personal Vaani
-const VAANI_PROMPTS = [
+// Exact Melooha 4 Prompts for Personal Jyotish
+const JYOTISH_PROMPTS = [
   "What is Saturn doing to my chart right now?",
   "Which gemstone suits my chart, if any?",
   "What is my lagna and what does it say about me?",
   "Which yogas are present in my chart?",
 ]
 
-// Exact Melooha 4 Prompts for Astropedia
-const ASTROPEDIA_PROMPTS = [
+// Exact Melooha 4 Prompts for Shastra
+const SHASTRA_PROMPTS = [
   "What is Kaal Sarp dosha and how seriously should it be taken?",
   "What does Moon in 7th house mean for marriage and public life?",
   "What is a muhurta and how is an auspicious time chosen?",
@@ -33,11 +33,11 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
 
   const [query, setQuery] = useState(queryParam || "")
   const [engine, setEngine] = useState(
-    engineParam === "astropedia" ? "astropedia" : "vaani"
+    engineParam === "shastra" ? "shastra" : "jyotish"
   )
   const dispatch = useDispatch()
   const { isAuthenticated, user, birthDetails } = useSelector((state) => state.auth || {})
-  const { questionQuota, isGenerating } = useSelector((state) => state.vaani || {})
+  const { questionQuota, isGenerating } = useSelector((state) => state.jyotish || {})
 
   const activeQuestionQuota =
     typeof questionQuota === "number"
@@ -50,7 +50,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
 
   // Keep engine state and query state in sync if URL query param changes
   useEffect(() => {
-    if (engineParam === "astropedia" || engineParam === "vaani") {
+    if (engineParam === "shastra" || engineParam === "jyotish") {
       setEngine(engineParam)
       setQuery("")
     }
@@ -88,8 +88,8 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
     const text = (textToSend || query).trim()
     if (!text || isGenerating) return
 
-    // VAANI: Chart-bound personalized reading requires authentication & question quota
-    if (engine === "vaani") {
+    // JYOTISH: Chart-bound personalized reading requires authentication & question quota
+    if (engine === "jyotish") {
       if (!isAuthenticated) {
         if (typeof onOpenBindModal === "function") {
           onOpenBindModal(() => executeQuestion(text))
@@ -100,7 +100,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
       }
 
       if (activeQuestionQuota <= 0) {
-        toast.error("Your question quota is empty. Top up with Gold Pack to consult Vaani.")
+        toast.error("Your question quota is empty. Top up with Gold Pack to consult Jyotish.")
         if (onOpenBuyModal) {
           onOpenBuyModal({ promoCode: "QUICKGOLD", packId: "pack_gold_12" })
         }
@@ -108,7 +108,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
       }
 
       const initialThinkingStep =
-        engine === "vaani"
+        engine === "jyotish"
           ? "Reviewing your core birth profile and selecting chart tools..."
           : "Searching Brihat Parashara Hora Shastra & classical treatises..."
 
@@ -120,7 +120,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
         })
       )
     } else {
-      // ASTROPEDIA: Universal Vedic Encyclopedia is 100% Free & Unlimited
+      // SHASTRA: Universal Vedic Encyclopedia is 100% Free & Unlimited
       dispatch(
         startGenerating({
           step: "Searching Brihat Parashara Hora Shastra & classical treatises...",
@@ -170,9 +170,9 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
     executeQuestion(question)
   }
 
-  const activePrompts = engine === "astropedia" ? ASTROPEDIA_PROMPTS : VAANI_PROMPTS
+  const activePrompts = engine === "shastra" ? SHASTRA_PROMPTS : JYOTISH_PROMPTS
   const inputPlaceholder =
-    engine === "astropedia"
+    engine === "shastra"
       ? "Search any Vedic astrology topic…"
       : "Ask about your career, marriage, or the timing of a decision…"
 
@@ -194,7 +194,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1, duration: 0.4 }}
         className={`w-full rounded-[22px] border bg-[#07273c]/92 backdrop-blur-[7px] p-4 sm:p-5 shadow-[0_22px_60px_rgba(0,0,0,0.55)] space-y-4 transition-all ${
-          engine === "astropedia"
+          engine === "shastra"
             ? "border-amber-500/45 focus-within:border-amber-500/85 shadow-[0_22px_60px_rgba(0,0,0,.55),0_0_48px_rgba(223,129,7,.34),inset_0_1px_0_rgba(255,255,255,.08)]"
             : "border-mlh-plum-400/45 focus-within:border-mlh-plum-400/85 shadow-[0_22px_60px_rgba(0,0,0,.55),0_0_48px_rgba(255,112,16,.22),inset_0_1px_0_rgba(255,255,255,.08)]"
         }`}
@@ -219,36 +219,36 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
             <button
               type="button"
               role="radio"
-              aria-checked={engine === "vaani"}
-              onClick={() => handleSelectEngine("vaani")}
+              aria-checked={engine === "jyotish"}
+              onClick={() => handleSelectEngine("jyotish")}
               className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                engine === "vaani"
+                engine === "jyotish"
                   ? "bg-gradient-to-r from-mlh-plum-500 to-mlh-plum text-white shadow-xs"
                   : "text-mlh-muted hover:text-white"
               }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>Vaani</span>
+              <span>Jyotish</span>
             </button>
             <button
               type="button"
               role="radio"
-              aria-checked={engine === "astropedia"}
-              onClick={() => handleSelectEngine("astropedia")}
+              aria-checked={engine === "shastra"}
+              onClick={() => handleSelectEngine("shastra")}
               className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                engine === "astropedia"
+                engine === "shastra"
                   ? "bg-gradient-to-r from-[#feb371] to-[#df8107] text-[#0f090c] font-semibold shadow-xs"
                   : "text-mlh-muted hover:text-white"
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span>Astropedia</span>
+              <span>Shastra</span>
             </button>
           </div>
 
           {/* Right Action Buttons */}
           <div className="flex items-center justify-between sm:justify-end gap-3 self-end sm:self-auto w-full sm:w-auto">
-            {engine === "vaani" ? (
+            {engine === "jyotish" ? (
               isAuthenticated ? (
                 <div
                   className={`flex items-center gap-2 pl-3 pr-1 py-1 rounded-full text-xs transition-all shadow-xs ${
@@ -306,7 +306,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
               onClick={() => executeQuestion(query)}
               aria-label="Send question"
               className={`w-10 h-10 rounded-full shrink-0 shadow-md cursor-pointer disabled:opacity-40 transition-all ${
-                engine === "astropedia"
+                engine === "shastra"
                   ? "bg-[linear-gradient(160deg,#feb371,#df8107_62%,#b45309)] text-[#0f090c] hover:brightness-110 shadow-[0_0_24px_rgba(223,129,7,0.6)]"
                   : "bg-gradient-to-br from-mlh-plum-500 to-mlh-plum hover:from-mlh-plum hover:to-mlh-plum-800 text-white shadow-[0_0_24px_rgba(129,23,86,0.6)]"
               }`}
@@ -328,7 +328,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
             whileHover={{ y: -2 }}
             onClick={() => handlePromptClick(question)}
             className={`p-3.5 sm:p-4 rounded-[14px] border text-left backdrop-blur-[3px] transition-all cursor-pointer group shadow-[0_4px_16px_rgba(0,0,0,0.3)] flex items-center justify-between gap-3 ${
-              engine === "astropedia"
+              engine === "shastra"
                 ? "border-amber-500/25 bg-amber-500/[.03] hover:border-amber-500/50 hover:bg-amber-500/[.08]"
                 : "border-white/12 bg-white/[.02] hover:border-mlh-plum-400/50 hover:bg-mlh-plum-500/[.08]"
             }`}

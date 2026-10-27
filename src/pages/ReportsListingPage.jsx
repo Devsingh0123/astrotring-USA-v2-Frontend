@@ -12,7 +12,7 @@ export default function ReportsListingPage() {
   const dispatch = useDispatch()
   const context = useOutletContext() || {}
   const [isBuyReportsModalOpen, setIsBuyReportsModalOpen] = useState(false)
-  const { reportQuota } = useSelector((state) => state.vaani || {})
+  const { reportQuota } = useSelector((state) => state.jyotish || {})
   const { user, isAuthenticated } = useSelector((state) => state.auth || {})
   const { catalog, categories, myReports, loading } = useSelector((state) => state.reports || {})
 

@@ -27,7 +27,7 @@ import NorthIndianChart from "@/features/calculators/components/NorthIndianChart
 import PlanetaryTable from "@/features/calculators/components/PlanetaryTable";
 import HouseAnalysis from "@/features/calculators/components/HouseAnalysis";
 import DashaTimeline from "@/features/calculators/components/DashaTimeline";
-import AskVaaniPromptCard from "@/features/calculators/components/AskVaaniPromptCard";
+import AskJyotishPromptCard from "@/features/calculators/components/AskJyotishPromptCard";
 
 import { fetchUserChart } from "@/features/calculators";
 import { openAuthModal } from "@/features/auth";
@@ -222,13 +222,13 @@ export default function KundliDisplayPage() {
               <span className="hidden sm:inline">Print / PDF</span>
             </Button>
 
-            <Link to="/?engine=vaani">
+            <Link to="/?engine=jyotish">
               <Button
                 size="sm"
                 className="h-9 px-4 rounded-xl bg-gradient-to-r from-mlh-amber to-amber-600 hover:from-amber-500 hover:to-amber-600 text-black font-semibold text-xs font-mono tracking-wider flex items-center gap-2 shadow-lg shadow-mlh-amber/20 cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Ask Vaani</span>
+                <span>Ask Jyotish</span>
               </Button>
             </Link>
           </div>
@@ -593,9 +593,9 @@ export default function KundliDisplayPage() {
               </div>
             )}
 
-            {/* ================= 6. ASK VAANI CARD ================= */}
+            {/* ================= 6. ASK JYOTISH CARD ================= */}
             <div className="pt-4">
-              <AskVaaniPromptCard chartSummary={summary} />
+              <AskJyotishPromptCard chartSummary={summary} />
             </div>
           </div>
         )}

@@ -122,9 +122,9 @@ export default function DailyForecastWidget({ onOpenBindModal }) {
   const luckyNumber = forecast?.lucky?.number ?? forecast?.luckyNumber ?? 7
   const cosmicRemedy = forecast?.lucky?.cosmicRemedy || null
 
-  const handleAskVaani = () => {
+  const handleAskJyotish = () => {
     const prompt = `How should I navigate my day today based on my ${signLatin} (${signVedic}) Moon sign forecast?`
-    navigate(`/?engine=vaani&q=${encodeURIComponent(prompt)}`)
+    navigate(`/?engine=jyotish&q=${encodeURIComponent(prompt)}`)
   }
 
   return (
@@ -298,11 +298,11 @@ export default function DailyForecastWidget({ onOpenBindModal }) {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={handleAskVaani}
+                    onClick={handleAskJyotish}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-mlh-plum/30 bg-mlh-plum/20 hover:bg-mlh-plum/30 text-white text-[11px] font-mono tracking-wider transition-colors cursor-pointer"
                   >
                     <MessageSquare className="w-3 h-3 text-mlh-plum-300" />
-                    <span>Ask Vaani</span>
+                    <span>Ask Jyotish</span>
                   </button>
                   <Link
                     to={`/horoscopes/${signKey}/daily`}

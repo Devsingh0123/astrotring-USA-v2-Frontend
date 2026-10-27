@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "@/features/auth/authSlice";
-import vaaniReducer from "@/features/vaani/vaaniSlice";
+import jyotishReducer from "@/features/jyotish/jyotishSlice";
 import calculatorReducer from "@/features/calculators/calculatorSlice";
 import horoscopeReducer from "@/features/horoscope/horoscopeSlice";
 import reportsReducer from "@/features/reports/reportsSlice";
@@ -11,7 +11,7 @@ import compatibilityReducer from "@/features/compatibility/compatibilitySlice";
  * AstroTring Independent Global Redux Store Configuration
  * Assembles all modular feature slices from their respective feature directories:
  * - @/features/auth/authSlice
- * - @/features/vaani/vaaniSlice
+ * - @/features/jyotish/jyotishSlice
  * - @/features/calculators/calculatorSlice
  * - @/features/horoscope/horoscopeSlice
  * - @/features/reports/reportsSlice
@@ -22,7 +22,7 @@ export const store = configureStore({
   reducer: {
     app: (state = { ready: true }) => state,
     auth: authReducer,
-    vaani: vaaniReducer,
+    jyotish: jyotishReducer,
     calculators: calculatorReducer,
     horoscope: horoscopeReducer,
     reports: reportsReducer,

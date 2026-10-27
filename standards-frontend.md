@@ -42,7 +42,7 @@ Never use inline styles. Never use hardcoded hex colors in components. Always us
 
 Project Structure Rules:
 
-Follow a feature-based folder structure (features/auth, features/reports, features/horoscope, features/vaani, features/compatibility, features/user).
+Follow a feature-based folder structure (features/auth, features/reports, features/horoscope, features/jyotish, features/compatibility, features/user).
 
 Redux slices live inside their respective feature folder (e.g., features/auth/authSlice.js).
 

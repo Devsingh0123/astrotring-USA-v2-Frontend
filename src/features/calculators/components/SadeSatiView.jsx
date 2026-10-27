@@ -12,7 +12,7 @@ import {
   Compass,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import AskVaaniPromptCard from "./AskVaaniPromptCard";
+import AskJyotishPromptCard from "./AskJyotishPromptCard";
 
 const SATURN_REMEDIES = [
   {
@@ -209,8 +209,8 @@ export default function SadeSatiView({ data, onReset }) {
         </div>
       </div>
 
-      {/* Ask Vaani AI CTA */}
-      <AskVaaniPromptCard
+      {/* Ask Jyotish AI CTA */}
+      <AskJyotishPromptCard
         prompts={[
           "What specific career lessons is my current Sade Sati teaching me?",
           "When exactly does my peak Sade Sati phase conclude?",

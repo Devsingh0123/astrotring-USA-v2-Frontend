@@ -281,11 +281,11 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 stroke-[3]" />
-                  <span>Vaani remembers every thread</span>
+                  <span>Jyotish remembers every thread</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 stroke-[3]" />
-                  <span>Astropedia stays free</span>
+                  <span>Shastra stays free</span>
                 </li>
               </ul>
             </div>
@@ -479,7 +479,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                     A little about you
                   </h3>
                   <p className="text-xs text-white/50 leading-relaxed font-sans">
-                    This helps Vaani address you the right way.
+                    This helps Jyotish address you the right way.
                   </p>
                 </div>
 

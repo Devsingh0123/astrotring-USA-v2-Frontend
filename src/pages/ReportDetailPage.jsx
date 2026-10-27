@@ -45,7 +45,7 @@ export default function ReportDetailPage() {
     (state) => state.reports || {}
   )
   const { user, isAuthenticated, birthDetails } = useSelector((state) => state.auth || {})
-  const { reportQuota } = useSelector((state) => state.vaani || {})
+  const { reportQuota } = useSelector((state) => state.jyotish || {})
 
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
   const pollingRef = useRef(null)
@@ -154,9 +154,9 @@ export default function ReportDetailPage() {
     }
   }
 
-  const handleAskVaani = (customPrompt) => {
-    const prompt = customPrompt || report.vaaniPrompt || `Tell me about my ${report.title}`
-    navigate(`/?engine=vaani&q=${encodeURIComponent(prompt)}`)
+  const handleAskJyotish = (customPrompt) => {
+    const prompt = customPrompt || report.jyotishPrompt || `Tell me about my ${report.title}`
+    navigate(`/?engine=jyotish&q=${encodeURIComponent(prompt)}`)
   }
 
   const isUnlocked = Boolean(
@@ -449,21 +449,21 @@ export default function ReportDetailPage() {
                       </div>
                     )}
 
-                    {/* Interactive "Ask Vaani about this Chapter" CTA */}
+                    {/* Interactive "Ask Jyotish about this Chapter" CTA */}
                     <div className="pt-2 flex justify-end">
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
                         onClick={() =>
-                          handleAskVaani(
+                          handleAskJyotish(
                             `Regarding chapter "${section.title}" in my ${report.title} report: ${section.astrometricSummary || ""}`
                           )
                         }
                         className="text-xs font-mono text-mlh-plum-300 hover:text-white hover:bg-white/5 flex items-center gap-1.5 cursor-pointer"
                       >
                         <MessageSquare className="w-3.5 h-3.5 text-amber-300" />
-                        <span>Query Vaani on this chapter →</span>
+                        <span>Query Jyotish on this chapter →</span>
                       </Button>
                     </div>
                   </section>
@@ -522,11 +522,11 @@ export default function ReportDetailPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => handleAskVaani()}
+                  onClick={() => handleAskJyotish()}
                   className="h-11 px-5 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-medium text-xs tracking-wider uppercase transition-all cursor-pointer flex items-center gap-2"
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-amber-300" />
-                  <span>Ask Vaani first</span>
+                  <span>Ask Jyotish first</span>
                 </Button>
               </div>
 

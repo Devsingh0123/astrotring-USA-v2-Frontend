@@ -286,8 +286,8 @@ export const authSlice = createSlice({
         state.onboardingError =
           action.payload || "Failed to submit onboarding details.";
       })
-      // Sync auth.user credit and report balances with vaani quota actions
-      .addCase("vaani/setQuestionQuota", (state, action) => {
+      // Sync auth.user credit and report balances with jyotish quota actions
+      .addCase("jyotish/setQuestionQuota", (state, action) => {
         if (state.user) {
           state.user.creditBalance = action.payload;
           try {
@@ -295,7 +295,7 @@ export const authSlice = createSlice({
           } catch {}
         }
       })
-      .addCase("vaani/addQuestionQuota", (state, action) => {
+      .addCase("jyotish/addQuestionQuota", (state, action) => {
         if (state.user) {
           state.user.creditBalance = (state.user.creditBalance || 0) + action.payload;
           try {
@@ -303,7 +303,7 @@ export const authSlice = createSlice({
           } catch {}
         }
       })
-      .addCase("vaani/setReportQuota", (state, action) => {
+      .addCase("jyotish/setReportQuota", (state, action) => {
         if (state.user) {
           state.user.reportCredits = action.payload;
           try {
@@ -311,7 +311,7 @@ export const authSlice = createSlice({
           } catch {}
         }
       })
-      .addCase("vaani/addReportQuota", (state, action) => {
+      .addCase("jyotish/addReportQuota", (state, action) => {
         if (state.user) {
           state.user.reportCredits = (state.user.reportCredits || 0) + action.payload;
           try {
@@ -319,12 +319,12 @@ export const authSlice = createSlice({
           } catch {}
         }
       })
-      .addCase("vaani/addConversation", (state, action) => {
+      .addCase("jyotish/addConversation", (state, action) => {
         if (state.user) {
           const reading = action.payload;
           if (typeof reading?.creditsRemaining === "number") {
             state.user.creditBalance = reading.creditsRemaining;
-          } else if (reading?.engine !== "astropedia" && state.user.creditBalance > 0) {
+          } else if (reading?.engine !== "shastra" && state.user.creditBalance > 0) {
             state.user.creditBalance -= 1;
           }
           try {

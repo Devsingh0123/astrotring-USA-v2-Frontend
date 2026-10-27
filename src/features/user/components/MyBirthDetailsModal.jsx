@@ -191,7 +191,7 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
             </DialogTitle>
           </div>
           <DialogDescription className="text-xs text-mlh-muted font-sans leading-relaxed">
-            These power every reading Vaani gives you. Keep them accurate for the sharpest chart.
+            These power every reading Jyotish gives you. Keep them accurate for the sharpest chart.
           </DialogDescription>
         </DialogHeader>
 

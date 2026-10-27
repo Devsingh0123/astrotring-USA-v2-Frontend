@@ -448,9 +448,9 @@ export default function BlogDetailPage() {
           </div>
         )}
 
-        {/* Interactive "Ask Vaani" Consultation Card */}
+        {/* Interactive "Ask Jyotish" Consultation Card */}
         <section
-          aria-label="Ask Vaani on this topic"
+          aria-label="Ask Jyotish on this topic"
           className="my-10 rounded-2xl border border-amber-500/40 bg-gradient-to-br from-[#ff7010]/20 via-[#0e344d] to-[#031d2e] p-6 sm:p-8 shadow-[0_16px_50px_rgba(255,112,16,0.18)] relative overflow-hidden"
         >
           <div className="absolute -right-8 -bottom-8 w-48 h-48 rounded-full bg-mlh-plum/20 blur-3xl pointer-events-none" />
@@ -465,16 +465,16 @@ export default function BlogDetailPage() {
                 How does this transit or yoga affect your birth chart?
               </h3>
               <p className="text-xs sm:text-sm text-mlh-muted leading-relaxed">
-                Consult <strong>Vaani</strong>, our AI Vedic engine. It cross-references your exact birth degrees with Brihat Parashara Hora Shastra in seconds.
+                Consult <strong>Jyotish</strong>, our AI Vedic engine. It cross-references your exact birth degrees with Brihat Parashara Hora Shastra in seconds.
               </p>
             </div>
 
             <button
               type="button"
-              onClick={() => navigate(`/?engine=vaani`)}
+              onClick={() => navigate(`/?engine=jyotish`)}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-mlh-plum px-6 py-3.5 text-sm font-bold text-white shadow-[0_0_24px_rgba(223,129,7,0.5)] hover:shadow-[0_0_36px_rgba(223,129,7,0.8)] hover:scale-[1.02] transition-all cursor-pointer shrink-0"
             >
-              <span>Consult Vaani</span>
+              <span>Consult Jyotish</span>
               <ChevronRight className="w-4 h-4 stroke-[3]" />
             </button>
           </div>

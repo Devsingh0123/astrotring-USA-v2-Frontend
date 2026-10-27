@@ -10,7 +10,7 @@ import MatchScoreOverviewCard from "@/features/compatibility/components/MatchSco
 import AshtakootBreakdownTable from "@/features/compatibility/components/AshtakootBreakdownTable";
 import ManglikDoshaCard from "@/features/compatibility/components/ManglikDoshaCard";
 import NadiBhakootAlert from "@/features/compatibility/components/NadiBhakootAlert";
-import AskVaaniMarriageCTA from "@/features/compatibility/components/AskVaaniMarriageCTA";
+import AskJyotishMarriageCTA from "@/features/compatibility/components/AskJyotishMarriageCTA";
 import {
   calculateMarriageMatch,
   clearMatch,
@@ -124,8 +124,8 @@ export default function CompatibilityPage() {
                 partners={matchData.partners}
               />
 
-              {/* Ask Vaani AI & Deep Report Upsell */}
-              <AskVaaniMarriageCTA
+              {/* Ask Jyotish AI & Deep Report Upsell */}
+              <AskJyotishMarriageCTA
                 boyName={matchData.partners.boy.name}
                 girlName={matchData.partners.girl.name}
               />

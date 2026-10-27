@@ -20,11 +20,11 @@ import CalculatorRunnerPage from "@/pages/CalculatorRunnerPage"
 import ArthaSutramPage from "@/pages/ArthaSutramPage"
 import NotFoundPage from "@/pages/NotFoundPage"
 
-function VaaniRedirect() {
+function JyotishRedirect() {
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
   if (!searchParams.get("engine")) {
-    searchParams.set("engine", "vaani")
+    searchParams.set("engine", "jyotish")
   }
   return <Navigate to={`/?${searchParams.toString()}`} replace />
 }
@@ -61,11 +61,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "chat",
-        element: <VaaniRedirect />,
+        element: <JyotishRedirect />,
       },
       {
-        path: "vaani",
-        element: <VaaniRedirect />,
+        path: "jyotish",
+        element: <JyotishRedirect />,
       },
       {
         path: "calculators",

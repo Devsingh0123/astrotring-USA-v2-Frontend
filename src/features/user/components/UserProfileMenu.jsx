@@ -30,7 +30,7 @@ export default function UserProfileMenu({
   const navigate = useNavigate()
 
   const { user, birthDetails } = useSelector((state) => state.auth || {})
-  const { questionQuota, reportQuota } = useSelector((state) => state.vaani || {})
+  const { questionQuota, reportQuota } = useSelector((state) => state.jyotish || {})
 
   const realQuestionQuota =
     typeof questionQuota === "number"
@@ -163,7 +163,7 @@ export default function UserProfileMenu({
           {/* Questions Quota */}
           <div className="flex items-center justify-between p-2 rounded-xl bg-white/5 border border-white/5">
             <div>
-              <div className="text-[11px] font-medium text-white/70">Vaani questions</div>
+              <div className="text-[11px] font-medium text-white/70">Jyotish questions</div>
               <div className="text-xs font-semibold text-white">
                 <span className="font-mono text-amber-300">{realQuestionQuota}</span> question
                 {realQuestionQuota === 1 ? "" : "s"} left

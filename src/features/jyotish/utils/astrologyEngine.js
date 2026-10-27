@@ -1,20 +1,20 @@
 /**
  * Vedic Astrology Simulation Engine
  * Generates deep, authentic chart-aware readings mirroring Melooha's tone and precision.
- * Handles both Vaani (Personal Chart-bound) and Astropedia (Universal Encyclopedia).
+ * Handles both Jyotish (Personal Chart-bound) and Shastra (Universal Encyclopedia).
  */
 
-export function generateAstrologyResponse({ question, engine = "vaani", user, birthDetails }) {
+export function generateAstrologyResponse({ question, engine = "jyotish", user, birthDetails }) {
   const userName = user?.name || birthDetails?.fullName || birthDetails?.name || user?.email?.split("@")[0] || "Seeker"
   const firstName = userName.split(" ")[0]
   const lowerQ = (question || "").toLowerCase()
 
-  // ================= ASTROPEDIA ENGINE (Universal Free Encyclopedia) =================
-  if (engine === "astropedia") {
-    return generateAstropediaResponse(question, lowerQ)
+  // ================= SHASTRA ENGINE (Universal Free Encyclopedia) =================
+  if (engine === "shastra") {
+    return generateShastraResponse(question, lowerQ)
   }
 
-  // ================= VAANI ENGINE (Personal Chart-Bound Readings) =================
+  // ================= JYOTISH ENGINE (Personal Chart-Bound Readings) =================
   // 1. Higher Studies / Education Query
   if (lowerQ.includes("higher studies") || lowerQ.includes("education") || lowerQ.includes("study") || lowerQ.includes("university")) {
     return {
@@ -162,7 +162,7 @@ export function generateAstrologyResponse({ question, engine = "vaani", user, bi
     }
   }
 
-  // 5. Default General Vaani Reading
+  // 5. Default General Jyotish Reading
   return {
     openingThought: `Synthesizing your ascendant lord and planetary strength, ${firstName}...`,
     thinkingSteps: [
@@ -197,8 +197,8 @@ export function generateAstrologyResponse({ question, engine = "vaani", user, bi
   }
 }
 
-// ================= ASTROPEDIA CONTEXTUAL ENCYCLOPEDIA =================
-function generateAstropediaResponse(question, lowerQ) {
+// ================= SHASTRA CONTEXTUAL ENCYCLOPEDIA =================
+function generateShastraResponse(question, lowerQ) {
   // 1. Lagna vs Moon Sign
   if (lowerQ.includes("lagna") && lowerQ.includes("moon")) {
     return {
@@ -317,7 +317,7 @@ function generateAstropediaResponse(question, lowerQ) {
     }
   }
 
-  // 5. Default General Astropedia Answer
+  // 5. Default General Shastra Answer
   return {
     openingThought: "Consulting classical Vedic texts and astrological treatises...",
     thinkingSteps: [

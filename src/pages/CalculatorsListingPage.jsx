@@ -34,7 +34,7 @@ export default function CalculatorsListingPage() {
         <title>12 Free Vedic Astrology Calculators | AstroTring</title>
         <meta
           name="description"
-          content="12 instruments on the same Swiss Ephemeris the readings run on. Compute here, then hand the result to Vaani."
+          content="12 instruments on the same Swiss Ephemeris the readings run on. Compute here, then hand the result to Jyotish."
         />
       </Helmet>
 
@@ -50,7 +50,7 @@ export default function CalculatorsListingPage() {
           </h1>
 
           <p className="text-mlh-muted mt-2.5 max-w-[640px] text-[15px] leading-snug text-pretty">
-            12 instruments on the same Swiss Ephemeris the readings run on. Compute here, then hand the result to Vaani.
+            12 instruments on the same Swiss Ephemeris the readings run on. Compute here, then hand the result to Jyotish.
           </p>
         </header>
 

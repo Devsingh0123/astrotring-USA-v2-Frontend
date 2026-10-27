@@ -17,7 +17,7 @@ import NorthIndianChart from "@/features/calculators/components/NorthIndianChart
 import PlanetaryTable from "@/features/calculators/components/PlanetaryTable";
 import HouseAnalysis from "@/features/calculators/components/HouseAnalysis";
 import DashaTimeline from "@/features/calculators/components/DashaTimeline";
-import AskVaaniPromptCard from "@/features/calculators/components/AskVaaniPromptCard";
+import AskJyotishPromptCard from "@/features/calculators/components/AskJyotishPromptCard";
 
 import SadeSatiView from "@/features/calculators/components/SadeSatiView";
 import MangalDoshaView from "@/features/calculators/components/MangalDoshaView";
@@ -183,8 +183,8 @@ export default function CalculatorRunnerPage() {
                     summary={kundliData?.summary}
                   />
 
-                  {/* Ask Vaani AI CTA */}
-                  <AskVaaniPromptCard />
+                  {/* Ask Jyotish AI CTA */}
+                  <AskJyotishPromptCard />
                 </div>
               )}
             </motion.div>

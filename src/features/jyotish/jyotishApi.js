@@ -13,11 +13,11 @@ const getAuthToken = () => {
 }
 
 /**
- * Server-Sent Events (SSE) Streaming Client for Vaani & Astropedia
- * Connects directly to POST /api/v1/chat/{vaani|astropedia} with live thinking steps and reading delivery.
+ * Server-Sent Events (SSE) Streaming Client for Jyotish & Shastra
+ * Connects directly to POST /api/v1/chat/{jyotish|shastra} with live thinking steps and reading delivery.
  */
 export async function streamChatTurn({
-  engine = "vaani",
+  engine = "jyotish",
   query,
   threadId,
   chartId,
@@ -121,7 +121,7 @@ export async function streamChatTurn({
  * Endpoint: GET /api/v1/chat/threads?engine=...
  */
 export const fetchUserThreads = createAsyncThunk(
-  "vaani/fetchUserThreads",
+  "jyotish/fetchUserThreads",
   async ({ engine } = {}, { rejectWithValue }) => {
     try {
       const params = engine ? { engine } : {}
@@ -143,7 +143,7 @@ export const fetchUserThreads = createAsyncThunk(
  * Endpoint: GET /api/v1/chat/threads/:threadId
  */
 export const fetchThreadById = createAsyncThunk(
-  "vaani/fetchThreadById",
+  "jyotish/fetchThreadById",
   async (threadId, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(`/chat/threads/${threadId}`)
@@ -179,7 +179,7 @@ export const fetchThreadById = createAsyncThunk(
               readings.push({
                 id: msg.id,
                 threadId: thread?.id || threadId,
-                engine: thread?.engine || "vaani",
+                engine: thread?.engine || "jyotish",
                 question: prevUser ? prevUser.content : (thread?.title || "Reading"),
                 createdAt: msg.createdAt || msg.created_at || new Date().toISOString(),
                 openingThought: structured.openingThought || "",
@@ -224,7 +224,7 @@ export const fetchThreadById = createAsyncThunk(
           return {
             ...r,
             threadId: r.threadId || thread?.id || threadId,
-            engine: r.engine || thread?.engine || "vaani",
+            engine: r.engine || thread?.engine || "jyotish",
             question: r.question || thread?.title || "Reading",
             openingThought: r.openingThought || structured.openingThought || "",
             thinkingSteps: Array.isArray(r.thinkingSteps)
@@ -252,7 +252,7 @@ export const fetchThreadById = createAsyncThunk(
           readings.push({
             id: thread.id,
             threadId: thread.id,
-            engine: thread.engine || "vaani",
+            engine: thread.engine || "jyotish",
             question: thread.title || "Consultation",
             createdAt: thread.createdAt || new Date().toISOString(),
             paragraphs: ["Consultation thread opened."],
@@ -279,7 +279,7 @@ export const fetchThreadById = createAsyncThunk(
  * Endpoint: PATCH /api/v1/chat/messages/:messageId/feedback
  */
 export const submitMessageFeedback = createAsyncThunk(
-  "vaani/submitMessageFeedback",
+  "jyotish/submitMessageFeedback",
   async ({ messageId, feedback }, { rejectWithValue }) => {
     try {
       const response = await apiClient.patch(`/chat/messages/${messageId}/feedback`, {
@@ -307,7 +307,7 @@ export const submitMessageFeedback = createAsyncThunk(
  * Endpoint: DELETE /api/v1/chat/threads/:threadId
  */
 export const deleteThread = createAsyncThunk(
-  "vaani/deleteThread",
+  "jyotish/deleteThread",
   async (threadId, { rejectWithValue }) => {
     try {
       const response = await apiClient.delete(`/chat/threads/${threadId}`)

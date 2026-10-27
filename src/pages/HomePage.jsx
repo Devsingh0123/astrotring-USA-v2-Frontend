@@ -5,14 +5,14 @@ import ZodiacWheelBackground from "@/components/sections/ZodiacWheelBackground"
 import HeroChatInput from "@/components/sections/HeroChatInput"
 import DashboardKundliCard from "@/components/sections/DashboardKundliCard"
 import DailyForecastWidget from "@/components/sections/DailyForecastWidget"
-import VaaniChatConversation from "@/features/vaani/components/VaaniChatConversation"
+import JyotishChatConversation from "@/features/jyotish/components/JyotishChatConversation"
 import Footer from "@/components/layout/Footer"
 
 export default function HomePage() {
   const context = useOutletContext() || {}
   const onOpenBindModal = context.onOpenBindModal || (() => {})
   const onOpenBuyModal = context.onOpenBuyModal || (() => {})
-  const { activeConversationId, activeThreadId, isGenerating } = useSelector((state) => state.vaani || {})
+  const { activeConversationId, activeThreadId, isGenerating } = useSelector((state) => state.jyotish || {})
 
   const hasActiveConversation = Boolean(activeConversationId || activeThreadId || isGenerating)
 
@@ -32,7 +32,7 @@ export default function HomePage() {
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="flex-1 min-h-0 h-full w-full flex flex-col overflow-hidden"
           >
-            <VaaniChatConversation onOpenBuyModal={onOpenBuyModal} />
+            <JyotishChatConversation onOpenBuyModal={onOpenBuyModal} />
           </motion.div>
         ) : (
           <motion.div
