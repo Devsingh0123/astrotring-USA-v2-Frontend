@@ -133,6 +133,10 @@ export default function JyotishChatConversation({ onOpenBuyModal }) {
   const [expandedAstrologyMap, setExpandedAstrologyMap] = useState({})
   const [countdownSeconds, setCountdownSeconds] = useState(582)
   const scrollAreaRef = useRef(null)
+  const latestTurnRef = useRef(null)
+  const generatingTurnRef = useRef(null)
+  const prevReadingsLengthRef = useRef(displayReadings.length)
+  const prevGeneratingRef = useRef(isGenerating)
 
   const toggleExpandedAstrology = (id) => {
     setExpandedAstrologyMap((prev) => ({
@@ -149,12 +153,57 @@ export default function JyotishChatConversation({ onOpenBuyModal }) {
     return () => clearInterval(timer)
   }, [])
 
-  // Auto-scroll inside message list when readings update or generator thinking step changes
+  // Reset scroll to top when switching between conversation threads
   useEffect(() => {
     if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
+      scrollAreaRef.current.scrollTop = 0
     }
-  }, [displayReadings.length, isGenerating, thinkingStep, thinkingSteps])
+  }, [currentThreadId])
+
+  // Ensure parent main container and window are at top when chat view mounts
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      const parentMain = scrollAreaRef.current.closest("main")
+      if (parentMain) {
+        parentMain.scrollTop = 0
+      }
+      window.scrollTo({ top: 0, behavior: "instant" })
+    }
+  }, [])
+
+  // Smart scrolling: Keep the user focused on the beginning of their new turn / answer
+  // NEVER force scrollTop to container bottom, which pushes the answer off-screen
+  useEffect(() => {
+    const readingsCountChanged = displayReadings.length !== prevReadingsLengthRef.current
+    const generatingStarted = !prevGeneratingRef.current && isGenerating
+    const generatingFinished = prevGeneratingRef.current && !isGenerating
+
+    prevReadingsLengthRef.current = displayReadings.length
+    prevGeneratingRef.current = isGenerating
+
+    // 1. When a new question starts generating: scroll smoothly to show question and thinking indicator
+    if (generatingStarted) {
+      requestAnimationFrame(() => {
+        if (displayReadings.length === 0) {
+          if (scrollAreaRef.current) scrollAreaRef.current.scrollTop = 0
+        } else if (generatingTurnRef.current) {
+          generatingTurnRef.current.scrollIntoView({ behavior: "smooth", block: "start" })
+        }
+      })
+      return
+    }
+
+    // 2. When generation finishes and answer arrives: bring top of the answer into view
+    if (generatingFinished || (readingsCountChanged && displayReadings.length > 0)) {
+      requestAnimationFrame(() => {
+        if (displayReadings.length === 1 && scrollAreaRef.current) {
+          scrollAreaRef.current.scrollTop = 0
+        } else if (latestTurnRef.current) {
+          latestTurnRef.current.scrollIntoView({ behavior: "smooth", block: "start" })
+        }
+      })
+    }
+  }, [displayReadings.length, isGenerating])
 
   const handleSendFollowUp = (queryToSend) => {
     const text = (queryToSend || followUpQuery).trim()
@@ -270,7 +319,11 @@ export default function JyotishChatConversation({ onOpenBuyModal }) {
             const isExpanded = Boolean(expandedAstrologyMap[reading.id || rIdx])
 
             return (
-              <div key={reading.id || rIdx} className="flex flex-col gap-[30px]">
+              <div
+                key={reading.id || rIdx}
+                ref={isLastReading ? latestTurnRef : null}
+                className="flex flex-col gap-[30px]"
+              >
                 {/* User Question Speech Bubble (Aligned to the Right) */}
                 {reading.question && (
                   <div className="animate-mlh-rise flex max-w-[700px] flex-col items-end self-end">
@@ -569,7 +622,7 @@ export default function JyotishChatConversation({ onOpenBuyModal }) {
 
           {/* Active Generating Turn (if isGenerating) */}
           {isGenerating && (
-            <div className="flex flex-col gap-[30px]">
+            <div ref={generatingTurnRef} className="flex flex-col gap-[30px]">
               {(inFlightQuery || pendingQuestion) && (
                 <div className="animate-mlh-rise flex max-w-[700px] flex-col items-end self-end">
                   <span className="text-white/35 mb-2.5 font-mono text-[9.5px] tracking-[0.2em] uppercase">

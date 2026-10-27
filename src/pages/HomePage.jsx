@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { useOutletContext } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
@@ -14,6 +15,17 @@ export default function HomePage() {
   const { activeConversationId, activeThreadId, isGenerating } = useSelector((state) => state.jyotish || {})
 
   const hasActiveConversation = Boolean(activeConversationId || activeThreadId || isGenerating)
+
+  // When switching to active chat conversation, ensure main container and window are at top
+  useEffect(() => {
+    if (hasActiveConversation) {
+      window.scrollTo({ top: 0, behavior: "instant" })
+      const mainEl = document.querySelector("main")
+      if (mainEl) {
+        mainEl.scrollTop = 0
+      }
+    }
+  }, [hasActiveConversation])
 
   return (
     <div
