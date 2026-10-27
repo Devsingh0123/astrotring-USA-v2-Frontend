@@ -79,6 +79,51 @@ export default function ReportsListingPage() {
           </Button>
         </motion.div>
 
+        {/* Flagship Artha Sutram Master Blueprint Feature Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl border border-amber-500/40 bg-gradient-to-br from-[#24170d]/90 via-[#16121e]/90 to-[#0e0c15]/95 p-6 sm:p-8 space-y-4 shadow-[0_16px_40px_rgba(0,0,0,0.5),0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group"
+        >
+          <div className="absolute -right-20 -top-20 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/40 bg-amber-500/15 text-amber-300 text-xs font-mono uppercase tracking-widest font-semibold">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>अर्थ सूत्रम् · Flagship Master Wealth Blueprint</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-serif font-medium text-white tracking-tight">
+                Artha Sutram — 23-Chapter Wealth Destiny
+              </h2>
+
+              <p className="text-xs sm:text-sm text-mlh-muted leading-relaxed font-sans">
+                The premier master reading analyzing your 2nd house treasury, 11th house of profits, Indu Lagna prosperity point, and Hora (D-2) chart to map lifetime accumulation and harvest windows.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-mlh-muted pt-1">
+                <span className="text-amber-300 font-medium">✦ 23 Analytical Sections</span>
+                <span>•</span>
+                <span>108-Year Mahadasha Timeline</span>
+                <span>•</span>
+                <span>D-2 & D-10 Charts</span>
+              </div>
+            </div>
+
+            <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <Link to="/reports/artha-sutram">
+                <Button
+                  className="w-full sm:w-auto h-11 px-6 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-black font-semibold text-xs font-mono tracking-wider uppercase shadow-lg shadow-amber-500/20 cursor-pointer"
+                >
+                  <span>Explore Blueprint & Sample Chapters</span>
+                  <ArrowRight className="w-3.5 h-3.5 ml-2 text-black" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Reports Grouped by Categories */}
         <div className="space-y-12">
           {categories.map((category) => {

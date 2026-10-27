@@ -177,7 +177,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
       : "Ask about your career, marriage, or the timing of a decision…"
 
   return (
-    <div className="w-full max-w-[760px] flex flex-col items-center justify-center relative z-10 mx-auto">
+    <div className="shrink-0 w-full max-w-[760px] flex flex-col items-center justify-center relative z-10 mx-auto">
       {/* Central Heading matching Melooha */}
       <motion.h1
         initial={{ opacity: 0, y: 14 }}

@@ -208,6 +208,15 @@ export default function UserProfileMenu({
           </button>
 
           <Link
+            to="/my-reports"
+            onClick={() => setOpen(false)}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-left font-medium"
+          >
+            <FileText className="w-4 h-4 text-mlh-plum-300 shrink-0" />
+            <span>My unlocked reports</span>
+          </Link>
+
+          <Link
             to="/invoices"
             onClick={() => setOpen(false)}
             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-left font-medium"

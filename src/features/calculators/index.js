@@ -11,3 +11,6 @@ export { default as CalculatorHeader } from "./components/CalculatorHeader";
 export { default as CalculatorFaqSection } from "./components/CalculatorFaqSection";
 export { default as RelatedCalculatorsGrid } from "./components/RelatedCalculatorsGrid";
 export { default as AskVaaniPromptCard } from "./components/AskVaaniPromptCard";
+export { default as SadeSatiView } from "./components/SadeSatiView";
+export { default as MangalDoshaView } from "./components/MangalDoshaView";
+export { default as DashaTreeView } from "./components/DashaTreeView";

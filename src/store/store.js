@@ -5,6 +5,7 @@ import calculatorReducer from "@/features/calculators/calculatorSlice";
 import horoscopeReducer from "@/features/horoscope/horoscopeSlice";
 import reportsReducer from "@/features/reports/reportsSlice";
 import blogsReducer from "@/features/blogs/blogsSlice";
+import compatibilityReducer from "@/features/compatibility/compatibilitySlice";
 
 /**
  * AstroTring Independent Global Redux Store Configuration
@@ -15,6 +16,7 @@ import blogsReducer from "@/features/blogs/blogsSlice";
  * - @/features/horoscope/horoscopeSlice
  * - @/features/reports/reportsSlice
  * - @/features/blogs/blogsSlice
+ * - @/features/compatibility/compatibilitySlice
  */
 export const store = configureStore({
   reducer: {
@@ -25,6 +27,7 @@ export const store = configureStore({
     horoscope: horoscopeReducer,
     reports: reportsReducer,
     blogs: blogsReducer,
+    compatibility: compatibilityReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

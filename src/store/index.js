@@ -5,3 +5,4 @@ export * from "@/features/horoscope/horoscopeSlice";
 export * from "@/features/calculators/calculatorSlice";
 export * from "@/features/vaani/vaaniSlice";
 export * from "@/features/reports/reportsSlice";
+export * from "@/features/compatibility/compatibilitySlice";

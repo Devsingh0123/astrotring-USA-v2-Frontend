@@ -86,7 +86,6 @@ export default function RootLayout() {
 
       if (data.type === "UNAUTHORIZED" || data.type === "LOGOUT") {
         dispatch(logout())
-        dispatch(openAuthModal())
       } else if (data.type === "LOGIN") {
         dispatch(fetchUserProfile())
       }

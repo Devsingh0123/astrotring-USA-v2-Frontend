@@ -352,3 +352,113 @@ export const fetchUserChart = createAsyncThunk(
     }
   }
 );
+
+/**
+ * Normalizes Saturn Timeline / Sade Sati data
+ */
+export function normalizeSaturnTimeline(raw = {}, fallbackInput = {}) {
+  const data = raw.data || raw;
+  const timeline = data.saturn_timeline || data.saturnTimeline || data;
+  const sadeSati = timeline.sadeSati || timeline.sade_sati || {};
+  const signBased = sadeSati.signBased || sadeSati.sign_based || {};
+  const degreeBased = sadeSati.degreeBased || sadeSati.degree_based || {};
+
+  const moonSign = timeline.moonSign || timeline.moon_sign || fallbackInput.moonSign || "—";
+  const moonDegree = timeline.moonDegree || timeline.moon_degree || 0;
+
+  const today = new Date().toISOString().split("T")[0];
+  const p1 = signBased.phase1 || signBased.phase_1 || {};
+  const p2 = signBased.phase2 || signBased.phase_2 || {};
+  const p3 = signBased.phase3 || signBased.phase_3 || {};
+
+  const phases = [
+    {
+      phaseNumber: 1,
+      name: "Phase 1: Rising Phase (12th from Moon)",
+      shortName: "Rising Phase",
+      house: p1.house || "12th House",
+      sign: p1.sign || "—",
+      startDate: p1.startDate || p1.start_date || p1.from || "—",
+      endDate: p1.endDate || p1.end_date || p1.to || "—",
+      description: "Saturn crosses the sign immediately preceding your natal Moon. Financial restructuring, foreign travel, and internal contemplation are emphasized.",
+      isActive: Boolean(p1.is_active || (p1.startDate && p1.endDate && today >= p1.startDate && today <= p1.endDate)),
+    },
+    {
+      phaseNumber: 2,
+      name: "Phase 2: Peak Phase / Janma Shani (Over Natal Moon)",
+      shortName: "Peak Phase (Janma Shani)",
+      house: p2.house || "1st House / Natal Moon",
+      sign: p2.sign || moonSign,
+      startDate: p2.startDate || p2.start_date || p2.from || "—",
+      endDate: p2.endDate || p2.end_date || p2.to || "—",
+      description: "Saturn transits directly over your natal Moon sign. Core period of profound karmic maturity, psychological resilience, and major career restructuring.",
+      isActive: Boolean(p2.is_active || (p2.startDate && p2.endDate && today >= p2.startDate && today <= p2.endDate)),
+    },
+    {
+      phaseNumber: 3,
+      name: "Phase 3: Setting Phase (2nd from Moon)",
+      shortName: "Setting Phase",
+      house: p3.house || "2nd House",
+      sign: p3.sign || "—",
+      startDate: p3.startDate || p3.start_date || p3.from || "—",
+      endDate: p3.endDate || p3.end_date || p3.to || "—",
+      description: "Saturn moves into the 2nd sign from Moon. Focus shifts to financial recovery, family speech, and consolidating the wisdom earned during the cycle.",
+      isActive: Boolean(p3.is_active || (p3.startDate && p3.endDate && today >= p3.startDate && today <= p3.endDate)),
+    },
+  ];
+
+  const activePhase = phases.find((p) => p.isActive);
+  const isSadeSatiActive = Boolean(activePhase || sadeSati.isActive || sadeSati.is_active);
+
+  return {
+    moonSign,
+    moonDegree,
+    isSadeSatiActive,
+    currentPhase: activePhase ? activePhase.shortName : (isSadeSatiActive ? "Sade Sati Active" : "No Active Sade Sati"),
+    phases,
+    degreeBased,
+    dhaiyya: timeline.dhaiyya || timeline.small_panoti || {},
+    nextCycle: timeline.nextCycle || timeline.next_cycle || "—",
+    computedAt: new Date().toISOString(),
+  };
+}
+
+/**
+ * Async Thunk: Calculate Shani Sade Sati & Saturn Timeline
+ * Endpoint: POST /api/v1/vedic/saturn-timeline
+ */
+export const calculateSaturnTimeline = createAsyncThunk(
+  "calculators/calculateSaturnTimeline",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const formatTime = (time, isUnknown) => {
+        if (isUnknown) return "12:00:00";
+        if (!time) return "12:00:00";
+        const trimmed = String(time).trim();
+        return trimmed.length === 5 ? `${trimmed}:00` : trimmed;
+      };
+
+      const requestBody = {
+        date: String(payload.dob || payload.date).trim(),
+        time: formatTime(payload.tob || payload.time, payload.isTimeUnknown),
+        latitude: Number(payload.lat ?? payload.latitude ?? payload.location?.lat),
+        longitude: Number(payload.lng ?? payload.longitude ?? payload.location?.lng),
+        timezone: Number(payload.timezoneOffset ?? payload.timezone ?? 5.5),
+        place: String(payload.city || payload.place || payload.location?.city || "New Delhi").trim(),
+      };
+
+      const response = await apiClient.post("/vedic/saturn-timeline", requestBody);
+      if (response.data && response.data.success) {
+        return normalizeSaturnTimeline(response.data.data, payload);
+      }
+      return rejectWithValue(response.data?.message || "Failed to calculate Saturn timeline.");
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Saturn timeline service temporarily unavailable.";
+      return rejectWithValue(message);
+    }
+  }
+);
+

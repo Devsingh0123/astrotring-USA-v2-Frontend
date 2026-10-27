@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import ZodiacWheelBackground from "@/components/sections/ZodiacWheelBackground"
 import HeroChatInput from "@/components/sections/HeroChatInput"
 import DashboardKundliCard from "@/components/sections/DashboardKundliCard"
+import DailyForecastWidget from "@/components/sections/DailyForecastWidget"
 import VaaniChatConversation from "@/features/vaani/components/VaaniChatConversation"
 import Footer from "@/components/layout/Footer"
 
@@ -17,8 +18,8 @@ export default function HomePage() {
 
   return (
     <div
-      className={`flex-1 flex flex-col relative w-full ${
-        hasActiveConversation ? "h-full min-h-0 overflow-hidden" : "min-h-full justify-between"
+      className={`relative w-full flex flex-col ${
+        hasActiveConversation ? "h-full min-h-0 overflow-hidden flex-1" : "min-h-full"
       }`}
     >
       <AnimatePresence mode="wait">
@@ -40,15 +41,15 @@ export default function HomePage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="flex-1 w-full min-h-full flex flex-col justify-between"
+            className="w-full flex flex-col"
           >
             {/* Hero Section with Cosmic Wheel & Input */}
-            <div className="relative flex flex-1 items-center justify-center px-4 sm:px-8 py-10 sm:py-16 overflow-hidden min-h-[calc(100vh-4rem)]">
+            <div className="relative flex flex-col items-center justify-start px-4 sm:px-8 pt-8 sm:pt-12 pb-16 w-full">
               {/* Background Concentric Dial */}
               <ZodiacWheelBackground />
 
-              {/* Bound Kundli Quick Glance for Logged-In User (Temporarily commented out per user request) */}
-              {/* <DashboardKundliCard /> */}
+              {/* Personalized Daily Moon Sign Dashboard Widget for Logged-In User */}
+              <DailyForecastWidget onOpenBindModal={onOpenBindModal} />
 
               {/* Hero Form & 4 Example Cards */}
               <HeroChatInput

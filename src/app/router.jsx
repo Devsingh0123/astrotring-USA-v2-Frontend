@@ -10,10 +10,14 @@ import OnboardingPage from "@/pages/OnboardingPage"
 import ReportsListingPage from "@/pages/ReportsListingPage"
 import ReportDetailPage from "@/pages/ReportDetailPage"
 import InvoicesPage from "@/pages/InvoicesPage"
+import MyReportsPage from "@/pages/MyReportsPage"
 import BlogsListingPage from "@/pages/BlogsListingPage"
 import BlogDetailPage from "@/pages/BlogDetailPage"
 import ProtectedRoute from "@/components/common/ProtectedRoute"
 import PlaceholderPage from "@/pages/PlaceholderPage"
+import CompatibilityPage from "@/pages/CompatibilityPage"
+import CalculatorRunnerPage from "@/pages/CalculatorRunnerPage"
+import ArthaSutramPage from "@/pages/ArthaSutramPage"
 import NotFoundPage from "@/pages/NotFoundPage"
 
 function VaaniRedirect() {
@@ -76,16 +80,36 @@ export const router = createBrowserRouter([
         element: <FreeKundliPage />,
       },
       {
+        path: "calculators/kundli-milan",
+        element: <CompatibilityPage />,
+      },
+      {
         path: "calculators/:toolName",
-        element: <FreeKundliPage />,
+        element: <CalculatorRunnerPage />,
       },
       {
         path: "reports",
         element: <ReportsListingPage />,
       },
       {
+        path: "reports/artha-sutram",
+        element: <ArthaSutramPage />,
+      },
+      {
+        path: "artha-sutram",
+        element: <ArthaSutramPage />,
+      },
+      {
         path: "reports/:slug",
         element: <ReportDetailPage />,
+      },
+      {
+        path: "my-reports",
+        element: (
+          <ProtectedRoute>
+            <MyReportsPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "blogs",
@@ -133,7 +157,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "compatibility",
-        element: <PlaceholderPage title="Kundli Milan Compatibility" />,
+        element: <CompatibilityPage />,
       },
       {
         path: "*",

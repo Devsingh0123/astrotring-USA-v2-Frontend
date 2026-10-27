@@ -1,12 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   calculateKundli,
+  calculateSaturnTimeline,
   searchLocations,
   fetchUserChart,
   normalizeHoroscopeData,
+  normalizeSaturnTimeline,
 } from "./calculatorApi";
 
-export { calculateKundli, searchLocations, fetchUserChart, normalizeHoroscopeData };
+export {
+  calculateKundli,
+  calculateSaturnTimeline,
+  searchLocations,
+  fetchUserChart,
+  normalizeHoroscopeData,
+  normalizeSaturnTimeline,
+};
 
 /**
  * Load cached Kundli if available
@@ -45,6 +54,11 @@ const initialState = {
   locationQuery: "",
   locationSuggestions: [],
   isSearchingLocation: false,
+
+  // Shani Sade Sati Timeline
+  saturnTimelineData: null,
+  saturnTimelineStatus: "idle", // "idle" | "loading" | "succeeded" | "failed"
+  saturnTimelineError: null,
 };
 
 export const calculatorSlice = createSlice({
@@ -116,6 +130,21 @@ export const calculatorSlice = createSlice({
       .addCase(searchLocations.rejected, (state) => {
         state.isSearchingLocation = false;
         state.locationSuggestions = [];
+      })
+
+      // calculateSaturnTimeline
+      .addCase(calculateSaturnTimeline.pending, (state) => {
+        state.saturnTimelineStatus = "loading";
+        state.saturnTimelineError = null;
+      })
+      .addCase(calculateSaturnTimeline.fulfilled, (state, action) => {
+        state.saturnTimelineStatus = "succeeded";
+        state.saturnTimelineData = action.payload;
+        state.saturnTimelineError = null;
+      })
+      .addCase(calculateSaturnTimeline.rejected, (state, action) => {
+        state.saturnTimelineStatus = "failed";
+        state.saturnTimelineError = action.payload || "Failed to calculate Saturn timeline.";
       });
   },
 });
