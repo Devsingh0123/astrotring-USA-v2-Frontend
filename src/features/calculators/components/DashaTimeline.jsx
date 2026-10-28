@@ -12,20 +12,20 @@ export default function DashaTimeline({ dashas = {}, summary = {} }) {
   const balanceAtBirth = dashas?.balance_at_birth || (summary?.nakshatraLord ? `${summary.nakshatraLord} Dasha` : "—");
 
   return (
-    <div className="rounded-2xl border border-mlh-border/80 bg-mlh-surface/80 backdrop-blur-md p-5 sm:p-6 shadow-xl shadow-black/20">
-      <div className="flex items-center justify-between pb-4 mb-5 border-b border-mlh-border/60">
+    <div className="glass-card rounded-2xl border border-border/70 p-5 sm:p-6 shadow-xl">
+      <div className="flex items-center justify-between pb-4 mb-5 border-b border-border/60">
         <div>
-          <h3 className="text-base sm:text-lg font-heading font-medium text-mlh-text-hi flex items-center gap-2">
-            <Clock className="w-4 h-4 text-mlh-amber" />
+          <h3 className="text-base sm:text-lg font-serif font-medium text-foreground flex items-center gap-2">
+            <Clock className="w-4 h-4 text-primary" />
             <span>Vimshottari Dasha Periods</span>
           </h3>
-          <p className="text-xs text-mlh-muted font-mono">
+          <p className="text-xs text-muted-foreground font-mono">
             120-year planetary cycle calculated from Moon Nakshatra ({nakshatra})
           </p>
         </div>
         <Badge
           variant="outline"
-          className="border-mlh-amber/30 text-mlh-amber bg-mlh-amber/5 font-mono text-[10px]"
+          className="border-primary/30 text-primary bg-primary/10 font-mono text-[10px] font-medium"
         >
           ACTIVE CYCLE
         </Badge>
@@ -33,41 +33,41 @@ export default function DashaTimeline({ dashas = {}, summary = {} }) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Current Mahadasha */}
-        <div className="p-4 rounded-xl border border-mlh-amber/40 bg-mlh-amber/5 relative overflow-hidden">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-mlh-amber mb-1">
+        <div className="p-4 rounded-xl border border-primary/40 bg-primary/10 relative overflow-hidden shadow-sm">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-primary mb-1 font-semibold">
             Running Mahadasha
           </div>
-          <div className="text-xl sm:text-2xl font-heading font-medium text-mlh-text-hi flex items-center gap-2">
+          <div className="text-xl sm:text-2xl font-serif font-medium text-foreground flex items-center gap-2">
             <span>{majorDasha}</span>
-            <Sparkles className="w-4 h-4 text-mlh-amber" />
+            <Sparkles className="w-4 h-4 text-primary" />
           </div>
-          <p className="text-xs text-mlh-muted mt-1.5 leading-relaxed">
+          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
             Primary overarching planetary influence governing life focus, karma, and temperament.
           </p>
         </div>
 
         {/* Current Antardasha */}
-        <div className="p-4 rounded-xl border border-mlh-border bg-mlh-bg/40">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-mlh-muted mb-1">
+        <div className="p-4 rounded-xl border border-border/70 glass-card shadow-sm">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1 font-medium">
             Active Antardasha (Bhukti)
           </div>
-          <div className="text-xl sm:text-2xl font-heading font-medium text-mlh-text-hi">
+          <div className="text-xl sm:text-2xl font-serif font-medium text-foreground">
             {subDasha}
           </div>
-          <p className="text-xs text-mlh-muted mt-1.5 leading-relaxed">
+          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
             Secondary sub-period modulating opportunities, relationship dynamics, and career shifts.
           </p>
         </div>
 
         {/* Current Pratyantardasha */}
-        <div className="p-4 rounded-xl border border-mlh-border bg-mlh-bg/40">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-mlh-muted mb-1">
+        <div className="p-4 rounded-xl border border-border/70 glass-card shadow-sm">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1 font-medium">
             Pratyantardasha (Micro Period)
           </div>
-          <div className="text-xl sm:text-2xl font-heading font-medium text-mlh-text-hi">
+          <div className="text-xl sm:text-2xl font-serif font-medium text-foreground">
             {pratyantar}
           </div>
-          <p className="text-xs text-mlh-muted mt-1.5 leading-relaxed">
+          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
             Short-term energetic trigger for immediate events, decisions, and weekly transit activations.
           </p>
         </div>

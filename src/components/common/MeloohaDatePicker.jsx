@@ -172,8 +172,8 @@ export default function MeloohaDatePicker({
           type="button"
           disabled={disabled}
           className={cn(
-            "w-full rounded-2xl border border-white/10 bg-[#1a1424] px-4 py-3 text-xs sm:text-sm text-left transition-all cursor-pointer flex items-center justify-between group outline-none",
-            "focus-visible:ring-1 focus-visible:ring-[#b32b6e] focus-visible:border-[#b32b6e] hover:border-white/20",
+            "w-full rounded-xl border border-border/80 bg-accent/40 px-3.5 py-2.5 text-xs sm:text-sm text-left transition-all cursor-pointer flex items-center justify-between group outline-none",
+            "focus-visible:border-primary hover:border-primary/50 hover:bg-accent/60",
             disabled && "opacity-40 cursor-not-allowed pointer-events-none",
             className
           )}
@@ -182,13 +182,13 @@ export default function MeloohaDatePicker({
             <span
               className={cn(
                 "truncate font-medium",
-                !selectedDate ? "text-white/40" : "text-white"
+                !selectedDate ? "text-muted-foreground" : "text-foreground"
               )}
             >
               {selectedDate ? format(selectedDate, "dd MMM yyyy") : placeholder}
             </span>
           </div>
-          <CalendarIcon className="w-4 h-4 text-white/40 group-hover:text-white/70 transition-colors shrink-0 ml-2" />
+          <CalendarIcon className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0 ml-2" />
         </button>
       </PopoverTrigger>
 
@@ -196,7 +196,7 @@ export default function MeloohaDatePicker({
         align="start"
         sideOffset={6}
         collisionPadding={12}
-        className="w-[280px] p-3 border border-white/15 bg-[#161224] shadow-2xl rounded-2xl backdrop-blur-xl text-white select-none overflow-hidden"
+        className="w-[280px] p-3 border border-border/80 bg-card/95 shadow-2xl rounded-2xl backdrop-blur-2xl text-foreground select-none overflow-hidden"
       >
         {/* VIEW 1: DAYS CALENDAR */}
         {viewMode === "days" && (
@@ -207,7 +207,7 @@ export default function MeloohaDatePicker({
                 type="button"
                 onClick={handlePrevMonth}
                 aria-label="Previous month"
-                className="w-7 h-7 flex items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/70 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                className="w-7 h-7 flex items-center justify-center rounded-lg border border-border/80 bg-accent/40 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -216,14 +216,14 @@ export default function MeloohaDatePicker({
                 <button
                   type="button"
                   onClick={() => setViewMode("months")}
-                  className="px-2 py-1 rounded-md text-white hover:bg-white/10 hover:text-white transition-colors cursor-pointer font-semibold"
+                  className="px-2 py-1 rounded-md text-foreground hover:bg-accent transition-colors cursor-pointer font-semibold"
                 >
                   {MONTH_NAMES[viewMonth]}
                 </button>
                 <button
                   type="button"
                   onClick={() => setViewMode("years")}
-                  className="px-2 py-1 rounded-md text-white/80 hover:bg-white/10 hover:text-white transition-colors cursor-pointer font-semibold"
+                  className="px-2 py-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer font-semibold"
                 >
                   {viewYear}
                 </button>
@@ -233,14 +233,14 @@ export default function MeloohaDatePicker({
                 type="button"
                 onClick={handleNextMonth}
                 aria-label="Next month"
-                className="w-7 h-7 flex items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/70 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                className="w-7 h-7 flex items-center justify-center rounded-lg border border-border/80 bg-accent/40 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
             {/* Weekdays header */}
-            <div className="grid grid-cols-7 gap-1 text-center font-mono text-[10px] text-white/40 uppercase">
+            <div className="grid grid-cols-7 gap-1 text-center font-mono text-[10px] text-muted-foreground uppercase">
               {WEEKDAYS.map((wd) => (
                 <div key={wd} className="h-5 flex items-center justify-center">
                   {wd}
@@ -273,11 +273,11 @@ export default function MeloohaDatePicker({
                     onClick={() => handleDayClick(item)}
                     className={cn(
                       "w-8 h-8 rounded-xl text-xs font-normal transition-all flex items-center justify-center cursor-pointer",
-                      !item.isCurrentMonth && "text-white/20 hover:text-white/40",
-                      item.isCurrentMonth && "text-white/85 hover:bg-white/10 hover:text-white",
-                      isCurrentToday && !isSelected && "border border-[#ff7010]/60 font-medium",
+                      !item.isCurrentMonth && "text-muted-foreground/40 hover:text-muted-foreground",
+                      item.isCurrentMonth && "text-foreground/85 hover:bg-accent hover:text-foreground",
+                      isCurrentToday && !isSelected && "border border-primary font-medium text-primary",
                       isSelected &&
-                        "!bg-gradient-to-r !from-[#ea650a] !to-[#ff7010] !text-white !font-bold shadow-md shadow-[#ff7010]/30",
+                        "!bg-primary !text-primary-foreground !font-bold shadow-md",
                       isFuture && "opacity-20 cursor-not-allowed pointer-events-none"
                     )}
                   >
@@ -292,14 +292,14 @@ export default function MeloohaDatePicker({
         {/* VIEW 2: MONTH SELECTION GRID */}
         {viewMode === "months" && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between pb-1 border-b border-white/10">
-              <span className="text-xs font-semibold text-white tracking-wide">
+            <div className="flex items-center justify-between pb-1 border-b border-border/80">
+              <span className="text-xs font-semibold text-foreground tracking-wide">
                 Select Month ({viewYear})
               </span>
               <button
                 type="button"
                 onClick={() => setViewMode("days")}
-                className="text-white/50 hover:text-white p-1 rounded-md text-xs cursor-pointer"
+                className="text-muted-foreground hover:text-foreground p-1 rounded-md text-xs cursor-pointer"
               >
                 Back
               </button>
@@ -319,8 +319,8 @@ export default function MeloohaDatePicker({
                     className={cn(
                       "py-2 px-1 text-xs rounded-xl font-medium transition-all cursor-pointer text-center",
                       isSelected
-                        ? "bg-gradient-to-r from-[#ea650a] to-[#ff7010] text-white font-bold shadow-sm"
-                        : "text-white/80 hover:bg-white/10 hover:text-white"
+                        ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                        : "text-foreground/80 hover:bg-accent hover:text-foreground"
                     )}
                   >
                     {mShort}
@@ -334,14 +334,14 @@ export default function MeloohaDatePicker({
         {/* VIEW 3: YEAR SELECTION SCROLLABLE GRID */}
         {viewMode === "years" && (
           <div className="space-y-2">
-            <div className="flex items-center justify-between pb-1 border-b border-white/10">
-              <span className="text-xs font-semibold text-white tracking-wide">
+            <div className="flex items-center justify-between pb-1 border-b border-border/80">
+              <span className="text-xs font-semibold text-foreground tracking-wide">
                 Select Birth Year
               </span>
               <button
                 type="button"
                 onClick={() => setViewMode("days")}
-                className="text-white/50 hover:text-white p-1 rounded-md text-xs cursor-pointer"
+                className="text-muted-foreground hover:text-foreground p-1 rounded-md text-xs cursor-pointer"
               >
                 Back
               </button>
@@ -365,8 +365,8 @@ export default function MeloohaDatePicker({
                     className={cn(
                       "py-1.5 px-2 text-xs rounded-xl font-medium transition-all cursor-pointer text-center font-mono",
                       isSelected
-                        ? "bg-gradient-to-r from-[#ea650a] to-[#ff7010] text-white font-bold shadow-sm"
-                        : "text-white/75 hover:bg-white/10 hover:text-white"
+                        ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                        : "text-foreground/75 hover:bg-accent hover:text-foreground"
                     )}
                   >
                     {y}

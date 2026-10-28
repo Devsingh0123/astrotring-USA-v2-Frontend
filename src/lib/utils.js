@@ -11,17 +11,27 @@ export const CURRENCY_SYMBOLS = {
 }
 
 /**
- * Format currency with proper symbol and locale formatting
+ * Strictly normalizes currency to either "INR" or "USD". Defaults to "INR".
+ * @param {string} currency
+ * @returns {"INR" | "USD"}
+ */
+export function normalizeCurrency(currency) {
+  const curr = String(currency || "INR").trim().toUpperCase()
+  return curr === "USD" ? "USD" : "INR"
+}
+
+/**
+ * Format currency with proper symbol and locale formatting (strictly INR or USD)
  * @param {number|string} amount - price
  * @param {string} currency - "INR", "USD"
  * @param {Object} [options]
  * @param {boolean} [options.showDecimals] - force displaying decimals
- * @returns {string} e.g. "₹799", "$9.99", "£8.50"
+ * @returns {string} e.g. "₹799", "$9.99"
  */
 export function formatCurrency(amount, currency = "INR", options = {}) {
   const num = Number(amount) || 0
-  const curr = String(currency || "INR").toUpperCase()
-  const symbol = CURRENCY_SYMBOLS[curr] || `${curr} `
+  const curr = normalizeCurrency(currency)
+  const symbol = CURRENCY_SYMBOLS[curr]
 
   if (curr === "INR") {
     const isWhole = num % 1 === 0 && !options.showDecimals
@@ -39,20 +49,18 @@ export function formatCurrency(amount, currency = "INR", options = {}) {
 }
 
 /**
- * Safe extractor for dynamic pack pricing whether returned at top-level
- * or inside nested `prices` object (per currency or direct).
+ * Safe extractor for dynamic pack pricing strictly for INR or USD.
  * @param {Object} pkg - pack object from API
- * @param {string} currentCurrency - active currency code
- * @returns {{ originalPrice: number, offerPrice: number, currency: string }}
+ * @param {string} currentCurrency - active currency code ("INR" | "USD")
+ * @returns {{ originalPrice: number, offerPrice: number, currency: "INR" | "USD" }}
  */
 export function getPackPricing(pkg, currentCurrency = "INR") {
+  const curr = normalizeCurrency(currentCurrency || pkg?.currency)
   if (!pkg) {
-    return { originalPrice: 0, offerPrice: 0, currency: currentCurrency || "INR" }
+    return { originalPrice: 0, offerPrice: 0, currency: curr }
   }
 
-  const curr = String(pkg.currency || currentCurrency || "INR").toUpperCase()
-
-  // Handle nested prices JSON if present (e.g. { INR: { originalPrice, offerPrice } } or { originalPrice, offerPrice })
+  // Handle nested prices JSON if present (strictly INR or USD)
   const nested =
     pkg.prices && typeof pkg.prices === "object" && !Array.isArray(pkg.prices)
       ? pkg.prices[curr] || pkg.prices["INR"] || pkg.prices

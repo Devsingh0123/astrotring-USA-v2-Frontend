@@ -56,12 +56,12 @@ export default function HouseAnalysis({ chartData = {}, summary = {} }) {
   });
 
   return (
-    <div className="rounded-2xl border border-mlh-border/80 bg-mlh-surface/80 backdrop-blur-md p-5 sm:p-6 shadow-xl shadow-black/20">
-      <div className="pb-4 mb-5 border-b border-mlh-border/60">
-        <h3 className="text-base sm:text-lg font-heading font-medium text-mlh-text-hi">
+    <div className="glass-card rounded-2xl border border-border/70 p-5 sm:p-6 shadow-xl">
+      <div className="pb-4 mb-5 border-b border-border/60">
+        <h3 className="text-base sm:text-lg font-serif font-medium text-foreground">
           The 12 Bhavas (House Significance)
         </h3>
-        <p className="text-xs text-mlh-muted font-mono">
+        <p className="text-xs text-muted-foreground font-mono">
           Vedic house significations mapped from Lagna: {ascendantSignStr}
         </p>
       </div>
@@ -77,43 +77,43 @@ export default function HouseAnalysis({ chartData = {}, summary = {} }) {
               key={num}
               className={`p-3.5 rounded-xl border transition-all ${
                 num === 1
-                  ? "border-mlh-amber/40 bg-mlh-amber/5"
+                  ? "border-primary/40 bg-primary/10 shadow-sm"
                   : [4, 7, 10].includes(num)
-                  ? "border-mlh-border-hi bg-mlh-surface-hi/40"
+                  ? "border-border/80 glass-card shadow-sm"
                   : [5, 9].includes(num)
-                  ? "border-mlh-border-hi bg-mlh-surface/90"
-                  : "border-mlh-border/60 bg-mlh-bg/40"
+                  ? "border-border/80 glass-card shadow-sm"
+                  : "border-border/50 glass-card"
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
-                <span className="font-mono text-xs font-semibold text-mlh-amber">
+                <span className="font-mono text-xs font-semibold text-primary">
                   House {num} · {sanskrit}
                 </span>
-                <span className="text-[11px] font-mono text-mlh-muted">
+                <span className="text-[11px] font-mono text-muted-foreground">
                   {signInfo?.name} ({signNum})
                 </span>
               </div>
 
-              <p className="text-xs text-mlh-muted leading-relaxed line-clamp-2">
+              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
                 {theme}
               </p>
 
               {planets.length > 0 ? (
-                <div className="mt-2.5 pt-2 border-t border-mlh-border/40 flex flex-wrap gap-1.5 items-center">
-                  <span className="text-[10px] font-mono text-mlh-muted uppercase tracking-wider">
+                <div className="mt-2.5 pt-2 border-t border-border/40 flex flex-wrap gap-1.5 items-center">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
                     Planets:
                   </span>
                   {planets.map((p) => (
                     <span
                       key={p}
-                      className="px-2 py-0.5 rounded text-[11px] font-mono font-medium border border-mlh-border bg-mlh-surface text-mlh-text-hi"
+                      className="px-2 py-0.5 rounded text-[11px] font-mono font-medium border border-border/80 glass-card text-foreground"
                     >
                       {p}
                     </span>
                   ))}
                 </div>
               ) : (
-                <div className="mt-2.5 pt-2 border-t border-mlh-border/30 text-[10px] font-mono text-mlh-faint">
+                <div className="mt-2.5 pt-2 border-t border-border/30 text-[10px] font-mono text-muted-foreground/60">
                   Empty House
                 </div>
               )}

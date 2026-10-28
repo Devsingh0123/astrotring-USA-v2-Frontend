@@ -25,8 +25,8 @@ import {
   recordPaymentFailure,
 } from "@/features/billing/billingApi"
 import { openRazorpayCheckout } from "@/lib/razorpay"
-import { INDIAN_GST_STATES } from "@/lib/constants"
-import { formatCurrency, getPackPricing } from "@/lib/utils"
+import { INDIAN_GST_STATES, SUPPORTED_CURRENCIES } from "@/lib/constants"
+import { formatCurrency, getPackPricing, normalizeCurrency } from "@/lib/utils"
 
 export default function ReportPacksModal({
   isOpen,
@@ -40,9 +40,9 @@ export default function ReportPacksModal({
   const dispatch = useDispatch()
   const { isAuthenticated, user } = useSelector((state) => state.auth || {})
 
-  // Dynamic backend catalog & currency state
-  const [activeCurrency, setActiveCurrency] = useState(currency || "INR")
-  const [supportedCurrencies, setSupportedCurrencies] = useState(["INR", "USD"])
+  // Dynamic backend catalog & currency state (strictly INR or USD)
+  const [activeCurrency, setActiveCurrency] = useState(normalizeCurrency(currency))
+  const [supportedCurrencies, setSupportedCurrencies] = useState(SUPPORTED_CURRENCIES)
   const [packs, setPacks] = useState([])
   const [coupons, setCoupons] = useState([])
   const [isLoadingPacks, setIsLoadingPacks] = useState(false)
@@ -66,7 +66,7 @@ export default function ReportPacksModal({
   // Sync currency prop when passed
   useEffect(() => {
     if (currency) {
-      setActiveCurrency(currency)
+      setActiveCurrency(normalizeCurrency(currency))
     }
   }, [currency])
 
@@ -134,11 +134,14 @@ export default function ReportPacksModal({
         const catalogData = response?.data || response
         const reportPacks = catalogData?.reportPacks || []
         const availableCoupons = catalogData?.coupons || []
-        const backendCurrency = catalogData?.currency || targetCurrency
-        const availableCurrencies = catalogData?.supportedCurrencies || ["INR", "USD"]
+        const backendCurrency = normalizeCurrency(catalogData?.currency || targetCurrency)
+        const rawCurrencies = catalogData?.supportedCurrencies || SUPPORTED_CURRENCIES
+        const availableCurrencies = Array.isArray(rawCurrencies)
+          ? rawCurrencies.filter((c) => SUPPORTED_CURRENCIES.includes(c))
+          : SUPPORTED_CURRENCIES
 
         setActiveCurrency(backendCurrency)
-        setSupportedCurrencies(availableCurrencies)
+        setSupportedCurrencies(availableCurrencies.length > 0 ? availableCurrencies : SUPPORTED_CURRENCIES)
         setPacks(reportPacks)
         setCoupons(availableCoupons)
 
@@ -196,10 +199,11 @@ export default function ReportPacksModal({
   }, [isOpen, loadCatalog])
 
   const handleCurrencyChange = (newCurrency) => {
-    if (newCurrency === activeCurrency || isLoadingPacks) return
-    setActiveCurrency(newCurrency)
+    const safeCurr = normalizeCurrency(newCurrency)
+    if (safeCurr === activeCurrency || isLoadingPacks) return
+    setActiveCurrency(safeCurr)
     setServerBreakdown(null)
-    loadCatalog(newCurrency)
+    loadCatalog(safeCurr)
   }
 
   const handleModalClose = () => {
@@ -501,31 +505,31 @@ export default function ReportPacksModal({
       <Dialog open={isOpen} onOpenChange={(open) => !open && handleModalClose()}>
         <DialogContent
           showCloseButton={false}
-          className="w-[96vw] sm:max-w-[860px] md:max-w-[920px] lg:max-w-[980px] max-h-[92vh] flex flex-col p-0 overflow-hidden border border-white/10 bg-[#07273c] text-foreground rounded-2xl sm:rounded-3xl shadow-2xl"
+          className="w-[96vw] sm:max-w-[860px] md:max-w-[920px] lg:max-w-[980px] max-h-[92vh] flex flex-col p-0 overflow-hidden border border-border/80 bg-card/90 backdrop-blur-2xl text-foreground rounded-2xl sm:rounded-3xl shadow-2xl"
           aria-describedby={undefined}
         >
           {/* ================= STEP 1: PACK SELECTION ================= */}
           {step === 1 && (
             <div className="flex flex-col h-full max-h-[92vh]">
               {/* Header with Title and Currency Toggle */}
-              <div className="shrink-0 pt-6 sm:pt-7 px-5 sm:px-8 pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/5">
+              <div className="shrink-0 pt-6 sm:pt-7 px-5 sm:px-8 pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-border/80">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-amber-400 block font-semibold">
+                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary block font-semibold">
                       DEEP VEDIC REPORTS
                     </span>
                   </div>
-                  <h2 className="font-serif text-2xl sm:text-[30px] font-normal text-white mt-0.5 tracking-tight">
+                  <h2 className="font-serif text-2xl sm:text-[30px] font-normal text-foreground mt-0.5 tracking-tight">
                     Choose a report pack
                   </h2>
-                  <p className="text-xs sm:text-sm text-white/50 mt-1 font-sans">
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-sans">
                     Deep multi-chapter Vedic analyses compiled directly from your chart · Never expires
                   </p>
                 </div>
 
                 {/* Right controls: Currency Pill Switcher & Close Button */}
                 <div className="flex items-center gap-3 self-end sm:self-center shrink-0">
-                  <div className="flex items-center bg-white/5 rounded-full p-1 border border-white/10">
+                  <div className="flex items-center bg-accent/40 rounded-full p-1 border border-border/80">
                     {supportedCurrencies.map((curr) => {
                       const isCurrActive = activeCurrency === curr
                       const label = curr === "INR" ? "₹ INR" : "$ USD"
@@ -537,8 +541,8 @@ export default function ReportPacksModal({
                           disabled={isLoadingPacks}
                           className={`px-2.5 py-1 text-[11px] font-mono rounded-full transition cursor-pointer disabled:opacity-50 ${
                             isCurrActive
-                              ? "bg-gradient-to-r from-[#ea650a] to-[#ff7010] text-white font-semibold shadow-sm"
-                              : "text-white/60 hover:text-white hover:bg-white/5"
+                              ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                              : "text-muted-foreground hover:text-foreground hover:bg-accent"
                           }`}
                         >
                           {label}
@@ -550,7 +554,7 @@ export default function ReportPacksModal({
                   <button
                     type="button"
                     onClick={handleModalClose}
-                    className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition cursor-pointer shrink-0"
+                    className="w-9 h-9 rounded-full bg-accent/40 hover:bg-accent flex items-center justify-center text-muted-foreground hover:text-foreground transition cursor-pointer shrink-0 border border-border/80"
                     aria-label="Close"
                   >
                     <X className="w-4 h-4" />
@@ -566,27 +570,27 @@ export default function ReportPacksModal({
                     {[1, 2, 3].map((idx) => (
                       <div
                         key={idx}
-                        className="rounded-2xl p-6 sm:p-7 border border-white/10 bg-[#07273c]/60 flex flex-col justify-between min-h-[340px]"
+                        className="rounded-2xl p-6 sm:p-7 border border-border/80 bg-accent/30 flex flex-col justify-between min-h-[340px]"
                       >
                         <div>
                           <div className="flex items-center justify-between">
-                            <Skeleton className="h-4 w-16 bg-white/10" />
-                            <Skeleton className="h-5 w-5 rounded-full bg-white/10" />
+                            <Skeleton className="h-4 w-16 bg-accent" />
+                            <Skeleton className="h-5 w-5 rounded-full bg-accent" />
                           </div>
                           <div className="mt-5 space-y-2">
-                            <Skeleton className="h-12 w-20 bg-white/10" />
-                            <Skeleton className="h-4 w-28 bg-white/5" />
+                            <Skeleton className="h-12 w-20 bg-accent" />
+                            <Skeleton className="h-4 w-28 bg-accent/60" />
                           </div>
                           <div className="mt-6 space-y-2">
-                            <Skeleton className="h-3 w-36 bg-white/5" />
-                            <Skeleton className="h-3 w-40 bg-white/5" />
-                            <Skeleton className="h-3 w-32 bg-white/5" />
+                            <Skeleton className="h-3 w-36 bg-accent/60" />
+                            <Skeleton className="h-3 w-40 bg-accent/60" />
+                            <Skeleton className="h-3 w-32 bg-accent/60" />
                           </div>
                         </div>
                         <div>
-                          <div className="border-t border-white/10 my-4" />
-                          <Skeleton className="h-8 w-32 bg-white/10" />
-                          <Skeleton className="h-4 w-24 bg-white/5 mt-2" />
+                          <div className="border-t border-border/80 my-4" />
+                          <Skeleton className="h-8 w-32 bg-accent" />
+                          <Skeleton className="h-4 w-24 bg-accent/60 mt-2" />
                         </div>
                       </div>
                     ))}
@@ -595,15 +599,15 @@ export default function ReportPacksModal({
 
                 {/* 2. Error State with Retry Button */}
                 {!isLoadingPacks && packsError && (
-                  <div className="rounded-2xl border border-red-500/20 bg-red-950/20 p-8 text-center flex flex-col items-center justify-center gap-3">
-                    <AlertCircle className="w-8 h-8 text-red-400" />
-                    <h3 className="text-white font-medium text-base">Unable to load report packages</h3>
-                    <p className="text-white/60 text-xs sm:text-sm max-w-md">{packsError}</p>
+                  <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-8 text-center flex flex-col items-center justify-center gap-3">
+                    <AlertCircle className="w-8 h-8 text-destructive" />
+                    <h3 className="text-foreground font-medium text-base">Unable to load report packages</h3>
+                    <p className="text-muted-foreground text-xs sm:text-sm max-w-md">{packsError}</p>
                     <Button
                       type="button"
                       variant="outline"
                       onClick={() => loadCatalog()}
-                      className="mt-2 border-white/20 text-white hover:bg-white/10 flex items-center gap-2 cursor-pointer"
+                      className="mt-2 border-border/80 text-foreground hover:bg-accent flex items-center gap-2 cursor-pointer"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
                       <span>Retry Loading</span>
@@ -630,13 +634,13 @@ export default function ReportPacksModal({
                           onClick={() => handleSelectPack(pkg)}
                           className={`relative rounded-2xl p-5 sm:p-6 lg:p-7 border cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[350px] ${
                             isSelected
-                              ? "border-2 border-[#ff7010] bg-gradient-to-b from-[#0e344d] to-[#07273c] ring-1 ring-[#ff7010]/50 shadow-[0_0_35px_rgba(255,112,16,0.3)]"
-                              : "border-white/10 bg-[#07273c]/70 hover:border-white/20 hover:bg-[#07273c]"
+                              ? "border-2 border-primary bg-primary/10 ring-1 ring-primary/40 shadow-xl"
+                              : "border-border/80 bg-accent/30 hover:border-primary/50 hover:bg-accent/50"
                           }`}
                         >
                           {/* Floating Badge (Popular / Best Value) */}
                           {badge && (
-                            <span className="absolute -top-3 left-6 bg-gradient-to-r from-amber-400 to-amber-500 text-black font-bold text-[10px] font-mono uppercase tracking-wider px-3 py-0.5 rounded-full shadow-md">
+                            <span className="absolute -top-3 left-6 bg-primary text-primary-foreground font-bold text-[10px] font-mono uppercase tracking-wider px-3 py-0.5 rounded-full shadow-md">
                               {badge}
                             </span>
                           )}
@@ -644,14 +648,14 @@ export default function ReportPacksModal({
                           <div>
                             {/* Top Row: Tier Name + Radio Circle */}
                             <div className="flex items-center justify-between">
-                              <span className="font-mono text-xs uppercase tracking-[0.2em] text-white/70 font-semibold">
+                              <span className="font-mono text-xs uppercase tracking-[0.2em] text-foreground/80 font-semibold">
                                 {pkg.name || pkg.tier}
                               </span>
                               <div
                                 className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
                                   isSelected
-                                    ? "border-[#b32b6e] bg-[#b32b6e] text-white"
-                                    : "border-white/25 bg-transparent"
+                                    ? "border-primary bg-primary text-primary-foreground"
+                                    : "border-border/80 bg-transparent"
                                 }`}
                               >
                                 {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
@@ -661,14 +665,14 @@ export default function ReportPacksModal({
                             {/* Credits Display */}
                             <div className="mt-3.5">
                               <div className="flex items-baseline gap-2">
-                                <span className="font-serif text-4xl sm:text-5xl font-light text-white tracking-tight leading-none">
+                                <span className="font-serif text-4xl sm:text-5xl font-light text-foreground tracking-tight leading-none">
                                   {pkg.credits}
                                 </span>
-                                <span className="text-sm sm:text-base font-sans text-white/70">
+                                <span className="text-sm sm:text-base font-sans text-muted-foreground">
                                   {pkg.credits === 1 ? "Deep Report" : "Deep Reports"}
                                 </span>
                               </div>
-                              <p className="text-[11px] sm:text-xs text-white/50 mt-1 font-sans">
+                              <p className="text-[11px] sm:text-xs text-muted-foreground mt-1 font-sans">
                                 {pkg.subtitle ||
                                   (pkg.credits === 1
                                     ? "Unlock 1 comprehensive life chapter or birth chart deep-dive"
@@ -679,27 +683,27 @@ export default function ReportPacksModal({
                             </div>
 
                             {/* Inclusions list */}
-                            <div className="mt-4 pt-3.5 border-t border-white/10">
-                              <ul className="space-y-1.5 text-xs text-white/65">
+                            <div className="mt-4 pt-3.5 border-t border-border/80">
+                              <ul className="space-y-1.5 text-xs text-foreground/80">
                                 {Array.isArray(pkg.features) && pkg.features.length > 0 ? (
                                   pkg.features.map((feat, fIdx) => (
                                     <li key={fIdx} className="flex items-center gap-1.5">
-                                      <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                      <Check className="w-3.5 h-3.5 text-primary shrink-0" />
                                       <span>{feat}</span>
                                     </li>
                                   ))
                                 ) : (
                                   <>
                                     <li className="flex items-center gap-1.5">
-                                      <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                      <Check className="w-3.5 h-3.5 text-primary shrink-0" />
                                       <span>20+ page structured report</span>
                                     </li>
                                     <li className="flex items-center gap-1.5">
-                                      <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                      <Check className="w-3.5 h-3.5 text-primary shrink-0" />
                                       <span>Planetary strengths & dashas</span>
                                     </li>
                                     <li className="flex items-center gap-1.5">
-                                      <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                      <Check className="w-3.5 h-3.5 text-primary shrink-0" />
                                       <span>Remedies, gemstones & timing</span>
                                     </li>
                                   </>
@@ -709,24 +713,24 @@ export default function ReportPacksModal({
                           </div>
 
                           {/* Pricing & Promo Code Section */}
-                          <div className="mt-5 pt-4 border-t border-white/10">
+                          <div className="mt-5 pt-4 border-t border-border/80">
                             <div className="flex items-baseline gap-2">
-                              <span className="font-mono text-2xl sm:text-[28px] font-bold text-white tracking-tight">
+                              <span className="font-mono text-2xl sm:text-[28px] font-bold text-foreground tracking-tight">
                                 {formatCurrency(pkgPricing.offerPrice, pkgPricing.currency)}
                               </span>
                               {pkgPricing.originalPrice > pkgPricing.offerPrice && (
-                                <span className="font-mono text-xs text-white/40 line-through">
+                                <span className="font-mono text-xs text-muted-foreground line-through">
                                   {formatCurrency(pkgPricing.originalPrice, pkgPricing.currency)}
                                 </span>
                               )}
                             </div>
 
                             <div className="flex items-center justify-between mt-1">
-                              <span className="text-xs text-amber-400/90 font-mono">
+                              <span className="text-xs text-primary font-mono">
                                 {formatCurrency(unitPriceNum, pkgPricing.currency)} / report
                               </span>
                               {defaultPromo && (
-                                <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full border border-emerald-400/20">
+                                <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                                   CODE: {defaultPromo}
                                 </span>
                               )}
@@ -739,9 +743,9 @@ export default function ReportPacksModal({
                 )}
               </div>
 
-              {/* Dark Footer Bar */}
-              <div className="shrink-0 bg-[#041826] px-5 sm:px-8 py-4 sm:py-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <span className="text-[11px] font-mono tracking-[0.2em] uppercase text-white/40 text-center sm:text-left">
+              {/* Footer Bar */}
+              <div className="shrink-0 bg-accent/40 px-5 sm:px-8 py-4 sm:py-5 border-t border-border/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <span className="text-[11px] font-mono tracking-[0.2em] uppercase text-muted-foreground text-center sm:left">
                   SECURE PAYMENT · {selectedPricing.currency === "INR" ? "GST INVOICE" : "TAX INVOICE"} · INSTANT UNLOCK
                 </span>
 
@@ -749,12 +753,12 @@ export default function ReportPacksModal({
                   type="button"
                   disabled={!selectedPack || isLoadingPacks}
                   onClick={() => setStep(2)}
-                  className="w-full sm:w-auto bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#f07015] hover:to-[#ff832b] text-white px-8 py-3.5 rounded-full font-medium shadow-lg shadow-[#ff7010]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer disabled:opacity-50"
+                  className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3.5 rounded-full font-medium shadow-md transition flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer disabled:opacity-50"
                 >
                   {selectedPack ? (
                     <>
                       <span>Continue with {selectedPack.credits} {selectedPack.credits === 1 ? "report" : "reports"}</span>
-                      <span className="text-white/40">·</span>
+                      <span className="opacity-40">·</span>
                       <span>{formatCurrency(selectedPricing.offerPrice, selectedPricing.currency)}</span>
                       <span className="text-base">→</span>
                     </>
@@ -770,21 +774,21 @@ export default function ReportPacksModal({
           {step === 2 && selectedPack && (
             <div className="flex flex-col h-full max-h-[92vh]">
               {/* Header with Back button and Step indicator */}
-              <div className="shrink-0 pt-6 sm:pt-7 px-5 sm:px-8 pb-4 flex items-center justify-between border-b border-white/5">
+              <div className="shrink-0 pt-6 sm:pt-7 px-5 sm:px-8 pb-4 flex items-center justify-between border-b border-border/80">
                 <div className="flex items-center gap-3.5">
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="w-9 h-9 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition cursor-pointer"
+                    className="w-9 h-9 rounded-full border border-border/80 bg-accent/40 hover:bg-accent flex items-center justify-center text-muted-foreground hover:text-foreground transition cursor-pointer"
                     aria-label="Back to packages"
                   >
                     <ArrowLeft className="w-4 h-4" />
                   </button>
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 block leading-tight mb-0.5">
+                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground block leading-tight mb-0.5">
                       STEP 2 OF 2
                     </span>
-                    <h2 className="font-serif text-2xl sm:text-[28px] font-normal text-white">
+                    <h2 className="font-serif text-2xl sm:text-[28px] font-normal text-foreground">
                       Payment summary
                     </h2>
                   </div>
@@ -793,7 +797,7 @@ export default function ReportPacksModal({
                 <button
                   type="button"
                   onClick={handleModalClose}
-                  className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition cursor-pointer"
+                  className="w-9 h-9 rounded-full bg-accent/40 hover:bg-accent flex items-center justify-center text-muted-foreground hover:text-foreground transition cursor-pointer border border-border/80"
                   aria-label="Close"
                 >
                   <X className="w-4 h-4" />
@@ -808,13 +812,13 @@ export default function ReportPacksModal({
                     {/* 1. YOUR PACK & QUICK SWITCH */}
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/50">
+                        <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
                           SELECT REPORT PACK
                         </span>
                         <button
                           type="button"
                           onClick={() => setStep(1)}
-                          className="text-[11px] font-mono uppercase tracking-[0.15em] text-amber-400 hover:text-amber-300 transition cursor-pointer"
+                          className="text-[11px] font-mono uppercase tracking-[0.15em] text-primary hover:underline transition cursor-pointer"
                         >
                           CHANGE SELECTION &gt;
                         </button>
@@ -834,19 +838,19 @@ export default function ReportPacksModal({
                               onClick={() => handleSelectPack(pkg)}
                               className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer relative flex flex-col justify-between ${
                                 isSelected
-                                  ? "border-amber-400 bg-[#25152a] ring-1 ring-amber-400/50 shadow-md"
-                                  : "border-white/10 bg-[#1b1726]/70 hover:border-white/20 hover:bg-[#1b1726]"
+                                  ? "border-primary bg-primary/10 ring-1 ring-primary/40 shadow-md"
+                                  : "border-border/80 bg-accent/30 hover:border-primary/50 hover:bg-accent/50"
                               }`}
                             >
                               {badge && (
-                                <span className="absolute -top-2 right-2 px-1.5 py-0.5 rounded text-[8px] font-mono font-bold uppercase bg-amber-400 text-black">
+                                <span className="absolute -top-2 right-2 px-1.5 py-0.5 rounded text-[8px] font-mono font-bold uppercase bg-primary text-primary-foreground">
                                   {badge}
                                 </span>
                               )}
                               <div className="flex items-center justify-between w-full">
                                 <span
                                   className={`text-[11px] font-mono uppercase tracking-wider font-semibold ${
-                                    isSelected ? "text-amber-300" : "text-white/70"
+                                    isSelected ? "text-primary" : "text-foreground/80"
                                   }`}
                                 >
                                   {pkg.name}
@@ -854,19 +858,19 @@ export default function ReportPacksModal({
                                 <div
                                   className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
                                     isSelected
-                                      ? "border-amber-400 bg-amber-400 text-black"
-                                      : "border-white/25 bg-transparent"
+                                      ? "border-primary bg-primary text-primary-foreground"
+                                      : "border-border/80 bg-transparent"
                                   }`}
                                 >
                                   {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
                                 </div>
                               </div>
                               <div className="mt-2">
-                                <div className="font-serif text-lg sm:text-xl font-light text-white leading-tight">
+                                <div className="font-serif text-lg sm:text-xl font-light text-foreground leading-tight">
                                   {pkg.credits}{" "}
-                                  <span className="text-xs font-sans text-white/50">{pkg.credits === 1 ? "Report" : "Reports"}</span>
+                                  <span className="text-xs font-sans text-muted-foreground">{pkg.credits === 1 ? "Report" : "Reports"}</span>
                                 </div>
-                                <div className="font-mono text-xs text-white/90 font-medium mt-1">
+                                <div className="font-mono text-xs text-foreground/90 font-medium mt-1">
                                   {formatCurrency(pPricing.offerPrice, pPricing.currency)}
                                 </div>
                               </div>
@@ -874,8 +878,8 @@ export default function ReportPacksModal({
                           )
                         })}
                       </div>
-                      <div className="text-[11px] text-white/50 mt-2 font-sans flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3 text-amber-300 shrink-0" />
+                      <div className="text-[11px] text-muted-foreground mt-2 font-sans flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-primary shrink-0" />
                         <span>{selectedPack.name} Pack ({selectedPack.credits} reports) · instant AI synthesis · never expires</span>
                       </div>
                     </div>
@@ -883,10 +887,10 @@ export default function ReportPacksModal({
                     {/* 2. BILLING STATE / REGION */}
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/50">
+                        <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
                           {selectedPricing.currency === "INR" ? "BILLING STATE" : "BILLING REGION"}
                         </span>
-                        <span className="text-xs text-white/40">
+                        <span className="text-xs text-muted-foreground">
                           {selectedPricing.currency === "INR" ? "Required on your GST invoice" : "International (0% GST)"}
                         </span>
                       </div>
@@ -896,18 +900,18 @@ export default function ReportPacksModal({
                           <button
                             type="button"
                             onClick={() => setIsStateDropdownOpen(!isStateDropdownOpen)}
-                            className="w-full rounded-2xl border border-white/10 bg-[#07273c] px-5 py-3.5 text-sm text-white flex items-center justify-between hover:border-white/20 transition cursor-pointer"
+                            className="w-full rounded-2xl border border-border/80 bg-accent/40 px-5 py-3.5 text-sm text-foreground flex items-center justify-between hover:border-primary/50 transition cursor-pointer"
                           >
                             <span>{billingState}</span>
                             <ChevronDown
-                              className={`w-4 h-4 text-white/40 transition-transform ${
+                              className={`w-4 h-4 text-muted-foreground transition-transform ${
                                 isStateDropdownOpen ? "rotate-180" : ""
                               }`}
                             />
                           </button>
 
                           {isStateDropdownOpen && (
-                            <div className="absolute z-40 left-0 right-0 mt-1.5 max-h-52 overflow-y-auto rounded-2xl border border-white/10 bg-[#07273c] p-2 shadow-2xl">
+                            <div className="absolute z-40 left-0 right-0 mt-1.5 max-h-52 overflow-y-auto rounded-2xl border border-border/80 bg-card/95 backdrop-blur-2xl p-2 shadow-2xl">
                               {INDIAN_GST_STATES.map((state) => (
                                 <div
                                   key={state}
@@ -917,13 +921,13 @@ export default function ReportPacksModal({
                                   }}
                                   className={`px-4 py-2.5 text-xs rounded-xl cursor-pointer transition flex items-center justify-between ${
                                     billingState === state
-                                      ? "bg-[#ff7010]/30 text-white font-semibold"
-                                      : "text-white/70 hover:bg-white/5 hover:text-white"
+                                      ? "bg-primary/20 text-primary font-semibold"
+                                      : "text-foreground/80 hover:bg-accent hover:text-foreground"
                                   }`}
                                 >
                                   <span>{state}</span>
                                   {billingState === state && (
-                                    <Check className="w-3.5 h-3.5 text-white" />
+                                    <Check className="w-3.5 h-3.5 text-primary" />
                                   )}
                                 </div>
                               ))}
@@ -931,7 +935,7 @@ export default function ReportPacksModal({
                           )}
                         </div>
                       ) : (
-                        <div className="w-full rounded-2xl border border-white/10 bg-[#07273c] px-5 py-3.5 text-sm text-white/80 font-mono">
+                        <div className="w-full rounded-2xl border border-border/80 bg-accent/40 px-5 py-3.5 text-sm text-foreground/80 font-mono">
                           International ({selectedPricing.currency}) · GST Exempt
                         </div>
                       )}
@@ -940,14 +944,14 @@ export default function ReportPacksModal({
                     {/* 3. PROMO CODE */}
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-emerald-400 font-semibold">
+                        <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400 font-semibold">
                           PROMO CODE
                         </span>
                         {coupons.length > 0 && (
                           <button
                             type="button"
                             onClick={() => setIsCouponsModalOpen(true)}
-                            className="text-[11px] font-mono uppercase tracking-[0.15em] text-white/60 hover:text-white transition cursor-pointer"
+                            className="text-[11px] font-mono uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition cursor-pointer"
                           >
                             VIEW ALL COUPONS &gt;
                           </button>
@@ -955,21 +959,21 @@ export default function ReportPacksModal({
                       </div>
 
                       {isPromoApplicable && !isPromoInputVisible ? (
-                        <div className="w-full rounded-2xl border border-emerald-500/30 bg-[#102419]/70 px-5 py-3.5 flex items-center justify-between text-sm">
+                        <div className="w-full rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-3.5 flex items-center justify-between text-sm">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                            <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                               <Check className="w-2.5 h-2.5 stroke-[3]" />
                             </div>
-                            <span className="text-white font-mono font-semibold tracking-wider">
+                            <span className="text-foreground font-mono font-semibold tracking-wider">
                               {appliedPromo}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-white/50">Applied</span>
+                            <span className="text-xs text-muted-foreground">Applied</span>
                             <button
                               type="button"
                               onClick={handleRemovePromo}
-                              className="text-white/40 hover:text-white cursor-pointer ml-1 p-0.5"
+                              className="text-muted-foreground hover:text-foreground cursor-pointer ml-1 p-0.5"
                               aria-label="Remove promo code"
                             >
                               <X className="w-3.5 h-3.5" />
@@ -989,12 +993,12 @@ export default function ReportPacksModal({
                                 handleApplyPromo()
                               }
                             }}
-                            className="flex-1 rounded-2xl border border-white/10 bg-[#07273c] px-5 py-3 text-xs text-white uppercase placeholder:text-white/30 focus:outline-none focus:border-[#ff7010] font-mono"
+                            className="flex-1 rounded-2xl border border-border/80 bg-accent/40 px-5 py-3 text-xs text-foreground uppercase placeholder:text-muted-foreground focus:outline-none focus:border-primary font-mono"
                           />
                           <Button
                             type="button"
                             onClick={() => handleApplyPromo()}
-                            className="bg-white/10 hover:bg-white/20 text-white text-xs px-5 rounded-2xl cursor-pointer h-auto"
+                            className="bg-accent hover:bg-accent/80 text-foreground border border-border/80 text-xs px-5 rounded-2xl cursor-pointer h-auto"
                           >
                             Apply
                           </Button>
@@ -1005,42 +1009,42 @@ export default function ReportPacksModal({
 
                   {/* Right Column: Order Cost Breakdown & Razorpay CTA */}
                   <div className="md:col-span-5 flex flex-col justify-between">
-                    <div className="bg-[#1b1626]/80 border border-white/10 rounded-2xl p-5 sm:p-6 space-y-4">
-                      <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/50 block">
+                    <div className="bg-accent/40 border border-border/80 rounded-2xl p-5 sm:p-6 space-y-4">
+                      <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground block">
                         ORDER BREAKDOWN
                       </span>
 
                       <div className="space-y-3 text-sm">
-                        <div className="flex justify-between items-center text-white/80">
+                        <div className="flex justify-between items-center text-foreground/80">
                           <span>{selectedPack.credits} {selectedPack.credits === 1 ? "Report Credit" : "Report Credits"}</span>
                           <span className="font-mono">{formatCurrency(subtotal, selectedPricing.currency)}</span>
                         </div>
 
                         {isPromoApplicable && discount > 0 && (
-                          <div className="flex justify-between items-center text-emerald-400">
+                          <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
                             <span className="text-xs">{appliedPromo} discount</span>
                             <span className="font-mono">− {formatCurrency(discount, selectedPricing.currency)}</span>
                           </div>
                         )}
 
-                        <div className="flex justify-between items-center text-white/50 text-xs">
+                        <div className="flex justify-between items-center text-muted-foreground text-xs">
                           <span>Taxes and fees</span>
                           <span>{selectedPricing.currency === "INR" ? "Included (18% GST)" : "Included (0% Tax)"}</span>
                         </div>
                       </div>
 
-                      <div className="border-t border-white/10 my-4" />
+                      <div className="border-t border-border/80 my-4" />
 
                       <div className="flex justify-between items-baseline">
                         <div>
-                          <span className="text-xs font-mono uppercase tracking-[0.2em] text-white/60 block">
+                          <span className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground block">
                             TOTAL
                           </span>
-                          <span className="text-[10px] text-white/40 mt-0.5 block">
+                          <span className="text-[10px] text-muted-foreground mt-0.5 block">
                             {selectedPricing.currency === "INR" ? "GST included" : "All taxes included"}
                           </span>
                         </div>
-                        <div className="font-serif text-3xl sm:text-[40px] font-normal text-white tracking-tight">
+                        <div className="font-serif text-3xl sm:text-[40px] font-normal text-foreground tracking-tight">
                           {formatCurrency(finalPrice, selectedPricing.currency)}
                         </div>
                       </div>
@@ -1051,7 +1055,7 @@ export default function ReportPacksModal({
                           type="button"
                           disabled={isInitiating}
                           onClick={handleProceedToRazorpay}
-                          className="w-full bg-gradient-to-r from-[#ea650a] to-[#ff7010] hover:from-[#f07015] hover:to-[#ff832b] text-white py-3.5 sm:py-4 rounded-full font-medium shadow-lg shadow-[#ff7010]/20 hover:brightness-105 transition flex items-center justify-center gap-2 text-base cursor-pointer disabled:opacity-60"
+                          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3.5 sm:py-4 rounded-full font-medium shadow-md transition flex items-center justify-center gap-2 text-base cursor-pointer disabled:opacity-60"
                         >
                           {isInitiating ? (
                             <span>Connecting to Gateway...</span>
@@ -1063,8 +1067,8 @@ export default function ReportPacksModal({
                           )}
                         </Button>
 
-                        <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 pt-1">
-                          <Lock className="w-3 h-3 text-white/40" />
+                        <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground pt-1">
+                          <Lock className="w-3 h-3 text-muted-foreground" />
                           <span>RAZORPAY SECURED</span>
                         </div>
                       </div>
@@ -1080,16 +1084,16 @@ export default function ReportPacksModal({
       {/* Available Coupons Modal */}
       {isCouponsModalOpen && (
         <Dialog open={isCouponsModalOpen} onOpenChange={setIsCouponsModalOpen}>
-          <DialogContent className="max-w-[440px] bg-[#1a1528] border border-white/10 text-white p-6 rounded-3xl shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+          <DialogContent className="max-w-[440px] bg-card/95 backdrop-blur-2xl border border-border/80 text-foreground p-6 rounded-3xl shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-border/80">
               <div className="flex items-center gap-2">
-                <Tag className="w-4 h-4 text-emerald-400" />
-                <h3 className="font-serif text-lg font-medium text-white">Available Coupons</h3>
+                <Tag className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <h3 className="font-serif text-lg font-medium text-foreground">Available Coupons</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsCouponsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/60 hover:text-white"
+                className="w-8 h-8 rounded-full bg-accent/40 flex items-center justify-center text-muted-foreground hover:text-foreground"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -1110,22 +1114,22 @@ export default function ReportPacksModal({
                     key={coupon.code}
                     className={`p-3.5 rounded-2xl border transition flex items-center justify-between ${
                       isApplicable
-                        ? "border-emerald-500/30 bg-emerald-500/5 hover:border-emerald-500/50"
-                        : "border-white/5 bg-white/[0.02] opacity-40"
+                        ? "border-emerald-500/30 bg-emerald-500/10 hover:border-emerald-500/50"
+                        : "border-border/40 bg-accent/20 opacity-40"
                     }`}
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                        <span className="font-mono text-xs font-bold text-foreground uppercase tracking-wider">
                           {coupon.code}
                         </span>
                         {appliedPromo === coupon.code && (
-                          <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono">
+                          <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 px-1.5 py-0.5 rounded font-mono">
                             Active
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-white/60 mt-1">{coupon.description}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">{coupon.description}</p>
                     </div>
 
                     {isApplicable && (

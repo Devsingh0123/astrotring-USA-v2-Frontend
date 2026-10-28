@@ -180,17 +180,17 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[480px] bg-[#07273c] border border-[#17384e] text-white p-6 space-y-5 rounded-2xl shadow-2xl">
+      <DialogContent className="sm:max-w-[480px] bg-card/90 border border-border/80 text-foreground p-6 space-y-5 rounded-3xl shadow-2xl backdrop-blur-2xl">
         <DialogHeader className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-mlh-plum/20 border border-mlh-plum/40 flex items-center justify-center text-amber-300">
+            <span className="w-6 h-6 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center text-primary">
               <Sparkles className="w-3.5 h-3.5" />
             </span>
-            <DialogTitle className="text-xl font-serif font-medium tracking-tight text-white">
+            <DialogTitle className="text-xl font-serif font-medium tracking-tight text-foreground">
               Birth details
             </DialogTitle>
           </div>
-          <DialogDescription className="text-xs text-mlh-muted font-sans leading-relaxed">
+          <DialogDescription className="text-xs text-muted-foreground font-sans leading-relaxed">
             These power every reading Jyotish gives you. Keep them accurate for the sharpest chart.
           </DialogDescription>
         </DialogHeader>
@@ -198,18 +198,18 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
         <div className="space-y-4 font-sans text-xs">
           {/* Full Name */}
           <div className="space-y-1.5">
-            <label className="text-mlh-muted font-medium">Full name</label>
+            <label className="text-muted-foreground font-medium">Full name</label>
             <Input
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="e.g. Suraj Kumar"
-              className="bg-black/40 border-white/10 text-white placeholder:text-mlh-faint focus-visible:border-mlh-plum text-sm h-10 rounded-xl"
+              className="bg-accent/40 border-border/80 text-foreground placeholder:text-muted-foreground focus-visible:border-primary text-sm h-10 rounded-xl"
             />
           </div>
 
           {/* Gender Segmented Picker */}
           <div className="space-y-1.5">
-            <label className="text-mlh-muted font-medium">Gender</label>
+            <label className="text-muted-foreground font-medium">Gender</label>
             <div className="grid grid-cols-3 gap-2">
               {["female", "male", "other"].map((g) => (
                 <button
@@ -218,8 +218,8 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
                   onClick={() => setGender(g)}
                   className={`py-2 rounded-xl border text-xs font-medium capitalize transition-all cursor-pointer ${
                     gender === g
-                      ? "bg-mlh-plum/30 border-mlh-plum text-white font-semibold shadow-xs"
-                      : "bg-black/30 border-white/10 text-mlh-muted hover:text-white hover:bg-white/5"
+                      ? "bg-primary/15 border-primary text-primary font-semibold shadow-xs"
+                      : "bg-accent/40 border-border/80 text-muted-foreground hover:text-foreground hover:bg-accent"
                   }`}
                 >
                   {g}
@@ -231,21 +231,21 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
           {/* Date of Birth & Time of Birth */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-mlh-muted font-medium flex items-center gap-1.5 text-xs">
-                <Calendar className="w-3.5 h-3.5 text-mlh-plum-300" />
+              <label className="text-muted-foreground font-medium flex items-center gap-1.5 text-xs">
+                <Calendar className="w-3.5 h-3.5 text-primary" />
                 <span>Date of birth *</span>
               </label>
               <MeloohaDatePicker
                 value={dob}
                 onChange={setDob}
                 placeholder="Select a date"
-                className="bg-black/40 border-white/10"
+                className="bg-accent/40 border-border/80 text-foreground"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-mlh-muted font-medium flex items-center gap-1.5 text-xs">
-                <Clock className="w-3.5 h-3.5 text-amber-300" />
+              <label className="text-muted-foreground font-medium flex items-center gap-1.5 text-xs">
+                <Clock className="w-3.5 h-3.5 text-amber-500" />
                 <span>Time of birth</span>
               </label>
               <MeloohaTimePicker
@@ -253,15 +253,15 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
                 onChange={setTob}
                 disabled={isTimeUnknown}
                 placeholder="Select a time"
-                className="bg-black/40 border-white/10"
+                className="bg-accent/40 border-border/80 text-foreground"
               />
             </div>
           </div>
 
           {/* Place of Birth with Autocomplete */}
           <div className="space-y-1.5 relative">
-            <label className="text-mlh-muted font-medium flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-rose-400" />
+            <label className="text-muted-foreground font-medium flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-rose-500" />
               <span>Place of birth</span>
             </label>
             <div className="relative">
@@ -272,10 +272,10 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
                   setSelectedLocation(null)
                 }}
                 placeholder="City, country (e.g. Delhi, India)"
-                className="bg-black/40 border-white/10 text-white placeholder:text-mlh-faint focus-visible:border-mlh-plum text-sm h-10 rounded-xl pr-8"
+                className="bg-accent/40 border-border/80 text-foreground placeholder:text-muted-foreground focus-visible:border-primary text-sm h-10 rounded-xl pr-8"
               />
               {isSearching && (
-                <div className="absolute right-3 top-2.5 text-mlh-muted animate-spin">
+                <div className="absolute right-3 top-2.5 text-muted-foreground animate-spin">
                   ⏳
                 </div>
               )}
@@ -283,15 +283,15 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
 
             {/* Suggestions dropdown */}
             {suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-[68px] z-50 rounded-xl border border-[#17384e] bg-[#041826] shadow-2xl p-1.5 space-y-1 max-h-44 overflow-y-auto no-scrollbar">
+              <div className="absolute left-0 right-0 top-[68px] z-50 rounded-2xl border border-border/80 bg-card/95 shadow-2xl p-1.5 space-y-1 max-h-44 overflow-y-auto no-scrollbar backdrop-blur-xl">
                 {suggestions.map((item, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => handleSelectLocation(item)}
-                    className="w-full text-left p-2 rounded-lg hover:bg-white/10 text-xs text-white/90 hover:text-white transition-colors cursor-pointer flex items-center gap-2"
+                    className="w-full text-left p-2 rounded-xl hover:bg-accent text-xs text-foreground/90 hover:text-foreground transition-colors cursor-pointer flex items-center gap-2"
                   >
-                    <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                    <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                     <span className="truncate">
                       {item.displayName || item.place || item.city}
                     </span>
@@ -303,8 +303,8 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
         </div>
 
         {/* Informational Hint */}
-        <p className="text-[11px] text-mlh-faint font-sans leading-relaxed pt-1 border-t border-white/5">
-          Don't know your birth time? Leave it blank, your reading stays approximate.
+        <p className="text-[11px] text-muted-foreground font-sans leading-relaxed pt-1 border-t border-border/50">
+          Don&apos;t know your birth time? Leave it blank, your reading stays approximate.
         </p>
 
         <DialogFooter className="flex items-center justify-end gap-2 pt-2">
@@ -312,7 +312,7 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
             type="button"
             variant="ghost"
             onClick={onClose}
-            className="text-xs text-mlh-muted hover:text-white hover:bg-white/5 rounded-xl cursor-pointer"
+            className="text-xs text-muted-foreground hover:text-foreground hover:bg-accent rounded-xl cursor-pointer"
           >
             Cancel
           </Button>
@@ -320,7 +320,7 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
             type="button"
             disabled={isSaving}
             onClick={handleSave}
-            className="text-xs px-5 rounded-xl bg-gradient-to-r from-mlh-plum-500 to-mlh-plum hover:from-mlh-plum hover:to-mlh-plum-800 text-white font-medium shadow-md cursor-pointer disabled:opacity-50"
+            className="text-xs px-5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-md cursor-pointer disabled:opacity-50"
           >
             {isSaving ? "Saving..." : "Save"}
           </Button>

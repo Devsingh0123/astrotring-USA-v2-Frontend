@@ -100,20 +100,20 @@ export default function NorthIndianChart({
   });
 
   return (
-    <div className="rounded-2xl border border-mlh-plum-500/25 bg-mlh-surface/60 backdrop-blur-md p-5 sm:p-6 shadow-xl shadow-black/20 text-left">
-      <div className="flex items-center justify-between pb-4 mb-4 border-b border-mlh-border/50">
+    <div className="glass-card rounded-2xl border border-border/70 p-5 sm:p-6 shadow-xl text-left">
+      <div className="flex items-center justify-between pb-4 mb-4 border-b border-border/50">
         <div>
-          <h3 className="font-serif text-[18px] sm:text-[20px] text-white font-medium">
+          <h3 className="font-serif text-[18px] sm:text-[20px] text-foreground font-medium">
             {title}
           </h3>
-          <p className="text-xs text-mlh-muted font-mono mt-0.5">
+          <p className="text-xs text-muted-foreground font-mono mt-0.5">
             Ascendant:{" "}
-            <span className="text-mlh-plum-300 font-semibold">
+            <span className="text-primary font-semibold">
               {ZODIAC_SIGNS[lagnaNum]?.name} ({lagnaNum})
             </span>
           </p>
         </div>
-        <span className="text-[9.5px] font-mono uppercase tracking-widest px-2.5 py-1 rounded-full border border-mlh-plum-400/30 bg-mlh-plum-500/10 text-mlh-plum-300">
+        <span className="text-[9.5px] font-mono uppercase tracking-widest px-2.5 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary font-medium">
           NORTH INDIAN FORMAT
         </span>
       </div>
@@ -130,8 +130,8 @@ export default function NorthIndianChart({
             y="4"
             width="392"
             height="392"
-            fill="var(--mlh-bg)"
-            stroke="var(--mlh-border-hi)"
+            fill="var(--card)"
+            stroke="var(--border)"
             strokeWidth="1.5"
             rx="8"
           />
@@ -142,7 +142,7 @@ export default function NorthIndianChart({
             y1="4"
             x2="396"
             y2="396"
-            stroke="var(--mlh-border)"
+            stroke="var(--border)"
             strokeWidth="1.2"
           />
           <line
@@ -150,7 +150,7 @@ export default function NorthIndianChart({
             y1="396"
             x2="396"
             y2="4"
-            stroke="var(--mlh-border)"
+            stroke="var(--border)"
             strokeWidth="1.2"
           />
 
@@ -158,15 +158,15 @@ export default function NorthIndianChart({
           <polygon
             points="200,4 396,200 200,396 4,200"
             fill="none"
-            stroke="var(--mlh-border-hi)"
+            stroke="var(--border)"
             strokeWidth="1.5"
           />
 
           {/* House 1 highlight (Lagna) */}
           <polygon
             points="200,4 300,100 200,200 100,100"
-            fill="var(--mlh-plum-500)"
-            fillOpacity="0.08"
+            fill="var(--primary)"
+            fillOpacity="0.12"
           />
 
           {/* Render House Signs and Planets */}
@@ -183,7 +183,7 @@ export default function NorthIndianChart({
                   y={pos.signY}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  className="fill-mlh-muted/60 text-[11px] font-mono font-medium pointer-events-none"
+                  className="fill-muted-foreground/70 text-[11px] font-mono font-medium pointer-events-none"
                 >
                   {signNumber}
                 </text>
@@ -206,10 +206,10 @@ export default function NorthIndianChart({
                           dominantBaseline="middle"
                           className={`text-[11px] font-mono tracking-tight font-semibold ${
                             planet.isAsc
-                              ? "fill-mlh-plum-300"
+                              ? "fill-primary"
                               : planet.isRetrograde
-                              ? "fill-amber-400"
-                              : "fill-white"
+                              ? "fill-amber-600 dark:fill-amber-400"
+                              : "fill-foreground"
                           }`}
                         >
                           {planet.abbr}
@@ -224,18 +224,18 @@ export default function NorthIndianChart({
         </svg>
       </div>
 
-      <div className="pt-3 border-t border-mlh-border/50 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-mlh-muted">
+      <div className="pt-3 border-t border-border/50 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-muted-foreground">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-mlh-plum-400" />
+            <span className="w-2 h-2 rounded-full bg-primary" />
             <span>Asc = Lagna</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="text-amber-400 font-semibold">(R)</span>
+            <span className="text-amber-600 dark:text-amber-400 font-semibold">(R)</span>
             <span>= Retrograde</span>
           </span>
         </div>
-        <span className="text-mlh-faint">Numbers indicate Rashi (1-12)</span>
+        <span className="text-muted-foreground/60">Numbers indicate Rashi (1-12)</span>
       </div>
     </div>
   );

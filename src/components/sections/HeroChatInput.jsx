@@ -1,14 +1,40 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useSearchParams } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { motion } from "framer-motion"
 import { Sparkles, BookOpen, ArrowUp } from "lucide-react"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
 import { openAuthModal } from "@/features/auth/authSlice"
 import { startGenerating, setThinkingStep, stopGenerating, addConversation } from "@/features/jyotish/jyotishSlice"
 import { streamChatTurn } from "@/features/jyotish/jyotishApi"
 import { toast } from "sonner"
+
+// Maximum words allowed in the query composer
+const MAX_WORDS = 250
+
+const countWords = (text) => {
+  if (!text) return 0
+  const matches = text.trim().match(/\S+/g)
+  return matches ? matches.length : 0
+}
+
+const limitToMaxWords = (text, max = MAX_WORDS) => {
+  if (!text) return text
+  const words = text.trim().match(/\S+/g) || []
+  if (words.length <= max) return text
+
+  let count = 0
+  let cutIndex = text.length
+  const regex = /\S+/g
+  let match
+  while ((match = regex.exec(text)) !== null) {
+    count++
+    if (count === max) {
+      cutIndex = match.index + match[0].length
+      break
+    }
+  }
+  return text.slice(0, cutIndex)
+}
 
 // Exact Melooha 4 Prompts for Personal Jyotish
 const JYOTISH_PROMPTS = [
@@ -39,14 +65,17 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
   const { isAuthenticated, user, birthDetails } = useSelector((state) => state.auth || {})
   const { questionQuota, isGenerating } = useSelector((state) => state.jyotish || {})
 
+  const textareaRef = useRef(null)
+  const currentWordCount = countWords(query)
+
   const activeQuestionQuota =
     typeof questionQuota === "number"
       ? questionQuota
       : typeof user?.creditBalance === "number"
-      ? user.creditBalance
-      : typeof user?.credit_balance === "number"
-      ? user.credit_balance
-      : 0
+        ? user.creditBalance
+        : typeof user?.credit_balance === "number"
+          ? user.credit_balance
+          : 0
 
   // Keep engine state and query state in sync if URL query param changes
   useEffect(() => {
@@ -61,6 +90,24 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
       setQuery(queryParam)
     }
   }, [queryParam])
+
+  // Automatically grow textarea to content height so it NEVER has an inner scrollbar
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"
+      textareaRef.current.style.height = `${Math.max(textareaRef.current.scrollHeight, 120)}px`
+    }
+  }, [query])
+
+  const handleTextareaChange = (e) => {
+    const rawVal = e.target.value
+    const cappedVal = limitToMaxWords(rawVal, MAX_WORDS)
+    setQuery(cappedVal)
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"
+      textareaRef.current.style.height = `${Math.max(textareaRef.current.scrollHeight, 120)}px`
+    }
+  }
 
   const handleSelectEngine = (newEngine) => {
     setEngine(newEngine)
@@ -177,148 +224,155 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
       : "Ask about your career, marriage, or the timing of a decision…"
 
   return (
-    <div className="shrink-0 w-full max-w-[760px] flex flex-col items-center justify-center relative z-10 mx-auto">
-      {/* Central Heading matching Melooha */}
+    <div className="shrink-0 w-full max-w-[820px] flex flex-col items-center justify-center relative z-10 mx-auto">
+      {/* Central Heading matching Jagannatha Hora */}
       <motion.h1
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="font-serif font-normal text-white text-[28px] sm:text-[36px] tracking-[-0.015em] leading-[1.1] text-center mb-6 sm:mb-7"
+        className="font-sans font-bold text-foreground text-[30px] sm:text-[38px] tracking-tight leading-[1.15] text-center mb-6 sm:mb-8 transition-colors"
       >
         What do you want to know?
       </motion.h1>
 
-      {/* Main Glassmorphic Chat Input Card */}
+      {/* Main Glassmorphic Chat Input Card - Exactly matching conversation composer */}
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1, duration: 0.4 }}
-        className={`w-full rounded-[22px] border bg-[#07273c]/92 backdrop-blur-[7px] p-4 sm:p-5 shadow-[0_22px_60px_rgba(0,0,0,0.55)] space-y-4 transition-all ${
-          engine === "shastra"
-            ? "border-amber-500/45 focus-within:border-amber-500/85 shadow-[0_22px_60px_rgba(0,0,0,.55),0_0_48px_rgba(223,129,7,.34),inset_0_1px_0_rgba(255,255,255,.08)]"
-            : "border-mlh-plum-400/45 focus-within:border-mlh-plum-400/85 shadow-[0_22px_60px_rgba(0,0,0,.55),0_0_48px_rgba(255,112,16,.22),inset_0_1px_0_rgba(255,255,255,.08)]"
-        }`}
+        className="w-full"
       >
-        {/* Multi-line Query Textarea */}
-        <Textarea
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={inputPlaceholder}
-          className="border-0 shadow-none focus-visible:ring-0 bg-transparent text-white placeholder:text-mlh-muted text-sm sm:text-base resize-none min-h-[90px] sm:min-h-[110px] p-0 leading-relaxed font-sans"
-        />
-
-        {/* Bottom Action Controls */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2 border-t border-[#17384e]/60">
-          {/* Engine Selector Segmented Pill (radiogroup "Answer source" in Melooha) */}
-          <div
-            role="radiogroup"
-            aria-label="Answer source"
-            className="inline-flex items-center rounded-full border border-[#17384e] bg-[#041826] p-1 self-start sm:self-auto"
-          >
-            <button
-              type="button"
-              role="radio"
-              aria-checked={engine === "jyotish"}
-              onClick={() => handleSelectEngine("jyotish")}
-              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                engine === "jyotish"
-                  ? "bg-gradient-to-r from-mlh-plum-500 to-mlh-plum text-white shadow-xs"
-                  : "text-mlh-muted hover:text-white"
-              }`}
+        <div
+          className={`relative overflow-hidden rounded-3xl border glass-card transition-all duration-300 shadow-xl backdrop-blur-2xl ${engine === "shastra"
+            ? "border-border/80 focus-within:border-amber-500/60 focus-within:shadow-2xl focus-within:shadow-amber-500/10"
+            : "border-border/80 focus-within:border-primary/60 focus-within:shadow-2xl focus-within:shadow-primary/10"
+            }`}
+        >
+          {/* Top input row with glowing ✦ symbol */}
+          <div className="relative flex gap-3 px-4 pt-4 sm:px-5 sm:pt-4">
+            <span
+              aria-hidden="true"
+              className={`shrink-0 pt-1 text-[16px] leading-none select-none ${engine === "shastra" ? "text-amber-500 animate-pulse" : "text-primary animate-pulse"
+                }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>Jyotish</span>
-            </button>
-            <button
-              type="button"
-              role="radio"
-              aria-checked={engine === "shastra"}
-              onClick={() => handleSelectEngine("shastra")}
-              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                engine === "shastra"
-                  ? "bg-gradient-to-r from-[#feb371] to-[#df8107] text-[#0f090c] font-semibold shadow-xs"
-                  : "text-mlh-muted hover:text-white"
-              }`}
-            >
-              <BookOpen className="w-3.5 h-3.5" />
-              <span>Shastra</span>
-            </button>
+              ✦
+            </span>
+            <textarea
+              ref={textareaRef}
+              rows={4}
+              value={query}
+              onChange={handleTextareaChange}
+              onKeyDown={handleKeyDown}
+              placeholder={inputPlaceholder}
+              className="text-foreground placeholder:text-muted-foreground min-w-0 flex-1 resize-none overflow-hidden bg-transparent font-sans text-[15px] sm:text-[17px] leading-[1.5] outline-none disabled:cursor-not-allowed disabled:opacity-60 caret-primary"
+              style={{ minHeight: "120px" }}
+            />
           </div>
 
-          {/* Right Action Buttons */}
-          <div className="flex items-center justify-between sm:justify-end gap-3 self-end sm:self-auto w-full sm:w-auto">
-            {engine === "jyotish" ? (
-              isAuthenticated ? (
-                <div
-                  className={`flex items-center gap-2 pl-3 pr-1 py-1 rounded-full text-xs transition-all shadow-xs ${
-                    activeQuestionQuota > 0
-                      ? "bg-[#041826]/90 border border-[#17384e]"
-                      : "bg-[#231206]/90 border border-amber-900/60"
+          {/* Bottom Action Controls */}
+          <div className="relative flex flex-wrap items-center justify-between gap-3 px-3 pt-2 pb-3 sm:gap-3.5 sm:px-4 sm:pt-2 sm:pb-3.5">
+            {/* Engine Selector Segmented Pill */}
+            <div
+              role="radiogroup"
+              aria-label="Answer source"
+              className="inline-flex items-center rounded-full border border-border/80 bg-accent/40 p-1"
+            >
+              <button
+                type="button"
+                role="radio"
+                aria-checked={engine === "jyotish"}
+                onClick={() => handleSelectEngine("jyotish")}
+                className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${engine === "jyotish"
+                  ? "bg-primary text-primary-foreground font-semibold shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Jyotish</span>
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={engine === "shastra"}
+                onClick={() => handleSelectEngine("shastra")}
+                className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${engine === "shastra"
+                  ? "bg-amber-500 text-white font-semibold shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Shastra</span>
+              </button>
+            </div>
+
+            {/* Right Action Controls */}
+            <div className="ml-auto flex items-center gap-2.5 sm:gap-3">
+              {currentWordCount > 0 && (
+                <span
+                  className={`font-mono text-[10.5px] tracking-wider transition-colors ${
+                    currentWordCount >= MAX_WORDS
+                      ? "text-amber-500 font-semibold"
+                      : "text-muted-foreground/60"
                   }`}
                 >
-                  <span
-                    className={`text-xs font-sans tracking-wide ${
-                      activeQuestionQuota > 0 ? "text-neutral-300" : "text-amber-200/90"
-                    }`}
-                  >
-                    <strong
-                      className={`font-mono font-semibold ${
-                        activeQuestionQuota > 0 ? "text-white" : "text-amber-300"
-                      }`}
+                  {currentWordCount}/{MAX_WORDS} words
+                </span>
+              )}
+
+              {engine === "jyotish" ? (
+                isAuthenticated ? (
+                  <div className="flex items-stretch overflow-hidden rounded-full border border-amber-500/40 bg-amber-500/10 font-mono text-[10.5px] font-medium tracking-[0.14em] whitespace-nowrap uppercase text-amber-600 dark:text-amber-300 shadow-xs">
+                    <span className="px-3 py-1.5">
+                      <span>{activeQuestionQuota}</span> {activeQuestionQuota === 1 ? "question left" : "questions left"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleBuyQuestions}
+                      className="cursor-pointer border-l border-amber-500/30 px-3 py-1.5 transition-colors bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-200 font-semibold"
                     >
-                      {activeQuestionQuota}
-                    </strong>{" "}
-                    {activeQuestionQuota === 1 ? "question" : "questions"} left
-                  </span>
+                      Buy more
+                    </button>
+                  </div>
+                ) : (
                   <button
                     type="button"
                     onClick={handleBuyQuestions}
-                    className={`px-3 py-1 rounded-full text-xs font-medium tracking-wide transition-all duration-150 cursor-pointer shadow-xs active:scale-95 ${
-                      activeQuestionQuota > 0
-                        ? "bg-[#82184d] hover:bg-[#9d1c5d] text-white border border-[#c43282]/30 hover:border-[#e04599]/50 shadow-[0_2px_8px_rgba(130,24,77,0.35)]"
-                        : "bg-gradient-to-r from-[#92400e] to-[#b45309] hover:from-[#a14710] hover:to-[#c65d0b] text-amber-100 border border-amber-500/30 shadow-[0_2px_8px_rgba(180,83,9,0.35)]"
-                    }`}
+                    className="cursor-pointer flex items-center overflow-hidden rounded-full border border-amber-500/40 bg-amber-500/10 font-mono text-[10.5px] font-semibold tracking-[0.14em] whitespace-nowrap uppercase text-amber-600 dark:text-amber-300 px-3.5 py-1.5 hover:bg-amber-500/20 transition-all shadow-xs"
                   >
-                    Buy more
+                    Buy questions
                   </button>
-                </div>
+                )
               ) : (
-                <button
-                  type="button"
-                  onClick={handleBuyQuestions}
-                  className="px-3.5 py-1.5 rounded-full bg-[#4d0e34] hover:bg-[#6b1449] border border-mlh-plum-400/25 text-[10.5px] font-mono font-semibold tracking-wider text-mlh-plum-100 transition-colors uppercase cursor-pointer"
-                >
-                  BUY QUESTIONS
-                </button>
-              )
-            ) : (
-              <div className="flex items-center gap-1.5 text-xs font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
-                <BookOpen className="w-3.5 h-3.5 text-amber-400" />
-                <span>Free knowledge · Unlimited</span>
-              </div>
-            )}
+                <div className="flex items-center gap-1.5 text-[11px] font-mono tracking-wider text-amber-600 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-full uppercase">
+                  <BookOpen className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Free knowledge · Unlimited</span>
+                </div>
+              )}
 
-            <Button
-              type="button"
-              size="icon"
-              disabled={!query.trim() || isGenerating}
-              onClick={() => executeQuestion(query)}
-              aria-label="Send question"
-              className={`w-10 h-10 rounded-full shrink-0 shadow-md cursor-pointer disabled:opacity-40 transition-all ${
-                engine === "shastra"
-                  ? "bg-[linear-gradient(160deg,#feb371,#df8107_62%,#b45309)] text-[#0f090c] hover:brightness-110 shadow-[0_0_24px_rgba(223,129,7,0.6)]"
-                  : "bg-gradient-to-br from-mlh-plum-500 to-mlh-plum hover:from-mlh-plum hover:to-mlh-plum-800 text-white shadow-[0_0_24px_rgba(129,23,86,0.6)]"
-              }`}
-            >
-              <ArrowUp className="w-5 h-5 stroke-[2.5]" />
-            </Button>
+              <button
+                type="button"
+                disabled={!query.trim() || isGenerating}
+                onClick={() => executeQuestion(query)}
+                aria-label="Send question"
+                className={`grid h-10 w-10 flex-none place-items-center rounded-full transition-all duration-200 cursor-pointer disabled:opacity-40 shadow-md ${engine === "shastra"
+                  ? "text-white bg-amber-500 hover:bg-amber-600 hover:scale-105 shadow-amber-500/25"
+                  : "text-primary-foreground bg-primary hover:bg-primary/90 hover:scale-105 shadow-primary/25"
+                  }`}
+              >
+                <ArrowUp className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            </div>
           </div>
+        </div>
+
+        {/* Keyboard shortcut hint */}
+        <div className="text-muted-foreground/60 mt-2 text-center font-mono text-[9px] tracking-[0.18em] uppercase">
+          Enter to send · Shift + Enter for a new line (Max 250 words)
         </div>
       </motion.div>
 
       {/* 4 Example Prompt Cards */}
-      <div className="w-full max-w-[760px] grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-5 sm:mt-6">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-5 sm:mt-6">
         {activePrompts.map((question, idx) => (
           <motion.div
             key={question}
@@ -327,13 +381,12 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
             transition={{ delay: 0.15 + idx * 0.05, duration: 0.3 }}
             whileHover={{ y: -2 }}
             onClick={() => handlePromptClick(question)}
-            className={`p-3.5 sm:p-4 rounded-[14px] border text-left backdrop-blur-[3px] transition-all cursor-pointer group shadow-[0_4px_16px_rgba(0,0,0,0.3)] flex items-center justify-between gap-3 ${
-              engine === "shastra"
-                ? "border-amber-500/25 bg-amber-500/[.03] hover:border-amber-500/50 hover:bg-amber-500/[.08]"
-                : "border-white/12 bg-white/[.02] hover:border-mlh-plum-400/50 hover:bg-mlh-plum-500/[.08]"
-            }`}
+            className={`p-4 rounded-2xl border text-left glass-card transition-all cursor-pointer group shadow-xs flex items-center justify-between gap-3 ${engine === "shastra"
+              ? "border-amber-500/20 hover:border-amber-500/50 hover:bg-amber-500/[.05]"
+              : "border-border/80 hover:border-primary/50 hover:bg-accent/40"
+              }`}
           >
-            <p className="text-[13px] sm:text-[14.5px] font-sans font-medium text-white/85 group-hover:text-white leading-snug">
+            <p className="text-sm sm:text-[14.5px] font-sans font-medium text-foreground/90 group-hover:text-foreground leading-snug">
               {question}
             </p>
           </motion.div>

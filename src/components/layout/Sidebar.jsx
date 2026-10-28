@@ -80,8 +80,9 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`h-screen sticky top-0 bg-[#041826] border-r border-[#17384e] flex flex-col justify-between transition-all duration-300 z-40 shrink-0 ${isCollapsed ? "w-[72px]" : "w-[260px] lg:w-[280px]"
-        }`}
+      className={`h-screen sticky top-0 bg-card/85 backdrop-blur-2xl border-r border-border flex flex-col justify-between transition-all duration-300 z-40 shrink-0 ${
+        isCollapsed ? "w-[72px]" : "w-[260px] lg:w-[280px]"
+      }`}
     >
       {/* Top Header & Navigation Rail */}
       <div className="flex flex-col h-full overflow-y-auto no-scrollbar p-3 space-y-4">
@@ -91,10 +92,10 @@ export default function Sidebar({
             <img
               src="/logo-192.jpg"
               alt="AstroTring"
-              className="w-8 h-8 rounded-full object-cover shrink-0 border border-white/10 shadow-sm group-hover:scale-105 transition-transform"
+              className="w-8 h-8 rounded-full object-cover shrink-0 border border-border shadow-xs group-hover:scale-105 transition-transform"
             />
             {!isCollapsed && (
-              <span className="font-serif font-bold text-lg tracking-tight text-white whitespace-nowrap">
+              <span className="font-serif font-bold text-lg tracking-tight text-foreground whitespace-nowrap">
                 AstroTring
               </span>
             )}
@@ -105,7 +106,7 @@ export default function Sidebar({
             size="icon"
             onClick={onToggleCollapse}
             aria-label="Collapse navigation"
-            className="w-8 h-8 rounded-lg text-mlh-muted hover:text-white hover:bg-white/5 shrink-0"
+            className="w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent shrink-0 cursor-pointer"
           >
             {isCollapsed ? (
               <PanelLeftOpen className="w-4 h-4" />
@@ -120,14 +121,14 @@ export default function Sidebar({
           <Link
             to="/?engine=jyotish"
             onClick={(e) => handleEngineClick(e, "jyotish")}
-            className={`-mx-1 flex items-center gap-3 rounded-[14px] p-1 text-left transition-all duration-200 ${
+            className={`-mx-1 flex items-center gap-3 rounded-2xl p-1 text-left transition-all duration-200 cursor-pointer ${
               isJyotishActive
-                ? "bg-mlh-plum-500/25 border border-mlh-plum-400/70 text-white shadow-[0_0_22px_rgba(154,69,120,0.36)]"
-                : "bg-mlh-plum-500/10 border border-mlh-plum-400/25 text-mlh-plum-300 hover:bg-mlh-plum-500/20 hover:border-mlh-plum-400/50 hover:text-white"
+                ? "bg-primary text-primary-foreground font-semibold shadow-md shadow-primary/25 border border-primary"
+                : "bg-accent/40 border border-border/80 text-muted-foreground hover:bg-accent hover:border-primary/40 hover:text-foreground"
             } ${isCollapsed ? "justify-center" : ""}`}
           >
             <span className="grid h-[36px] w-[40px] flex-none place-items-center">
-              <Sparkles className={`w-4 h-4 ${isJyotishActive ? "text-amber-300" : "text-mlh-plum-300"}`} />
+              <Sparkles className={`w-4 h-4 ${isJyotishActive ? "text-primary-foreground" : "text-primary"}`} />
             </span>
             {!isCollapsed && (
               <span className="font-sans text-[15px] sm:text-[16px] leading-tight font-medium">
@@ -139,14 +140,14 @@ export default function Sidebar({
           <Link
             to="/?engine=shastra"
             onClick={(e) => handleEngineClick(e, "shastra")}
-            className={`-mx-1 flex items-center gap-3 rounded-[14px] p-1 text-left transition-all duration-200 ${
+            className={`-mx-1 flex items-center gap-3 rounded-2xl p-1 text-left transition-all duration-200 cursor-pointer ${
               isShastraActive
-                ? "bg-amber-500/22 border border-amber-400/60 text-amber-300 shadow-[0_0_22px_rgba(223,129,7,0.26)]"
-                : "bg-amber-500/10 border border-amber-500/25 text-amber-200/80 hover:bg-amber-500/20 hover:border-amber-400/50 hover:text-white"
+                ? "bg-amber-500 text-white font-semibold shadow-md shadow-amber-500/25 border border-amber-500"
+                : "bg-accent/40 border border-border/80 text-muted-foreground hover:bg-accent hover:border-amber-500/40 hover:text-foreground"
             } ${isCollapsed ? "justify-center" : ""}`}
           >
             <span className="grid h-[36px] w-[40px] flex-none place-items-center">
-              <BookOpen className={`w-4 h-4 ${isShastraActive ? "text-amber-300" : "text-amber-400/80"}`} />
+              <BookOpen className={`w-4 h-4 ${isShastraActive ? "text-white" : "text-amber-500"}`} />
             </span>
             {!isCollapsed && (
               <span className="font-sans text-[15px] sm:text-[16px] leading-tight font-medium">
@@ -185,12 +186,12 @@ export default function Sidebar({
                 to={item.path}
                 onClick={handleItemClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-lg text-xs lg:text-sm font-medium transition-colors ${
-                    isCollapsed ? "justify-center p-2.5" : "px-3 py-2"
+                  `flex items-center gap-3 rounded-xl text-xs lg:text-sm font-medium transition-all duration-150 ${
+                    isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"
                   } ${
                     isActive
-                      ? "text-white bg-white/10"
-                      : "text-mlh-muted hover:text-white hover:bg-white/5"
+                      ? "text-primary dark:text-foreground bg-primary/10 dark:bg-card border border-primary/25 dark:border-border font-semibold shadow-xs"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/60"
                   }`
                 }
               >
@@ -203,16 +204,16 @@ export default function Sidebar({
 
         {/* Recent Readings Filter & History */}
         {!isCollapsed && (
-          <div className="pt-3 border-t border-[#17384e] space-y-3">
-            <div className="flex items-center gap-1 text-[10px] font-mono">
+          <div className="pt-3 border-t border-border space-y-3">
+            <div className="flex items-center gap-1 text-[10px] font-mono bg-accent/40 p-1 rounded-xl border border-border/70">
               {["ALL", "JYOTISH", "SHASTRA"].map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
-                  className={`px-2 py-1 rounded transition-colors cursor-pointer ${
+                  className={`flex-1 py-1 rounded-lg transition-all cursor-pointer text-center ${
                     activeFilter === filter
-                      ? "bg-white/15 text-white font-semibold"
-                      : "text-mlh-faint hover:text-mlh-muted"
+                      ? "bg-card text-foreground font-semibold shadow-xs border border-border/60"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {filter}
@@ -272,7 +273,7 @@ export default function Sidebar({
 
               if (filtered.length === 0) {
                 return (
-                  <div className="py-6 px-1 text-xs text-mlh-faint font-sans">
+                  <div className="py-6 px-1 text-xs text-muted-foreground font-sans">
                     Your readings will appear here.
                   </div>
                 )
@@ -327,9 +328,9 @@ export default function Sidebar({
                     const items = groupMap.get(groupKey) || []
                     return (
                       <div key={groupKey} className="space-y-1">
-                        <div className="flex items-center justify-between text-[10px] font-mono text-mlh-muted px-1.5 pt-1.5 pb-0.5 tracking-wider uppercase select-none">
+                        <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground px-1.5 pt-1.5 pb-0.5 tracking-wider uppercase select-none">
                           <span>{groupKey}</span>
-                          <span className="text-[9px] text-white/30 font-sans">{items.length}</span>
+                          <span className="text-[9px] text-muted-foreground/60 font-sans">{items.length}</span>
                         </div>
                         <div className="space-y-1">
                           {items.map((item) => {
@@ -346,19 +347,19 @@ export default function Sidebar({
                                 <button
                                   type="button"
                                   onClick={() => handleItemClick(item)}
-                                  className={`w-full text-left p-2 rounded-xl text-xs font-sans transition-all cursor-pointer flex items-start gap-2 pr-7 ${
+                                  className={`w-full text-left p-2.5 rounded-xl text-xs font-sans transition-all cursor-pointer flex items-start gap-2 pr-7 ${
                                     isSelected
                                       ? item.engine === "shastra"
-                                        ? "bg-amber-500/15 text-white border border-amber-500/40 shadow-xs"
-                                        : "bg-mlh-plum/20 text-white border border-mlh-plum/50 shadow-xs"
-                                      : "text-white/70 hover:text-white hover:bg-white/5 border border-transparent"
+                                        ? "bg-amber-500/15 text-foreground border border-amber-500/40 shadow-xs"
+                                        : "bg-primary/10 text-foreground border border-primary/30 shadow-xs"
+                                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50 border border-transparent"
                                   }`}
                                 >
                                   <span className="flex-none pt-0.5">
                                     {item.engine === "shastra" ? (
-                                      <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                                      <BookOpen className="w-3.5 h-3.5 text-amber-500" />
                                     ) : (
-                                      <Sparkles className="w-3.5 h-3.5 text-mlh-plum-300" />
+                                      <Sparkles className="w-3.5 h-3.5 text-primary" />
                                     )}
                                   </span>
                                   <span className="line-clamp-2 leading-snug flex-1">
@@ -370,7 +371,7 @@ export default function Sidebar({
                                   type="button"
                                   onClick={(e) => handleDeleteItem(e, item)}
                                   title="Delete reading"
-                                  className="absolute right-1.5 top-2.5 opacity-0 group-hover/reading:opacity-100 transition-opacity p-1 rounded-md text-white/40 hover:text-rose-400 hover:bg-white/10 cursor-pointer"
+                                  className="absolute right-1.5 top-2.5 opacity-0 group-hover/reading:opacity-100 transition-opacity p-1 rounded-md text-muted-foreground hover:text-destructive hover:bg-accent cursor-pointer"
                                 >
                                   <Trash2 className="w-3 h-3" />
                                 </button>
@@ -389,7 +390,7 @@ export default function Sidebar({
       </div>
 
       {/* Sticky Bottom Log In / User Profile Popover */}
-      <div className="p-3 border-t border-[#17384e] bg-[#041826]">
+      <div className="p-3 border-t border-border bg-card/90 backdrop-blur-md">
         {isAuthenticated ? (
           <UserProfileMenu
             isCollapsed={isCollapsed}
@@ -399,20 +400,23 @@ export default function Sidebar({
           />
         ) : (
           <button
-            onClick={() => onOpenBindModal(true)}
-            className={`w-full flex items-center gap-3 rounded-xl p-2.5 hover:bg-white/5 transition-colors group cursor-pointer text-left ${
+            onClick={() => {
+              dispatch(openAuthModal())
+              if (typeof onOpenBindModal === "function") onOpenBindModal()
+            }}
+            className={`w-full flex items-center gap-3 rounded-2xl p-2.5 hover:bg-accent border border-border/60 hover:border-primary/40 bg-card/60 transition-all group cursor-pointer text-left shadow-xs ${
               isCollapsed ? "justify-center" : ""
             }`}
           >
-            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-mlh-plum-300 group-hover:text-white transition-colors shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all shrink-0">
               <LogIn className="w-4 h-4" />
             </div>
             {!isCollapsed && (
               <div className="overflow-hidden">
-                <div className="text-sm font-bold text-white group-hover:text-mlh-plum-300 transition-colors">
+                <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
                   Log in
                 </div>
-                <div className="text-[10px] font-mono text-mlh-plum-300/80 tracking-wider">
+                <div className="text-[10px] font-mono text-primary font-medium tracking-wider">
                   BIND YOUR CHART
                 </div>
               </div>

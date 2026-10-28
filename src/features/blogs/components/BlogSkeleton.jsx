@@ -6,29 +6,29 @@ export default function BlogSkeleton({ count = 6 }) {
       {Array.from({ length: count }).map((_, idx) => (
         <div
           key={idx}
-          className="flex flex-col rounded-2xl border border-white/5 bg-[#120c11]/40 overflow-hidden p-0"
+          className="flex flex-col rounded-2xl border border-border/80 glass-card overflow-hidden p-0 shadow-sm"
         >
           {/* Image skeleton */}
-          <Skeleton className="aspect-[16/9] w-full bg-white/5" />
+          <Skeleton className="aspect-[16/9] w-full bg-muted/60" />
 
           {/* Body skeleton */}
           <div className="p-5 space-y-3">
             <div className="flex items-center justify-between">
-              <Skeleton className="h-3 w-20 bg-white/5" />
-              <Skeleton className="h-3 w-24 bg-white/5" />
+              <Skeleton className="h-3 w-20 bg-muted/60" />
+              <Skeleton className="h-3 w-24 bg-muted/60" />
             </div>
 
-            <Skeleton className="h-6 w-full bg-white/5" />
-            <Skeleton className="h-5 w-4/5 bg-white/5" />
+            <Skeleton className="h-6 w-full bg-muted/60" />
+            <Skeleton className="h-5 w-4/5 bg-muted/60" />
 
             <div className="space-y-1.5 pt-1">
-              <Skeleton className="h-3 w-full bg-white/5" />
-              <Skeleton className="h-3 w-3/4 bg-white/5" />
+              <Skeleton className="h-3 w-full bg-muted/60" />
+              <Skeleton className="h-3 w-3/4 bg-muted/60" />
             </div>
 
-            <div className="pt-3 border-t border-white/5 flex items-center justify-between">
-              <Skeleton className="h-4 w-28 bg-white/5" />
-              <Skeleton className="h-4 w-12 bg-white/5" />
+            <div className="pt-3 border-t border-border/60 flex items-center justify-between">
+              <Skeleton className="h-4 w-28 bg-muted/60" />
+              <Skeleton className="h-4 w-12 bg-muted/60" />
             </div>
           </div>
         </div>

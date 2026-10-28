@@ -14,6 +14,7 @@ import HouseAnalysis from "@/features/calculators/components/HouseAnalysis";
 import DashaTimeline from "@/features/calculators/components/DashaTimeline";
 import CalculatorFaqSection from "@/features/calculators/components/CalculatorFaqSection";
 import RelatedCalculatorsGrid from "@/features/calculators/components/RelatedCalculatorsGrid";
+import Footer from "@/components/layout/Footer";
 
 import { calculateKundli } from "@/features/calculators";
 
@@ -68,7 +69,7 @@ export default function FreeKundliPage() {
   const summary = kundliData?.summary || {};
 
   return (
-    <div className="min-h-screen bg-mlh-bg text-mlh-text pb-24">
+    <div className="min-h-screen bg-transparent text-foreground pb-24">
       <Helmet>
         <title>Free Kundli Maker & Birth Chart Calculator | AstroTring</title>
         <meta
@@ -146,54 +147,54 @@ export default function FreeKundliPage() {
               <div className="space-y-6 pt-2">
                 {/* 4 Summary Metric Cards */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3.5 rounded-xl border border-mlh-plum-400/40 bg-mlh-plum-500/10">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-mlh-plum-300 block mb-0.5">
+                  <div className="p-3.5 rounded-xl border border-primary/30 glass-card shadow-sm">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-primary block mb-0.5">
                       Ascendant (Lagna)
                     </span>
-                    <span className="text-base font-serif font-semibold text-white block">
+                    <span className="text-base font-serif font-semibold text-foreground block">
                       {summary.ascendantSign || "—"}
                     </span>
-                    <span className="text-[10px] font-mono text-mlh-muted">
+                    <span className="text-[10px] font-mono text-muted-foreground">
                       {summary.ascendantDegree !== undefined
                         ? `${Number(summary.ascendantDegree % 30).toFixed(2)}°`
                         : "—"}
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-xl border border-mlh-border/70 bg-mlh-surface/60">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-mlh-muted block mb-0.5">
+                  <div className="p-3.5 rounded-xl border border-border/60 glass-card shadow-sm">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground block mb-0.5">
                       Moon Sign (Rashi)
                     </span>
-                    <span className="text-base font-serif font-semibold text-white block">
+                    <span className="text-base font-serif font-semibold text-foreground block">
                       {summary.moonSign || "—"}
                     </span>
-                    <span className="text-[10px] font-mono text-mlh-muted">
+                    <span className="text-[10px] font-mono text-muted-foreground">
                       {summary.moonDegree !== undefined
                         ? `${Number(summary.moonDegree % 30).toFixed(2)}°`
                         : "—"}
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-xl border border-mlh-border/70 bg-mlh-surface/60">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-mlh-muted block mb-0.5">
+                  <div className="p-3.5 rounded-xl border border-border/60 glass-card shadow-sm">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground block mb-0.5">
                       Nakshatra
                     </span>
-                    <span className="text-base font-serif font-semibold text-white block truncate">
+                    <span className="text-base font-serif font-semibold text-foreground block truncate">
                       {summary.nakshatra || "—"}
                     </span>
-                    <span className="text-[10px] font-mono text-mlh-plum-300">
+                    <span className="text-[10px] font-mono text-primary font-medium">
                       {summary.pada ? `Pada ${summary.pada}` : "—"}{summary.nakshatraLord ? ` (${summary.nakshatraLord})` : ""}
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-xl border border-mlh-border/70 bg-mlh-surface/60">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-mlh-muted block mb-0.5">
+                  <div className="p-3.5 rounded-xl border border-border/60 glass-card shadow-sm">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground block mb-0.5">
                       Sun Sign
                     </span>
-                    <span className="text-base font-serif font-semibold text-white block">
+                    <span className="text-base font-serif font-semibold text-foreground block">
                       {summary.sunSign || "—"}
                     </span>
-                    <span className="text-[10px] font-mono text-mlh-muted">
+                    <span className="text-[10px] font-mono text-muted-foreground">
                       Nirayana Solar
                     </span>
                   </div>
@@ -206,8 +207,8 @@ export default function FreeKundliPage() {
                     onClick={() => setVargaTab("d1")}
                     className={`px-3.5 py-1.5 text-xs font-mono rounded-full border transition-all ${
                       vargaTab === "d1"
-                        ? "border-mlh-plum-400 bg-mlh-plum-500/25 text-white font-medium"
-                        : "border-mlh-border text-mlh-muted hover:border-mlh-plum-400/40 hover:text-white"
+                        ? "border-primary bg-primary text-primary-foreground font-medium shadow-sm"
+                        : "border-border/60 glass-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
                     D-1 Rashi
@@ -217,8 +218,8 @@ export default function FreeKundliPage() {
                     onClick={() => setVargaTab("d9")}
                     className={`px-3.5 py-1.5 text-xs font-mono rounded-full border transition-all ${
                       vargaTab === "d9"
-                        ? "border-mlh-plum-400 bg-mlh-plum-500/25 text-white font-medium"
-                        : "border-mlh-border text-mlh-muted hover:border-mlh-plum-400/40 hover:text-white"
+                        ? "border-primary bg-primary text-primary-foreground font-medium shadow-sm"
+                        : "border-border/60 glass-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
                     D-9 Navamsha
@@ -228,8 +229,8 @@ export default function FreeKundliPage() {
                     onClick={() => setVargaTab("d10")}
                     className={`px-3.5 py-1.5 text-xs font-mono rounded-full border transition-all ${
                       vargaTab === "d10"
-                        ? "border-mlh-plum-400 bg-mlh-plum-500/25 text-white font-medium"
-                        : "border-mlh-border text-mlh-muted hover:border-mlh-plum-400/40 hover:text-white"
+                        ? "border-primary bg-primary text-primary-foreground font-medium shadow-sm"
+                        : "border-border/60 glass-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
                     D-10 Dashamsha
@@ -249,22 +250,22 @@ export default function FreeKundliPage() {
                   onValueChange={setDetailsTab}
                   className="w-full space-y-4"
                 >
-                  <TabsList className="w-full grid grid-cols-3 bg-mlh-surface border border-mlh-border/80 h-11 p-1 rounded-xl">
+                  <TabsList className="w-full grid grid-cols-3 glass-card border border-border/80 h-11 p-1 rounded-xl shadow-sm">
                     <TabsTrigger
                       value="planets"
-                      className="text-xs font-mono uppercase data-[state=active]:bg-mlh-bg data-[state=active]:text-white"
+                      className="text-xs font-mono uppercase data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                     >
                       Planets
                     </TabsTrigger>
                     <TabsTrigger
                       value="bhavas"
-                      className="text-xs font-mono uppercase data-[state=active]:bg-mlh-bg data-[state=active]:text-white"
+                      className="text-xs font-mono uppercase data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                     >
                       12 Bhavas
                     </TabsTrigger>
                     <TabsTrigger
                       value="dashas"
-                      className="text-xs font-mono uppercase data-[state=active]:bg-mlh-bg data-[state=active]:text-white"
+                      className="text-xs font-mono uppercase data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                     >
                       Dashas
                     </TabsTrigger>
@@ -301,33 +302,33 @@ export default function FreeKundliPage() {
           {/* Right Complementary Sidebar (320px) matching Melooha */}
           <aside className="space-y-4 lg:sticky lg:top-8">
             {/* Metric Card */}
-            <div className="rounded-2xl border border-mlh-border/70 bg-mlh-surface/60 p-5 text-left">
-              <div className="font-serif text-[28px] leading-tight text-white font-medium">
+            <div className="glass-card rounded-2xl border border-border/70 p-5 text-left shadow-sm">
+              <div className="font-serif text-[28px] leading-tight text-foreground font-medium">
                 12 houses
               </div>
-              <p className="text-mlh-muted text-xs mt-1.5">
+              <p className="text-muted-foreground text-xs mt-1.5">
                 mapped from your exact birth moment
               </p>
             </div>
 
             {/* Want it interpreted? Card */}
-            <div className="rounded-2xl border border-mlh-plum-500/30 bg-gradient-to-b from-mlh-plum-500/15 to-transparent p-5 text-left space-y-3">
+            <div className="glass-card rounded-2xl border border-primary/30 p-5 text-left space-y-3 shadow-md">
               <div className="flex items-center gap-3">
-                <span className="grid h-[34px] w-[34px] flex-none place-items-center rounded-full bg-mlh-plum-500/20 text-mlh-plum-300 border border-mlh-plum-400/30">
+                <span className="grid h-[34px] w-[34px] flex-none place-items-center rounded-full bg-primary/10 text-primary border border-primary/25">
                   <Sparkles className="w-4 h-4" />
                 </span>
-                <div className="font-serif text-lg text-white font-medium leading-snug">
+                <div className="font-serif text-lg text-foreground font-medium leading-snug">
                   Want it interpreted?
                 </div>
               </div>
 
-              <p className="text-xs text-mlh-muted leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 Jyotish reads this result against the rest of your chart, not in isolation.
               </p>
 
               <Link
                 to="/?engine=jyotish"
-                className="block w-full text-center py-2.5 rounded-full border border-mlh-plum-400/40 text-mlh-plum-300 hover:bg-mlh-plum-500/20 font-sans text-sm font-medium transition cursor-pointer"
+                className="block w-full text-center py-2.5 rounded-full border border-border/80 glass-card text-foreground hover:bg-accent/40 font-sans text-sm font-medium transition cursor-pointer shadow-sm"
               >
                 Ask Jyotish
               </Link>
@@ -335,6 +336,9 @@ export default function FreeKundliPage() {
           </aside>
         </div>
       </div>
+
+      {/* Global Footer */}
+      <Footer />
     </div>
   );
 }

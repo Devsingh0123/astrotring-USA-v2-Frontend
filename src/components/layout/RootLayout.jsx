@@ -5,6 +5,7 @@ import Sidebar from "@/components/layout/Sidebar"
 import MobileHeader from "@/components/layout/MobileHeader"
 import AuthModal from "@/features/auth/AuthModal"
 import QuestionPacksModal from "@/components/common/QuestionPacksModal"
+import ReportPacksModal from "@/features/reports/components/ReportPacksModal"
 import MyBirthDetailsModal from "@/features/user/components/MyBirthDetailsModal"
 import { openAuthModal, closeAuthModal, fetchUserProfile, logout } from "@/features/auth/authSlice"
 import { getStoredAccessToken, AUTH_CHANNEL_NAME } from "@/lib/api-client"
@@ -13,6 +14,8 @@ export default function RootLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
   const [buyModalOptions, setBuyModalOptions] = useState(null)
+  const [isBuyReportsModalOpen, setIsBuyReportsModalOpen] = useState(false)
+  const [buyReportsModalOptions, setBuyReportsModalOptions] = useState(null)
   const [isBirthDetailsModalOpen, setIsBirthDetailsModalOpen] = useState(false)
   const pendingActionRef = useRef(null)
   const dispatch = useDispatch()
@@ -23,6 +26,11 @@ export default function RootLayout() {
   const handleOpenBuyModal = (options) => {
     setBuyModalOptions(options || null)
     setIsBuyModalOpen(true)
+  }
+
+  const handleOpenBuyReportsModal = (options) => {
+    setBuyReportsModalOptions(options || null)
+    setIsBuyReportsModalOpen(true)
   }
 
   // App load: Fetch user profile (/auth/me) if access token exists in storage
@@ -97,7 +105,7 @@ export default function RootLayout() {
   }, [dispatch])
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-[#031d2e] text-foreground flex flex-col md:flex-row font-sans selection:bg-mlh-plum/30 selection:text-white">
+    <div className="h-screen w-full overflow-hidden bg-background text-foreground flex flex-col md:flex-row font-sans selection:bg-primary/30 selection:text-foreground transition-colors duration-200">
       <ScrollRestoration />
 
       {/* Desktop Collapsible Left Sidebar */}
@@ -108,12 +116,12 @@ export default function RootLayout() {
           onOpenBindModal={handleOpenAuth}
           onOpenBirthDetailsModal={() => setIsBirthDetailsModalOpen(true)}
           onOpenBuyQuestionsModal={() => handleOpenBuyModal()}
-          onOpenBuyReportsModal={() => navigate("/reports")}
+          onOpenBuyReportsModal={() => handleOpenBuyReportsModal()}
         />
       </div>
 
       {/* Main Viewport Container */}
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-[#031d2e] relative">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-jagannatha-aura relative transition-colors duration-200">
         {/* Mobile Top Header */}
         <MobileHeader onOpenBindModal={handleOpenAuth} />
 
@@ -124,6 +132,8 @@ export default function RootLayout() {
               onOpenBindModal: handleOpenAuth,
               onOpenAuthModal: handleOpenAuth,
               onOpenBuyModal: handleOpenBuyModal,
+              onOpenBuyQuestionsModal: handleOpenBuyModal,
+              onOpenBuyReportsModal: handleOpenBuyReportsModal,
               onOpenBirthDetailsModal: () => setIsBirthDetailsModalOpen(true),
             }}
           />
@@ -147,6 +157,19 @@ export default function RootLayout() {
         initialPromoCode={buyModalOptions?.promoCode}
         initialPackId={buyModalOptions?.packId}
         currency={buyModalOptions?.currency || user?.currency || "INR"}
+      />
+
+      {/* Global Report Packs 2-Step Purchase Modal */}
+      <ReportPacksModal
+        isOpen={isBuyReportsModalOpen}
+        onClose={() => {
+          setIsBuyReportsModalOpen(false)
+          setBuyReportsModalOptions(null)
+        }}
+        onOpenAuth={handleOpenAuth}
+        initialPromoCode={buyReportsModalOptions?.promoCode}
+        initialPackId={buyReportsModalOptions?.packId}
+        currency={buyReportsModalOptions?.currency || user?.currency || "INR"}
       />
 
       {/* My Birth Details Edit Modal (Melooha Ref 09) */}

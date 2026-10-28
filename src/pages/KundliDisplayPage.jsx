@@ -25,6 +25,7 @@ import PlanetaryTable from "@/features/calculators/components/PlanetaryTable";
 import HouseAnalysis from "@/features/calculators/components/HouseAnalysis";
 import DashaTimeline from "@/features/calculators/components/DashaTimeline";
 import AskJyotishPromptCard from "@/features/calculators/components/AskJyotishPromptCard";
+import Footer from "@/components/layout/Footer";
 
 import { fetchUserChart } from "@/features/calculators";
 
@@ -170,7 +171,7 @@ export default function KundliDisplayPage() {
     "—";
 
   return (
-    <div className="min-h-screen bg-mlh-bg text-mlh-text pb-28">
+    <div className="min-h-screen bg-transparent text-foreground pb-24">
       <Helmet>
         <title>{displayName}'s Janam Kundli | AstroTring Vedic Astrology</title>
         <meta
@@ -182,16 +183,16 @@ export default function KundliDisplayPage() {
       {/* Main Container */}
       <div className="relative px-4 sm:px-8 lg:px-12 xl:px-16 pt-6 sm:pt-8 max-w-[1440px] mx-auto space-y-8">
         {/* ================= 1. BREADCRUMBS & TOP BAR ================= */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-mlh-border/50 pb-5">
-          <nav className="flex items-center gap-2 text-xs font-mono text-mlh-muted uppercase tracking-wider">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/50 pb-5">
+          <nav className="flex items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
             <Link
               to="/"
-              className="hover:text-mlh-text-hi transition-colors flex items-center gap-1"
+              className="hover:text-foreground transition-colors flex items-center gap-1"
             >
               <span>Dashboard</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-mlh-faint" />
-            <span className="text-mlh-amber font-medium">My Janam Kundli</span>
+            <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60" />
+            <span className="text-primary font-medium">My Janam Kundli</span>
           </nav>
 
           <div className="flex items-center gap-2.5">
@@ -200,10 +201,10 @@ export default function KundliDisplayPage() {
               size="sm"
               onClick={handleRefresh}
               disabled={isLoading}
-              className="h-9 px-3.5 rounded-xl border-mlh-border/80 bg-mlh-surface/60 hover:bg-mlh-surface text-xs font-mono text-mlh-text hover:text-white flex items-center gap-2 cursor-pointer"
+              className="h-9 px-3.5 rounded-xl border border-border/70 glass-card hover:bg-accent/40 text-xs font-mono text-foreground flex items-center gap-2 cursor-pointer shadow-sm"
             >
               <RefreshCw
-                className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-mlh-amber" : ""}`}
+                className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-primary" : ""}`}
               />
               <span className="hidden sm:inline">Refresh Chart</span>
             </Button>
@@ -212,7 +213,7 @@ export default function KundliDisplayPage() {
               variant="outline"
               size="sm"
               onClick={handlePrint}
-              className="h-9 px-3.5 rounded-xl border-mlh-border/80 bg-mlh-surface/60 hover:bg-mlh-surface text-xs font-mono text-mlh-text hover:text-white flex items-center gap-2 cursor-pointer print:hidden"
+              className="h-9 px-3.5 rounded-xl border border-border/70 glass-card hover:bg-accent/40 text-xs font-mono text-foreground flex items-center gap-2 cursor-pointer print:hidden shadow-sm"
             >
               <Printer className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Print / PDF</span>
@@ -221,7 +222,7 @@ export default function KundliDisplayPage() {
             <Link to="/?engine=jyotish">
               <Button
                 size="sm"
-                className="h-9 px-4 rounded-xl bg-gradient-to-r from-mlh-amber to-amber-600 hover:from-amber-500 hover:to-amber-600 text-black font-semibold text-xs font-mono tracking-wider flex items-center gap-2 shadow-lg shadow-mlh-amber/20 cursor-pointer"
+                className="h-9 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs font-mono tracking-wider flex items-center gap-2 shadow-lg shadow-primary/20 cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Ask Jyotish</span>
@@ -231,36 +232,36 @@ export default function KundliDisplayPage() {
         </div>
 
         {/* ================= 2. PROFILE & CALCULATION HEADER ================= */}
-        <div className="relative rounded-3xl border border-mlh-border/80 bg-gradient-to-br from-mlh-surface via-[#18121f] to-[#120a16] p-6 sm:p-8 shadow-2xl shadow-black/40 overflow-hidden">
+        <div className="relative rounded-3xl border border-border/80 glass-card p-6 sm:p-8 shadow-xl backdrop-blur-2xl overflow-hidden">
           {/* Subtle celestial background orb */}
-          <div className="absolute -right-20 -top-20 w-80 h-80 bg-mlh-plum-600/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-mlh-amber/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -right-20 -top-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-mlh-amber/30 bg-mlh-amber/10 text-mlh-amber text-[11px] font-mono tracking-wider uppercase">
-                <Compass className="w-3.5 h-3.5 text-mlh-amber" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-[11px] font-mono tracking-wider uppercase font-medium">
+                <Compass className="w-3.5 h-3.5 text-primary" />
                 <span>Authentic Vedic Janam Kundli</span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-medium text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-medium text-foreground tracking-tight">
                 {displayName}'s Birth Chart
               </h1>
 
               {/* Birth coordinates metadata row */}
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm text-mlh-muted font-sans">
-                <span className="flex items-center gap-1.5 text-white/90">
-                  <Calendar className="w-4 h-4 text-mlh-amber" />
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm text-muted-foreground font-sans">
+                <span className="flex items-center gap-1.5 text-foreground font-medium">
+                  <Calendar className="w-4 h-4 text-primary" />
                   <span>{displayDob}</span>
                 </span>
 
-                <span className="flex items-center gap-1.5 text-white/90">
-                  <Clock className="w-4 h-4 text-mlh-amber" />
+                <span className="flex items-center gap-1.5 text-foreground font-medium">
+                  <Clock className="w-4 h-4 text-primary" />
                   <span>{displayTob}</span>
                 </span>
 
-                <span className="flex items-center gap-1.5 text-white/90">
-                  <MapPin className="w-4 h-4 text-mlh-amber" />
+                <span className="flex items-center gap-1.5 text-foreground font-medium">
+                  <MapPin className="w-4 h-4 text-primary" />
                   <span>{displayCity}</span>
                 </span>
               </div>
@@ -269,16 +270,16 @@ export default function KundliDisplayPage() {
             {/* Ephemeris & System Badges */}
             <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end gap-2 shrink-0 pt-2 lg:pt-0">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-[11px] font-mono text-white/80">
-                  Ayanamsha: <strong className="text-mlh-amber">Lahiri (Chitra Paksha)</strong>
+                <span className="px-2.5 py-1 rounded-lg bg-accent/40 border border-border/60 text-[11px] font-mono text-foreground/90">
+                  Ayanamsha: <strong className="text-primary font-semibold">Lahiri (Chitra Paksha)</strong>
                 </span>
-                <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-[11px] font-mono text-white/80">
-                  Engine: <strong className="text-emerald-400">Swiss Ephemeris</strong>
+                <span className="px-2.5 py-1 rounded-lg bg-accent/40 border border-border/60 text-[11px] font-mono text-foreground/90">
+                  Engine: <strong className="text-emerald-600 dark:text-emerald-400 font-semibold">Swiss Ephemeris</strong>
                 </span>
               </div>
 
-              <div className="text-[11px] font-mono text-mlh-faint flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <div className="text-[11px] font-mono text-muted-foreground flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>Verified Nirayana Planetary Longitudes</span>
               </div>
             </div>
@@ -288,104 +289,104 @@ export default function KundliDisplayPage() {
         {/* ================= 3. FOUR CELESTIAL PILLARS ================= */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Pillar 1: Lagna (Ascendant) */}
-          <div className="relative rounded-2xl border border-mlh-plum/40 bg-gradient-to-br from-mlh-surface via-[#1b101f] to-mlh-surface p-5 shadow-xl shadow-mlh-plum/5 hover:border-mlh-plum/70 transition-all group">
+          <div className="relative rounded-2xl border border-primary/40 glass-card p-5 shadow-lg hover:border-primary/70 transition-all group">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-mlh-plum-300">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-primary font-medium">
                 Ascendant (Lagna)
               </span>
-              <span className="text-sm font-serif text-mlh-plum-200">✦</span>
+              <span className="text-sm font-serif text-primary">✦</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <h2 className="text-2xl font-heading font-medium text-white">
+              <h2 className="text-2xl font-serif font-medium text-foreground">
                 {ascSign}
               </h2>
-              <span className="text-xs font-mono text-mlh-muted">
+              <span className="text-xs font-mono text-muted-foreground">
                 ({ascMeta.sanskrit})
               </span>
             </div>
-            <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono">
-              <span className="text-mlh-muted">Degree: {formatDegree(summary.ascendantDegree)}</span>
-              <span className="text-mlh-amber">Lord: {ascMeta.lord}</span>
+            <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between text-xs font-mono">
+              <span className="text-muted-foreground">Degree: {formatDegree(summary.ascendantDegree)}</span>
+              <span className="text-primary font-semibold">Lord: {ascMeta.lord}</span>
             </div>
-            <div className="mt-1 text-[11px] text-mlh-faint">
+            <div className="mt-1 text-[11px] text-muted-foreground/80">
               House 1 · Dharma Trikona ({ascMeta.element} Element)
             </div>
           </div>
 
           {/* Pillar 2: Moon Sign (Chandra Rashi) */}
-          <div className="relative rounded-2xl border border-mlh-border/80 bg-gradient-to-br from-mlh-surface via-[#131522] to-mlh-surface p-5 shadow-xl shadow-black/20 hover:border-mlh-amber/40 transition-all group">
+          <div className="relative rounded-2xl border border-border/70 glass-card p-5 shadow-lg hover:border-primary/40 transition-all group">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-mlh-amber">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-primary font-medium">
                 Moon Sign (Janma Rashi)
               </span>
-              <span className="text-base text-mlh-amber">☽</span>
+              <span className="text-base text-primary">☽</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <h2 className="text-2xl font-heading font-medium text-white">
+              <h2 className="text-2xl font-serif font-medium text-foreground">
                 {moonSign}
               </h2>
-              <span className="text-xs font-mono text-mlh-muted">
+              <span className="text-xs font-mono text-muted-foreground">
                 ({moonMeta.sanskrit})
               </span>
             </div>
-            <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono">
-              <span className="text-mlh-muted">Degree: {formatDegree(summary.moonDegree)}</span>
-              <span className="text-mlh-amber">Lord: {moonMeta.lord}</span>
+            <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between text-xs font-mono">
+              <span className="text-muted-foreground">Degree: {formatDegree(summary.moonDegree)}</span>
+              <span className="text-primary font-semibold">Lord: {moonMeta.lord}</span>
             </div>
-            <div className="mt-1 text-[11px] text-mlh-faint">
+            <div className="mt-1 text-[11px] text-muted-foreground/80">
               Governs Emotions, Mind & Intuition
             </div>
           </div>
 
           {/* Pillar 3: Nakshatra & Pada */}
-          <div className="relative rounded-2xl border border-mlh-border/80 bg-gradient-to-br from-mlh-surface via-[#131522] to-mlh-surface p-5 shadow-xl shadow-black/20 hover:border-mlh-amber/40 transition-all group">
+          <div className="relative rounded-2xl border border-border/70 glass-card p-5 shadow-lg hover:border-primary/40 transition-all group">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-mlh-muted">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-medium">
                 Birth Star (Nakshatra)
               </span>
-              <span className="text-sm font-serif text-mlh-amber">✧</span>
+              <span className="text-sm font-serif text-primary">✧</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <h2 className="text-2xl font-heading font-medium text-white truncate">
+              <h2 className="text-2xl font-serif font-medium text-foreground truncate">
                 {nakshatra}
               </h2>
               <Badge
                 variant="outline"
-                className="border-mlh-amber/40 text-mlh-amber text-[10px] font-mono"
+                className="border-primary/40 text-primary bg-primary/10 text-[10px] font-mono font-medium"
               >
                 Pada {pada}
               </Badge>
             </div>
-            <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono">
-              <span className="text-mlh-muted">Lord: {summary.nakshatraLord || "Moon"}</span>
-              <span className="text-emerald-400">Vimsottari Ruler</span>
+            <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between text-xs font-mono">
+              <span className="text-muted-foreground">Lord: {summary.nakshatraLord || "Moon"}</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Vimsottari Ruler</span>
             </div>
-            <div className="mt-1 text-[11px] text-mlh-faint">
+            <div className="mt-1 text-[11px] text-muted-foreground/80">
               Lunar Constellation of Soul Receptivity
             </div>
           </div>
 
           {/* Pillar 4: Sun Sign (Surya Rashi) */}
-          <div className="relative rounded-2xl border border-mlh-border/80 bg-gradient-to-br from-mlh-surface via-[#131522] to-mlh-surface p-5 shadow-xl shadow-black/20 hover:border-mlh-amber/40 transition-all group">
+          <div className="relative rounded-2xl border border-border/70 glass-card p-5 shadow-lg hover:border-primary/40 transition-all group">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-mlh-muted">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-medium">
                 Sun Sign (Surya Rashi)
               </span>
-              <span className="text-base text-amber-400">☉</span>
+              <span className="text-base text-amber-500">☉</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <h2 className="text-2xl font-heading font-medium text-white">
+              <h2 className="text-2xl font-serif font-medium text-foreground">
                 {sunSign}
               </h2>
-              <span className="text-xs font-mono text-mlh-muted">
+              <span className="text-xs font-mono text-muted-foreground">
                 ({sunMeta.sanskrit})
               </span>
             </div>
-            <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono">
-              <span className="text-mlh-muted">System: Nirayana</span>
-              <span className="text-mlh-amber">Lord: {sunMeta.lord}</span>
+            <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between text-xs font-mono">
+              <span className="text-muted-foreground">System: Nirayana</span>
+              <span className="text-primary font-semibold">Lord: {sunMeta.lord}</span>
             </div>
-            <div className="mt-1 text-[11px] text-mlh-faint">
+            <div className="mt-1 text-[11px] text-muted-foreground/80">
               Core Vitality, Dharma & Soul Purpose
             </div>
           </div>
@@ -393,34 +394,34 @@ export default function KundliDisplayPage() {
 
         {/* ================= 4. LOADING SKELETON ================= */}
         {(isLoading || (!userKundli && !hasFailed)) && (
-          <div className="p-8 rounded-3xl border border-mlh-border/60 bg-mlh-surface/40 space-y-6">
+          <div className="p-8 rounded-3xl border border-border/60 glass-card space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-5 h-5 border-2 border-mlh-amber border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
               <div className="space-y-1">
-                <Skeleton className="h-5 w-48 bg-mlh-surface-hi rounded-md" />
-                <p className="text-xs text-mlh-muted font-mono">
+                <Skeleton className="h-5 w-48 bg-muted rounded-md" />
+                <p className="text-xs text-muted-foreground font-mono">
                   Calculating planetary positions via Swiss Ephemeris...
                 </p>
               </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center justify-center">
-              <Skeleton className="h-[420px] w-full max-w-[460px] mx-auto rounded-3xl bg-mlh-surface-hi" />
-              <Skeleton className="h-[420px] w-full rounded-2xl bg-mlh-surface-hi" />
+              <Skeleton className="h-[420px] w-full max-w-[460px] mx-auto rounded-3xl bg-muted" />
+              <Skeleton className="h-[420px] w-full rounded-2xl bg-muted" />
             </div>
           </div>
         )}
 
         {/* ================= ERROR STATE ================= */}
         {hasFailed && !userKundli && !isLoading && (
-          <div className="p-8 sm:p-12 rounded-3xl border border-rose-500/30 bg-rose-950/10 backdrop-blur-xl text-center space-y-5">
-            <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto">
+          <div className="p-8 sm:p-12 rounded-3xl border border-destructive/30 glass-card text-center space-y-5">
+            <div className="w-12 h-12 rounded-2xl bg-destructive/10 border border-destructive/30 text-destructive flex items-center justify-center mx-auto">
               <AlertCircle className="w-6 h-6" />
             </div>
             <div className="space-y-2 max-w-md mx-auto">
-              <h3 className="text-xl font-heading font-medium text-white">
+              <h3 className="text-xl font-serif font-medium text-foreground">
                 Unable to Calculate Kundli
               </h3>
-              <p className="text-xs sm:text-sm text-mlh-muted font-sans">
+              <p className="text-xs sm:text-sm text-muted-foreground font-sans">
                 {userKundliError ||
                   "We encountered an issue calculating your high-precision Vedic birth chart. Please verify your birth details or try refreshing."}
               </p>
@@ -428,7 +429,7 @@ export default function KundliDisplayPage() {
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <Button
                 onClick={handleRefresh}
-                className="h-10 px-5 rounded-xl bg-mlh-amber hover:bg-amber-500 text-black font-semibold text-xs font-mono tracking-wider flex items-center gap-2 cursor-pointer"
+                className="h-10 px-5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs font-mono tracking-wider flex items-center gap-2 cursor-pointer shadow-sm"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Retry Calculation</span>
@@ -436,9 +437,9 @@ export default function KundliDisplayPage() {
               <Button
                 variant="outline"
                 onClick={() => navigate("/onboarding")}
-                className="h-10 px-5 rounded-xl border-mlh-border bg-mlh-surface/60 hover:bg-mlh-surface text-xs font-mono text-mlh-text hover:text-white flex items-center gap-2 cursor-pointer"
+                className="h-10 px-5 rounded-xl border border-border/70 glass-card hover:bg-accent/40 text-xs font-mono text-foreground flex items-center gap-2 cursor-pointer shadow-sm"
               >
-                <User className="w-3.5 h-3.5 text-mlh-amber" />
+                <User className="w-3.5 h-3.5 text-primary" />
                 <span>Update Birth Details</span>
               </Button>
             </div>
@@ -449,9 +450,9 @@ export default function KundliDisplayPage() {
         {!isLoading && userKundli && (
           <div className="space-y-8">
             {/* Varga Divisional Selector Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl border border-mlh-border/80 bg-mlh-surface/80 backdrop-blur-md">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl border border-border/80 glass-card shadow-sm">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono uppercase tracking-wider text-mlh-muted mr-1 hidden sm:inline">
+                <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground mr-1 hidden sm:inline">
                   Divisional Chart:
                 </span>
                 <div className="flex items-center gap-1.5">
@@ -460,8 +461,8 @@ export default function KundliDisplayPage() {
                     onClick={() => setActiveVarga("d1")}
                     className={`px-3.5 py-1.5 text-xs font-mono rounded-xl border transition-all cursor-pointer ${
                       activeVarga === "d1"
-                        ? "border-mlh-amber bg-mlh-amber/15 text-mlh-amber font-semibold shadow-sm shadow-mlh-amber/20"
-                        : "border-mlh-border text-mlh-muted hover:border-mlh-border/80 hover:text-white"
+                        ? "border-primary bg-primary text-primary-foreground font-semibold shadow-sm"
+                        : "border-border/60 glass-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
                     D-1 Rashi (Natal)
@@ -471,8 +472,8 @@ export default function KundliDisplayPage() {
                     onClick={() => setActiveVarga("d9")}
                     className={`px-3.5 py-1.5 text-xs font-mono rounded-xl border transition-all cursor-pointer ${
                       activeVarga === "d9"
-                        ? "border-mlh-amber bg-mlh-amber/15 text-mlh-amber font-semibold shadow-sm shadow-mlh-amber/20"
-                        : "border-mlh-border text-mlh-muted hover:border-mlh-border/80 hover:text-white"
+                        ? "border-primary bg-primary text-primary-foreground font-semibold shadow-sm"
+                        : "border-border/60 glass-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
                     D-9 Navamsha
@@ -482,8 +483,8 @@ export default function KundliDisplayPage() {
                     onClick={() => setActiveVarga("d10")}
                     className={`px-3.5 py-1.5 text-xs font-mono rounded-xl border transition-all cursor-pointer ${
                       activeVarga === "d10"
-                        ? "border-mlh-amber bg-mlh-amber/15 text-mlh-amber font-semibold shadow-sm shadow-mlh-amber/20"
-                        : "border-mlh-border text-mlh-muted hover:border-mlh-border/80 hover:text-white"
+                        ? "border-primary bg-primary text-primary-foreground font-semibold shadow-sm"
+                        : "border-border/60 glass-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
                     D-10 Dashamsha
@@ -492,14 +493,14 @@ export default function KundliDisplayPage() {
               </div>
 
               {/* View Switcher Tabs (Chart Grid vs Detailed Bhavas vs Dashas) */}
-              <div className="flex items-center gap-1 border-t sm:border-t-0 pt-3 sm:pt-0 border-white/5">
+              <div className="flex items-center gap-1 border-t sm:border-t-0 pt-3 sm:pt-0 border-border/40">
                 <button
                   type="button"
                   onClick={() => setActiveTab("chart")}
                   className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-colors cursor-pointer ${
                     activeTab === "chart"
-                      ? "bg-white/10 text-white font-medium"
-                      : "text-mlh-faint hover:text-white"
+                      ? "bg-primary/15 text-primary border border-primary/25 font-medium shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   Kundli & Planets
@@ -509,8 +510,8 @@ export default function KundliDisplayPage() {
                   onClick={() => setActiveTab("bhavas")}
                   className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-colors cursor-pointer ${
                     activeTab === "bhavas"
-                      ? "bg-white/10 text-white font-medium"
-                      : "text-mlh-faint hover:text-white"
+                      ? "bg-primary/15 text-primary border border-primary/25 font-medium shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   12 Bhavas
@@ -520,8 +521,8 @@ export default function KundliDisplayPage() {
                   onClick={() => setActiveTab("dashas")}
                   className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-colors cursor-pointer ${
                     activeTab === "dashas"
-                      ? "bg-white/10 text-white font-medium"
-                      : "text-mlh-faint hover:text-white"
+                      ? "bg-primary/15 text-primary border border-primary/25 font-medium shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   Dasha Timeline
@@ -534,7 +535,7 @@ export default function KundliDisplayPage() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* 12-Box North Indian Diamond Chart (5 cols on desktop) */}
                 <div className="lg:col-span-5 flex flex-col items-center">
-                  <div className="w-full max-w-[460px] p-5 sm:p-6 rounded-3xl border border-mlh-border/80 bg-mlh-surface/90 backdrop-blur-xl shadow-2xl shadow-black/40">
+                  <div className="w-full max-w-[460px]">
                     <NorthIndianChart
                       chartData={activeChartData}
                       summary={summary}
@@ -548,10 +549,10 @@ export default function KundliDisplayPage() {
                     />
 
                     {/* Chart Legend */}
-                    <div className="mt-4 pt-3 border-t border-mlh-border/50 flex flex-wrap items-center justify-between text-[11px] font-mono text-mlh-muted">
+                    <div className="mt-3 px-3.5 py-2 glass-card rounded-xl border border-border/60 flex flex-wrap items-center justify-between text-[11px] font-mono text-muted-foreground shadow-sm">
                       <span>• Roman numerals: Signs</span>
                       <span>• (R): Retrograde</span>
-                      <span className="text-mlh-amber">Asc: Ascendant</span>
+                      <span className="text-primary font-semibold">Asc: Ascendant</span>
                     </div>
                   </div>
                 </div>
@@ -596,6 +597,9 @@ export default function KundliDisplayPage() {
           </div>
         )}
       </div>
+
+      {/* Global Footer */}
+      <Footer />
     </div>
   );
 }

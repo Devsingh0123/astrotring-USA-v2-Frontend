@@ -104,11 +104,11 @@ export function CalculatorCard({ item }) {
   return (
     <Link
       to={item.path}
-      className="group border-mlh-plum-500/20 from-mlh-plum-500/10 hover:from-mlh-plum-500/[0.18] hover:border-mlh-plum-400/55 relative flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-2xl border bg-gradient-to-b to-white/[0.012] p-4 text-left transition duration-200 ease-out hover:-translate-y-[3px] hover:shadow-[0_16px_38px_rgba(0,0,0,.45)] sm:p-[18px]"
+      className="group border border-border/80 glass-card hover:border-primary/50 relative flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-4 text-left transition duration-200 ease-out hover:-translate-y-[3px] hover:shadow-lg sm:p-[18px]"
     >
       {/* Top Section: Plate Icon + Title */}
       <span className="mb-3.5 flex items-start gap-3.5">
-        <span className="border-mlh-plum-400/30 group-hover:border-mlh-plum-400/65 relative grid h-[42px] w-[42px] flex-none place-items-center overflow-hidden rounded-[12px] border transition duration-200 bg-mlh-plum-500/10">
+        <span className="border border-border/80 group-hover:border-primary/50 relative grid h-[42px] w-[42px] flex-none place-items-center overflow-hidden rounded-[12px] transition duration-200 bg-accent/40">
           <img
             alt={item.title}
             src={item.image}
@@ -117,27 +117,27 @@ export function CalculatorCard({ item }) {
             className="pointer-events-none object-contain select-none transition duration-200 ease-out group-hover:scale-110"
           />
         </span>
-        <span className="line-clamp-2 min-w-0 flex-1 font-serif text-[19px] leading-[1.25] text-white sm:text-[20px]">
+        <span className="line-clamp-2 min-w-0 flex-1 font-serif text-[19px] leading-[1.25] text-foreground sm:text-[20px] group-hover:text-primary transition-colors">
           {item.title}
         </span>
       </span>
 
       {/* Bottom Section: Swap between Pill Tag and Hover Description */}
-      <span className="border-mlh-plum-500/15 group-hover:border-mlh-plum-400/30 mt-auto block border-t pt-3 transition-colors duration-200">
+      <span className="border-border/60 group-hover:border-border mt-auto block border-t pt-3 transition-colors duration-200">
         <span className="block relative min-h-[36px]">
           {/* Rest State: Tag + OPEN → */}
           <span className="flex group-hover:hidden items-center justify-between gap-2.5 py-1">
-            <span className="border-mlh-plum-500/25 bg-mlh-plum-500/10 text-mlh-plum-300 inline-flex items-center gap-1.5 rounded-[6px] border px-[7px] py-[4px] font-mono text-[9px] leading-none tracking-[0.12em]">
-              <span className="bg-mlh-plum-400/70 h-[3px] w-[3px] rounded-full" />
+            <span className="border border-border/80 bg-accent/40 text-muted-foreground inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[9px] leading-none tracking-[0.12em]">
+              <span className="bg-primary h-1 w-1 rounded-full" />
               {item.tag}
             </span>
-            <span className="text-mlh-plum-300 font-mono text-[9px] tracking-[0.18em]">
+            <span className="text-primary font-mono text-[9px] tracking-[0.18em] font-semibold">
               OPEN →
             </span>
           </span>
 
           {/* Hover State: Description */}
-          <span className="hidden group-hover:block text-mlh-muted line-clamp-2 text-[13px] leading-[18px]">
+          <span className="hidden group-hover:block text-muted-foreground line-clamp-2 text-[13px] leading-[18px]">
             {item.desc}
           </span>
         </span>
@@ -152,7 +152,7 @@ export default function RelatedCalculatorsGrid({ currentToolId = "" }) {
   return (
     <div className="space-y-6 my-12">
       <div className="space-y-1">
-        <h2 className="text-2xl sm:text-3xl font-heading font-medium text-white">
+        <h2 className="text-2xl sm:text-3xl font-heading font-medium text-foreground">
           Related Astrology Calculators
         </h2>
       </div>

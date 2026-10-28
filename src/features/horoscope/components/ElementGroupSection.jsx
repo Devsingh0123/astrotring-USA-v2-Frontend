@@ -8,17 +8,17 @@ export default function ElementGroupSection({ group, timeframe }) {
   return (
     <div className="space-y-5">
       {/* Group Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-[#17384e]/70 text-xs">
+      <div className="flex items-center justify-between pb-2 border-b border-border/70 text-xs">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-mlh-plum" />
-          <h2 className="font-bold text-white text-base font-serif tracking-wide">
+          <span className="w-2 h-2 rounded-full bg-primary" />
+          <h2 className="font-bold text-foreground text-base font-serif tracking-wide">
             {group.name}
           </h2>
-          <span className="text-mlh-muted text-xs font-serif italic">
+          <span className="text-muted-foreground text-xs font-serif italic">
             {group.sanskrit}
           </span>
         </div>
-        <div className="text-[10px] font-mono tracking-widest text-mlh-faint uppercase">
+        <div className="text-[10px] font-mono tracking-widest text-muted-foreground uppercase">
           {group.tagline}
         </div>
       </div>

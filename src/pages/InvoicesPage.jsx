@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog"
 import Footer from "@/components/layout/Footer"
 import { fetchUserInvoices } from "@/features/billing"
+import { formatCurrency, normalizeCurrency } from "@/lib/utils"
 
 export default function InvoicesPage() {
   const context = useOutletContext() || {}
@@ -96,7 +97,10 @@ export default function InvoicesPage() {
     return true
   })
 
-  const totalSpent = invoices.reduce((sum, inv) => sum + (Number(inv.total) || 0), 0)
+  const inrInvoices = invoices.filter((i) => normalizeCurrency(i.currency) === "INR")
+  const usdInvoices = invoices.filter((i) => normalizeCurrency(i.currency) === "USD")
+  const totalSpentINR = inrInvoices.reduce((sum, inv) => sum + (Number(inv.total) || 0), 0)
+  const totalSpentUSD = usdInvoices.reduce((sum, inv) => sum + (Number(inv.total) || 0), 0)
 
   const handlePrintInvoice = () => {
     window.print()
@@ -164,9 +168,13 @@ export default function InvoicesPage() {
           </div>
 
           <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex flex-col justify-between">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-white/50">Total Paid (INR)</span>
-            <div className="mt-2 text-2xl font-mono font-bold text-emerald-400">
-              ₹{totalSpent.toLocaleString("en-IN")}
+            <span className="text-[11px] font-mono uppercase tracking-wider text-white/50">Total Paid</span>
+            <div className="mt-2 text-xl sm:text-2xl font-mono font-bold text-emerald-400 truncate">
+              {totalSpentUSD > 0
+                ? totalSpentINR > 0
+                  ? `₹${totalSpentINR.toLocaleString("en-IN")} + $${totalSpentUSD.toFixed(2)}`
+                  : `$${totalSpentUSD.toFixed(2)}`
+                : `₹${totalSpentINR.toLocaleString("en-IN")}`}
             </div>
           </div>
 
@@ -304,15 +312,17 @@ export default function InvoicesPage() {
                 {/* Middle: Financials Breakdown */}
                 <div className="md:text-right border-t md:border-t-0 md:border-l border-white/10 pt-3 md:pt-0 md:pl-6 space-y-0.5 shrink-0">
                   <div className="text-xl sm:text-2xl font-mono font-bold text-white tracking-tight">
-                    ₹{Number(inv.total).toLocaleString("en-IN")}
+                    {formatCurrency(inv.total, inv.currency)}
                   </div>
                   <div className="text-[11px] font-mono text-emerald-400">
                     {inv.couponCode && inv.couponCode !== "NONE"
-                      ? `${inv.couponCode} applied (−₹${(Number(inv.discount) || 0).toLocaleString("en-IN")})`
+                      ? `${inv.couponCode} applied (−${formatCurrency(inv.discount || 0, inv.currency)})`
                       : "Standard Pricing"}
                   </div>
                   <div className="text-[10px] font-mono text-white/40">
-                    Incl. 18% GST (₹{inv.taxAmount || Math.round((Number(inv.total) * 18) / 118)})
+                    {normalizeCurrency(inv.currency) === "USD"
+                      ? "International (0% GST)"
+                      : `Incl. 18% GST (${formatCurrency(inv.taxAmount || Math.round((Number(inv.total) * 18) / 118), "INR")})`}
                   </div>
                 </div>
 
@@ -425,7 +435,9 @@ export default function InvoicesPage() {
                     </div>
                     <div>
                       <span className="font-semibold">Place of Supply: </span>
-                      {selectedInvoice.billingState || "Delhi"} (07)
+                      {normalizeCurrency(selectedInvoice.currency) === "USD"
+                        ? "International (Export of Service)"
+                        : `${selectedInvoice.billingState || "Delhi"} (07)`}
                     </div>
                     <div>
                       <span className="font-semibold">Reverse Charge: </span>No
@@ -447,7 +459,9 @@ export default function InvoicesPage() {
                     {selectedInvoice.userEmail || user?.email || ""}
                   </div>
                   <div className="text-neutral-600 mt-0.5">
-                    State: {selectedInvoice.billingState || "Delhi"}, India
+                    {normalizeCurrency(selectedInvoice.currency) === "USD"
+                      ? "Region: International (USD)"
+                      : `State: ${selectedInvoice.billingState || "Delhi"}, India`}
                   </div>
                 </div>
 
@@ -481,9 +495,15 @@ export default function InvoicesPage() {
                       <th className="p-2.5 border border-neutral-200">#</th>
                       <th className="p-2.5 border border-neutral-200">Description of Service</th>
                       <th className="p-2.5 border border-neutral-200">SAC Code</th>
-                      <th className="p-2.5 border border-neutral-200 text-right">Gross (₹)</th>
-                      <th className="p-2.5 border border-neutral-200 text-right">Discount (₹)</th>
-                      <th className="p-2.5 border border-neutral-200 text-right">Taxable Val (₹)</th>
+                      <th className="p-2.5 border border-neutral-200 text-right">
+                        Gross ({normalizeCurrency(selectedInvoice.currency) === "USD" ? "$" : "₹"})
+                      </th>
+                      <th className="p-2.5 border border-neutral-200 text-right">
+                        Discount ({normalizeCurrency(selectedInvoice.currency) === "USD" ? "$" : "₹"})
+                      </th>
+                      <th className="p-2.5 border border-neutral-200 text-right">
+                        Taxable Val ({normalizeCurrency(selectedInvoice.currency) === "USD" ? "$" : "₹"})
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -497,13 +517,15 @@ export default function InvoicesPage() {
                       </td>
                       <td className="p-2.5 border border-neutral-200 font-mono">998431</td>
                       <td className="p-2.5 border border-neutral-200 text-right font-mono">
-                        {Number(selectedInvoice.subtotal).toFixed(2)}
+                        {Number(selectedInvoice.subtotal || selectedInvoice.total).toFixed(2)}
                       </td>
                       <td className="p-2.5 border border-neutral-200 text-right font-mono text-emerald-700">
                         −{Number(selectedInvoice.discount || 0).toFixed(2)}
                       </td>
                       <td className="p-2.5 border border-neutral-200 text-right font-mono font-semibold">
-                        {(Number(selectedInvoice.total) / 1.18).toFixed(2)}
+                        {normalizeCurrency(selectedInvoice.currency) === "USD"
+                          ? Number(selectedInvoice.total).toFixed(2)
+                          : (Number(selectedInvoice.total) / 1.18).toFixed(2)}
                       </td>
                     </tr>
                   </tbody>
@@ -514,23 +536,44 @@ export default function InvoicesPage() {
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pt-2">
                 <div className="space-y-1 text-[11px] text-neutral-600 max-w-sm">
                   <div className="font-mono text-[10px] uppercase font-bold text-neutral-700">Tax Breakdown</div>
-                  <div>Central GST (CGST) @ 9%: ₹{((Number(selectedInvoice.total) * 0.09) / 1.18).toFixed(2)}</div>
-                  <div>State GST (SGST) @ 9%: ₹{((Number(selectedInvoice.total) * 0.09) / 1.18).toFixed(2)}</div>
-                  <div>Total Tax (18% GST): ₹{selectedInvoice.taxAmount || ((Number(selectedInvoice.total) * 0.18) / 1.18).toFixed(2)}</div>
+                  {normalizeCurrency(selectedInvoice.currency) === "USD" ? (
+                    <>
+                      <div>Export of Services under LUT (0% GST / Zero-Rated)</div>
+                      <div className="text-[10px] text-neutral-500">Supply meant for export under Letter of Undertaking without payment of IGST.</div>
+                    </>
+                  ) : (
+                    <>
+                      <div>Central GST (CGST) @ 9%: ₹{((Number(selectedInvoice.total) * 0.09) / 1.18).toFixed(2)}</div>
+                      <div>State GST (SGST) @ 9%: ₹{((Number(selectedInvoice.total) * 0.09) / 1.18).toFixed(2)}</div>
+                      <div>Total Tax (18% GST): ₹{selectedInvoice.taxAmount || ((Number(selectedInvoice.total) * 0.18) / 1.18).toFixed(2)}</div>
+                    </>
+                  )}
                 </div>
 
                 <div className="w-full sm:w-64 space-y-1.5 font-mono text-xs">
                   <div className="flex justify-between text-neutral-600">
                     <span>Taxable Amount:</span>
-                    <span>₹{(Number(selectedInvoice.total) / 1.18).toFixed(2)}</span>
+                    <span>
+                      {normalizeCurrency(selectedInvoice.currency) === "USD"
+                        ? `$${Number(selectedInvoice.total).toFixed(2)}`
+                        : `₹${(Number(selectedInvoice.total) / 1.18).toFixed(2)}`}
+                    </span>
                   </div>
                   <div className="flex justify-between text-neutral-600">
-                    <span>Total GST (18%):</span>
-                    <span>₹{selectedInvoice.taxAmount || ((Number(selectedInvoice.total) * 0.18) / 1.18).toFixed(2)}</span>
+                    <span>Total GST:</span>
+                    <span>
+                      {normalizeCurrency(selectedInvoice.currency) === "USD"
+                        ? "$0.00"
+                        : `₹${selectedInvoice.taxAmount || ((Number(selectedInvoice.total) * 0.18) / 1.18).toFixed(2)}`}
+                    </span>
                   </div>
                   <div className="border-t border-neutral-300 pt-1.5 flex justify-between font-bold text-base text-neutral-900">
                     <span>Invoice Total:</span>
-                    <span className="text-emerald-700">₹{Number(selectedInvoice.total).toFixed(2)}</span>
+                    <span className="text-emerald-700">
+                      {normalizeCurrency(selectedInvoice.currency) === "USD"
+                        ? `$${Number(selectedInvoice.total).toFixed(2)}`
+                        : `₹${Number(selectedInvoice.total).toFixed(2)}`}
+                    </span>
                   </div>
                 </div>
               </div>

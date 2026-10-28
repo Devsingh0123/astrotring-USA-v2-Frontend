@@ -112,8 +112,8 @@ export default function MeloohaTimePicker({
           type="button"
           disabled={disabled}
           className={cn(
-            "w-full rounded-2xl border border-white/10 bg-[#1a1424] px-4 py-3 text-xs sm:text-sm text-left transition-all cursor-pointer flex items-center justify-between group outline-none",
-            "focus-visible:ring-1 focus-visible:ring-[#b32b6e] focus-visible:border-[#b32b6e] hover:border-white/20",
+            "w-full rounded-xl border border-border/80 bg-accent/40 px-3.5 py-2.5 text-xs sm:text-sm text-left transition-all cursor-pointer flex items-center justify-between group outline-none",
+            "focus-visible:border-primary hover:border-primary/50 hover:bg-accent/60",
             disabled && "opacity-40 cursor-not-allowed pointer-events-none",
             className
           )}
@@ -122,13 +122,13 @@ export default function MeloohaTimePicker({
             <span
               className={cn(
                 "truncate font-medium",
-                !displayText ? "text-white/40" : "text-white"
+                !displayText ? "text-muted-foreground" : "text-foreground"
               )}
             >
               {displayText || placeholder}
             </span>
           </div>
-          <Clock className="w-4 h-4 text-white/40 group-hover:text-white/70 transition-colors shrink-0 ml-2" />
+          <Clock className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0 ml-2" />
         </button>
       </PopoverTrigger>
 
@@ -136,10 +136,10 @@ export default function MeloohaTimePicker({
         align="start"
         sideOffset={6}
         collisionPadding={12}
-        className="w-56 p-2 border border-white/15 bg-[#161224] shadow-2xl rounded-2xl backdrop-blur-xl text-white select-none overflow-hidden"
+        className="w-56 p-2 border border-border/80 bg-card/95 shadow-2xl rounded-2xl backdrop-blur-2xl text-foreground select-none overflow-hidden"
       >
         {/* Clean 3-Column Time Picker: [Hour] | [Minute] | [AM/PM] */}
-        <div className="flex divide-x divide-white/10 h-48">
+        <div className="flex divide-x divide-border/80 h-48">
           {/* Column 1: Hour (01 to 12) */}
           <div
             ref={hourRef}
@@ -156,8 +156,8 @@ export default function MeloohaTimePicker({
                   className={cn(
                     "w-full h-8 rounded-lg text-xs font-mono font-medium flex items-center justify-center transition-all cursor-pointer",
                     isSelected
-                      ? "bg-[#ff7010] text-white font-bold shadow-sm"
-                      : "text-white/70 hover:bg-white/10 hover:text-white"
+                      ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                      : "text-foreground/70 hover:bg-accent hover:text-foreground"
                   )}
                 >
                   {h}
@@ -182,8 +182,8 @@ export default function MeloohaTimePicker({
                   className={cn(
                     "w-full h-8 rounded-lg text-xs font-mono font-medium flex items-center justify-center transition-all cursor-pointer",
                     isSelected
-                      ? "bg-[#ff7010] text-white font-bold shadow-sm"
-                      : "text-white/70 hover:bg-white/10 hover:text-white"
+                      ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                      : "text-foreground/70 hover:bg-accent hover:text-foreground"
                   )}
                 >
                   {m}
@@ -204,8 +204,8 @@ export default function MeloohaTimePicker({
                   className={cn(
                     "w-full h-9 rounded-lg text-xs font-semibold flex items-center justify-center transition-all cursor-pointer",
                     isSelected
-                      ? "bg-[#ff7010] text-white font-bold shadow-sm"
-                      : "text-white/60 hover:bg-white/10 hover:text-white"
+                      ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
                   )}
                 >
                   {p}
@@ -216,8 +216,8 @@ export default function MeloohaTimePicker({
         </div>
 
         {/* Footer: Done button */}
-        <div className="pt-2 px-1 border-t border-white/10 flex items-center justify-between">
-          <span className="text-[11px] font-mono text-white/50 pl-1">
+        <div className="pt-2 px-1 border-t border-border/80 flex items-center justify-between">
+          <span className="text-[11px] font-mono text-muted-foreground pl-1">
             {selectedHour}:{selectedMinute} {selectedPeriod}
           </span>
           <button
@@ -226,7 +226,7 @@ export default function MeloohaTimePicker({
               commit(selectedHour, selectedMinute, selectedPeriod)
               setOpen(false)
             }}
-            className="px-3.5 py-1 text-xs font-semibold rounded-lg bg-[#b32b6e] hover:bg-[#c23277] text-white shadow-sm transition-colors cursor-pointer"
+            className="px-3.5 py-1 text-xs font-semibold rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-colors cursor-pointer"
           >
             Done
           </button>

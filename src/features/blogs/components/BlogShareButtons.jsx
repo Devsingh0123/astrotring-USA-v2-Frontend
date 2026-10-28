@@ -52,8 +52,8 @@ export default function BlogShareButtons({ title, url }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-xs font-mono text-mlh-faint uppercase tracking-wider flex items-center gap-1.5 mr-1">
-        <Share2 className="w-3.5 h-3.5 text-mlh-plum-300" />
+      <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mr-1">
+        <Share2 className="w-3.5 h-3.5 text-primary" />
         <span>Share:</span>
       </span>
 
@@ -61,18 +61,18 @@ export default function BlogShareButtons({ title, url }) {
       <button
         type="button"
         onClick={handleCopyLink}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+        className="inline-flex items-center gap-1.5 rounded-lg border border-border/80 bg-card/80 px-2.5 py-1.5 text-xs text-foreground hover:bg-accent transition-colors cursor-pointer glass-card shadow-xs"
         title="Copy article link"
       >
         {copied ? (
           <>
-            <Check className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-emerald-400 font-mono text-[11px]">Copied</span>
+            <Check className="w-3.5 h-3.5 text-emerald-500" />
+            <span className="text-emerald-500 font-mono text-[11px] font-semibold">Copied</span>
           </>
         ) : (
           <>
-            <Link2 className="w-3.5 h-3.5 text-white/60" />
-            <span className="font-mono text-[11px]">Copy Link</span>
+            <Link2 className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="font-mono text-[11px] text-muted-foreground">Copy Link</span>
           </>
         )}
       </button>
@@ -85,7 +85,7 @@ export default function BlogShareButtons({ title, url }) {
           target="_blank"
           rel="noopener noreferrer"
           title={`Share on ${s.name}`}
-          className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-xs font-mono font-bold text-white/70 hover:text-white hover:bg-white/10 hover:border-mlh-plum-400/40 transition-colors"
+          className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-border/80 bg-card/80 text-xs font-mono font-bold text-muted-foreground hover:text-foreground hover:bg-accent hover:border-primary/40 transition-colors glass-card shadow-xs"
         >
           {s.icon}
         </a>

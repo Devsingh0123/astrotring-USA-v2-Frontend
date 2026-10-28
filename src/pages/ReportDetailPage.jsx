@@ -170,7 +170,7 @@ export default function ReportDetailPage() {
     "Synthesizing foundational chapters and divisional analysis..."
 
   return (
-    <div className="flex-1 flex flex-col justify-between min-h-screen bg-[#031d2e] text-foreground">
+    <div className="flex-1 flex flex-col justify-between min-h-screen bg-transparent text-foreground">
       <div className="w-full max-w-4xl mx-auto px-4 py-8 sm:py-12 space-y-10">
         {/* Navigation Breadcrumb */}
         <Link

@@ -53,11 +53,12 @@ export const openRazorpayCheckout = ({
 
   // Razorpay expects amount in smallest currency subunit (paise/cents)
   const finalSubunits = amountSubunits || Math.round(Number(amount || 0) * 100);
+  const safeCurrency = String(currency || "INR").trim().toUpperCase() === "USD" ? "USD" : "INR";
 
   const options = {
     key: activeKey,
     amount: finalSubunits,
-    currency,
+    currency: safeCurrency,
     name,
     description,
     image,

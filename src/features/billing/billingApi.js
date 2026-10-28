@@ -1,29 +1,33 @@
 import apiClient from "@/lib/api-client";
+import { normalizeCurrency } from "@/lib/utils";
 
 /**
- * Fetch packages & coupons catalog from backend
- * @param {string} currency - e.g. "INR", "USD"
+ * Fetch packages & coupons catalog from backend (strictly INR or USD)
+ * @param {string} currency - "INR" | "USD"
  */
 export const fetchBillingCatalog = async (currency = "INR") => {
-  const response = await apiClient.get(`/billing/packs?currency=${currency}`);
+  const safeCurrency = normalizeCurrency(currency);
+  const response = await apiClient.get(`/billing/packs?currency=${safeCurrency}`);
   return response.data;
 };
 
 /**
  * Validate a promo coupon and preview GST breakdown
  */
-export const validateCoupon = async ({ packId, couponCode, currency = "INR", billingState = "Delhi" }) => {
+export const validateCoupon = async ({ packId, couponCode, currency = "INR", billingState }) => {
+  const safeCurrency = normalizeCurrency(currency);
+  const safeState = billingState || (safeCurrency === "USD" ? "International" : "Delhi");
   const response = await apiClient.post("/billing/validate-coupon", {
     packId,
     couponCode,
-    currency,
-    billingState,
+    currency: safeCurrency,
+    billingState: safeState,
   });
   return response.data;
 };
 
 /**
- * Create a real Razorpay Order on the backend
+ * Create a real Razorpay Order on the backend (strictly INR or USD)
  * Returns { orderId, keyId, amount, amountSubunits, currency, ... }
  */
 export const createRazorpayOrder = async ({
@@ -31,14 +35,16 @@ export const createRazorpayOrder = async ({
   itemType = "questions",
   currency = "INR",
   couponCode = "",
-  billingState = "Delhi",
+  billingState,
 }) => {
+  const safeCurrency = normalizeCurrency(currency);
+  const safeState = billingState || (safeCurrency === "USD" ? "International" : "Delhi");
   const response = await apiClient.post("/billing/create-order", {
     packId,
     itemType,
-    currency,
+    currency: safeCurrency,
     couponCode,
-    billingState,
+    billingState: safeState,
   });
   return response.data;
 };

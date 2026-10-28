@@ -272,7 +272,7 @@ export default function ArthaSutramPage() {
   const selectedChapter = SAMPLE_CHAPTERS.find((c) => c.id === activeTab) || SAMPLE_CHAPTERS[0]
 
   return (
-    <div className="flex-1 flex flex-col justify-between min-h-screen bg-[#0a070e] text-foreground relative overflow-hidden">
+    <div className="flex-1 flex flex-col justify-between min-h-screen bg-transparent text-foreground relative overflow-hidden">
       {/* Background ambient gold/amber aura */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-amber-500/10 via-mlh-plum/5 to-transparent blur-3xl pointer-events-none" />
 

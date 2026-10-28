@@ -85,7 +85,7 @@ export default function CalculatorRunnerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d0914] text-foreground flex flex-col justify-between">
+    <div className="min-h-screen bg-transparent text-foreground flex flex-col justify-between">
       <Helmet>
         <title>{currentCalc.title} | AstroTring Vedic Calculators</title>
         <meta name="description" content={currentCalc.desc} />

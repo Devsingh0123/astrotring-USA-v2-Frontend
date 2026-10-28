@@ -33,13 +33,13 @@ function formatDegree(degree) {
 
 export default function PlanetaryTable({ chartData = {} }) {
   return (
-    <div className="rounded-2xl border border-mlh-border/80 bg-mlh-surface/80 backdrop-blur-md overflow-hidden shadow-xl shadow-black/20">
-      <div className="px-5 py-4 border-b border-mlh-border/60 flex items-center justify-between">
+    <div className="glass-card rounded-2xl border border-border/70 overflow-hidden shadow-xl">
+      <div className="px-5 py-4 border-b border-border/60 flex items-center justify-between">
         <div>
-          <h3 className="text-base font-heading font-medium text-mlh-text-hi">
+          <h3 className="text-base font-serif font-medium text-foreground">
             Planetary Positions (Graha Sphutas)
           </h3>
-          <p className="text-xs text-mlh-muted font-mono">
+          <p className="text-xs text-muted-foreground font-mono">
             Nirayana (Sidereal) Zodiac · Lahiri Ayanamsha
           </p>
         </div>
@@ -47,27 +47,27 @@ export default function PlanetaryTable({ chartData = {} }) {
 
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="bg-mlh-bg/60">
-            <TableRow className="border-mlh-border/60 hover:bg-transparent">
-              <TableHead className="text-[11px] font-mono tracking-wider text-mlh-muted uppercase py-3">
+          <TableHeader className="bg-accent/30">
+            <TableRow className="border-border/60 hover:bg-transparent">
+              <TableHead className="text-[11px] font-mono tracking-wider text-muted-foreground uppercase py-3">
                 Planet
               </TableHead>
-              <TableHead className="text-[11px] font-mono tracking-wider text-mlh-muted uppercase">
+              <TableHead className="text-[11px] font-mono tracking-wider text-muted-foreground uppercase">
                 Sign (Rashi)
               </TableHead>
-              <TableHead className="text-[11px] font-mono tracking-wider text-mlh-muted uppercase">
+              <TableHead className="text-[11px] font-mono tracking-wider text-muted-foreground uppercase">
                 Degree
               </TableHead>
-              <TableHead className="text-[11px] font-mono tracking-wider text-mlh-muted uppercase">
+              <TableHead className="text-[11px] font-mono tracking-wider text-muted-foreground uppercase">
                 Nakshatra
               </TableHead>
-              <TableHead className="text-[11px] font-mono tracking-wider text-mlh-muted uppercase">
+              <TableHead className="text-[11px] font-mono tracking-wider text-muted-foreground uppercase">
                 Pada
               </TableHead>
-              <TableHead className="text-[11px] font-mono tracking-wider text-mlh-muted uppercase">
+              <TableHead className="text-[11px] font-mono tracking-wider text-muted-foreground uppercase">
                 Lord
               </TableHead>
-              <TableHead className="text-[11px] font-mono tracking-wider text-mlh-muted uppercase text-right">
+              <TableHead className="text-[11px] font-mono tracking-wider text-muted-foreground uppercase text-right">
                 Motion
               </TableHead>
             </TableRow>
@@ -83,50 +83,50 @@ export default function PlanetaryTable({ chartData = {} }) {
               return (
                 <TableRow
                   key={key}
-                  className="border-mlh-border/40 hover:bg-mlh-bg/40 transition-colors"
+                  className="border-border/40 hover:bg-accent/40 transition-colors"
                 >
-                  <TableCell className="py-3 font-medium text-sm text-mlh-text-hi">
+                  <TableCell className="py-3 font-medium text-sm text-foreground">
                     <div className="flex items-center gap-2">
-                      <span className="text-base text-mlh-amber w-4 text-center font-serif">
+                      <span className="text-base text-primary w-4 text-center font-serif">
                         {glyph}
                       </span>
                       <span>{label}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm font-medium text-mlh-text">
+                  <TableCell className="text-sm font-medium text-foreground">
                     {data.sign || "—"}
                   </TableCell>
-                  <TableCell className="text-xs font-mono text-mlh-text-hi">
+                  <TableCell className="text-xs font-mono text-foreground font-medium">
                     {formatDegree(data.longitude)}
                   </TableCell>
-                  <TableCell className="text-xs text-mlh-text">
+                  <TableCell className="text-xs text-foreground/80">
                     {data.nakshatra || "—"}
                   </TableCell>
-                  <TableCell className="text-xs font-mono text-mlh-amber font-semibold">
+                  <TableCell className="text-xs font-mono text-primary font-semibold">
                     {data.pada || "—"}
                   </TableCell>
-                  <TableCell className="text-xs text-mlh-muted">
+                  <TableCell className="text-xs text-muted-foreground">
                     {data.sign_lord || data.nakshatra_lord || "—"}
                   </TableCell>
                   <TableCell className="text-right">
                     {isAsc ? (
                       <Badge
                         variant="outline"
-                        className="border-mlh-amber/40 text-mlh-amber bg-mlh-amber/10 text-[10px] font-mono"
+                        className="border-primary/40 text-primary bg-primary/10 text-[10px] font-mono font-medium"
                       >
                         LAGNA
                       </Badge>
                     ) : isRetro ? (
                       <Badge
                         variant="outline"
-                        className="border-amber-500/40 text-amber-400 bg-amber-500/10 text-[10px] font-mono"
+                        className="border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10 text-[10px] font-mono font-medium"
                       >
                         RETRO (R)
                       </Badge>
                     ) : (
                       <Badge
                         variant="outline"
-                        className="border-mlh-border text-mlh-muted text-[10px] font-mono"
+                        className="border-border text-muted-foreground text-[10px] font-mono"
                       >
                         DIRECT
                       </Badge>

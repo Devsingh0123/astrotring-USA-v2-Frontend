@@ -78,122 +78,174 @@
 
 /* ==========================================================================
    LIGHT MODE TOKENS (:root)
-   Clean solar celestial with amber-orange accents
+   Exact match to https://jagannathahora.com/api-mcp
    ========================================================================== */
 :root {
-  /* Shadcn / Core Semantic Mappings */
-  --background: #f4f8fb;
-  --foreground: #031d2e;
+  /* Exact extracted variables from jagannathahora.com */
+  --color-background: #f3f4f6;
+  --color-background-gradient-from: #fff;
+  --color-background-gradient-via: #f9fafb;
+  --color-background-gradient-to: #f3f4f6;
+  --color-foreground: #111827;
+  --color-card: #fff;
+  --color-card-gradient-from: #fffffff2;
+  --color-card-gradient-to: #f9fafbe6;
+  --color-border: #e5e7eb;
+  --color-muted: #9ca3af;
+  --color-accent: #f9fafb;
+  --color-table-rule: #6b7280;
+  --color-warning: #b45309;
+  --color-danger: #dc2626;
+  --color-link: #1d4ed8;
+  --color-focus-ring: #2563eb;
+  --color-success: #047857;
+  --color-scrim: #000000b3;
+  --toast-fg: #fff;
+  --toast-success-bg: #047857;
+  --toast-error-bg: #b91c1c;
+  --toast-info-bg: #1d4ed8;
+  --shadow-button: 0 2px 8px #00000026;
+  --nav-gradient-from: #fff;
+  --nav-gradient-via: #f3f4f6;
+  --nav-gradient-to: #e5e7eb;
+  --button-gradient-from: #2563eb;
+  --button-gradient-via: #3b82f6;
+  --button-gradient-to: #60a5fa;
+  --button-gradient: linear-gradient(150deg, #2563eb 0%, #1d4ed8 100%);
+  --button-fg: #fff;
+
+  /* Shadcn / Semantic Mappings (Light) */
+  --background: #f3f4f6;
+  --foreground: #111827;
   --card: #ffffff;
-  --card-foreground: #031d2e;
+  --card-foreground: #111827;
   --popover: #ffffff;
-  --popover-foreground: #031d2e;
-  --primary: #ff7010;
+  --popover-foreground: #111827;
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --secondary: #e5f0f5;
-  --secondary-foreground: #031d2e;
-  --muted: #e5f0f5;
-  --muted-foreground: #5d7785;
-  --accent: #e5f0f5;
-  --accent-foreground: #ff7010;
-  --destructive: #ef4444;
+  --secondary: #e5e7eb;
+  --secondary-foreground: #111827;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #f9fafb;
+  --accent-foreground: #111827;
+  --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: #d0e0eb;
-  --input: #d0e0eb;
-  --ring: #ff7010;
-  --radius: 0.625rem;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #2563eb;
+  --radius: 0.75rem;
 
-  /* Surfaces (Light Canvas) */
-  --mlh-bg: #f4f8fb;
-  --mlh-sidebar: #ebf3f7;
+  /* Surfaces & Accents */
+  --mlh-bg: #f3f4f6;
+  --mlh-sidebar: #ffffff;
   --mlh-surface: #ffffff;
-  --mlh-surface-hi: #f0f6fa;
-  --mlh-border: #d0e0eb;
-  --mlh-border-hi: #bcd2e0;
+  --mlh-surface-hi: #f9fafb;
+  --mlh-border: #e5e7eb;
+  --mlh-border-hi: #d1d5db;
 
-  /* Brand Solar Orange Hierarchy */
-  --mlh-plum-800: #8a3600;
-  --mlh-plum: #ff7010;
-  --mlh-plum-500: #ff852e;
-  --mlh-plum-400: #ff9b52;
-  --mlh-plum-300: #ffbd8a;
-  --mlh-plum-100: #fff0e6;
+  /* Brand Accents */
+  --mlh-plum-800: #1e40af;
+  --mlh-plum: #2563eb;
+  --mlh-plum-500: #3b82f6;
+  --mlh-plum-400: #60a5fa;
+  --mlh-plum-300: #93c5fd;
+  --mlh-plum-100: #dbeafe;
 
-  /* Celestial & Functional Accents */
   --mlh-amber: #f59e0b;
   --mlh-orrery: #ff7010;
   --mlh-orrery-hi: #ff9b52;
-  --mlh-iris: #38bdf8;
-  --mlh-iris-hi: #7dd3fc;
-  --mlh-iris-ink: #031826;
-  --mlh-success: #10b981;
-  --mlh-danger: #ef4444;
+  --mlh-iris: #3b82f6;
+  --mlh-iris-hi: #60a5fa;
+  --mlh-iris-ink: #111827;
+  --mlh-success: #047857;
+  --mlh-danger: #dc2626;
 
   /* Text Hierarchy */
-  --mlh-text-hi: #02121d;
-  --mlh-text: #042439;
-  --mlh-muted: #5d7785;
-  --mlh-faint: #8ba2b0;
+  --mlh-text-hi: #111827;
+  --mlh-text: #1f2937;
+  --mlh-muted: #6b7280;
+  --mlh-faint: #9ca3af;
 }
 
 /* ==========================================================================
    DARK MODE TOKENS (.dark)
-   Exact match to https://horoscopes.today/
-   Clean, Premium, Deep Cosmic Midnight Navy & Vibrant Solar Orange
+   Exact match to https://jagannathahora.com/api-mcp
    ========================================================================== */
 .dark {
-  /* Shadcn / Core Semantic Mappings */
-  --background: #031d2e;
-  --foreground: #e5f0f5;
-  --card: #07273c;
-  --card-foreground: #e5f0f5;
-  --popover: #07273c;
+  /* Exact extracted variables from jagannathahora.com */
+  --color-background: #1f2937;
+  --color-background-gradient-from: #1f2937;
+  --color-background-gradient-via: #1f2937;
+  --color-background-gradient-to: #1f2937;
+  --color-foreground: #f9fafb;
+  --color-card: #1a1f2e;
+  --color-card-gradient-from: #1a1f2ef2;
+  --color-card-gradient-to: #1e293be6;
+  --color-border: #2d3748;
+  --color-muted: #6b7280;
+  --color-accent: #252b3b;
+  --color-warning: #f59e0b;
+  --color-danger: #f87171;
+  --color-link: #60a5fa;
+  --color-focus-ring: #93c5fd;
+  --color-success: #34d399;
+  --nav-gradient-from: #1f2937;
+  --nav-gradient-via: #111827;
+  --nav-gradient-to: #0f172a;
+  --button-gradient: #185abc;
+
+  /* Shadcn / Semantic Mappings (Dark) */
+  --background: #1f2937;
+  --foreground: #f9fafb;
+  --card: #1a1f2e;
+  --card-foreground: #f9fafb;
+  --popover: #1a1f2e;
   --popover-foreground: #ffffff;
-  --primary: #ff7010;
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --secondary: #0e344d;
-  --secondary-foreground: #e5f0f5;
-  --muted: #0e344d;
-  --muted-foreground: #9ab3c0;
-  --accent: #17384e;
-  --accent-foreground: #ffffff;
-  --destructive: #ef4444;
+  --secondary: #252b3b;
+  --secondary-foreground: #f9fafb;
+  --muted: #252b3b;
+  --muted-foreground: #9ca3af;
+  --accent: #252b3b;
+  --accent-foreground: #f9fafb;
+  --destructive: #f87171;
   --destructive-foreground: #ffffff;
-  --border: #17384e;
-  --input: #17384e;
-  --ring: #ff7010;
+  --border: #2d3748;
+  --input: #2d3748;
+  --ring: #2563eb;
 
-  /* AstroTring Surfaces (Deep Cosmic Midnight Navy) */
-  --mlh-bg: #031d2e;
-  --mlh-sidebar: #041826;
-  --mlh-surface: #07273c;
-  --mlh-surface-hi: #0e344d;
-  --mlh-border: #17384e;
-  --mlh-border-hi: #234966;
+  /* Surfaces & Accents */
+  --mlh-bg: #1f2937;
+  --mlh-sidebar: #111827;
+  --mlh-surface: #1a1f2e;
+  --mlh-surface-hi: #252b3b;
+  --mlh-border: #2d3748;
+  --mlh-border-hi: #374151;
 
-  /* Brand Solar Orange Hierarchy (replacing legacy plum) */
-  --mlh-plum-800: #8a3600;
-  --mlh-plum: #ff7010;
-  --mlh-plum-500: #ff852e;
-  --mlh-plum-400: #ff9b52;
-  --mlh-plum-300: #ffbd8a;
-  --mlh-plum-100: #fff0e6;
+  /* Brand Accents */
+  --mlh-plum-800: #1e40af;
+  --mlh-plum: #3b82f6;
+  --mlh-plum-500: #60a5fa;
+  --mlh-plum-400: #93c5fd;
+  --mlh-plum-300: #bfdbfe;
+  --mlh-plum-100: #eff6ff;
 
-  /* Celestial & Functional Accents */
   --mlh-amber: #f59e0b;
   --mlh-orrery: #ff7010;
   --mlh-orrery-hi: #ff9b52;
-  --mlh-iris: #38bdf8;
-  --mlh-iris-hi: #7dd3fc;
-  --mlh-iris-ink: #041826;
-  --mlh-success: #10b981;
-  --mlh-danger: #ef4444;
+  --mlh-iris: #60a5fa;
+  --mlh-iris-hi: #93c5fd;
+  --mlh-iris-ink: #0f172a;
+  --mlh-success: #34d399;
+  --mlh-danger: #f87171;
 
   /* Text Hierarchy */
   --mlh-text-hi: #ffffff;
-  --mlh-text: #e5f0f5;
-  --mlh-muted: #9ab3c0;
-  --mlh-faint: #5d7785;
+  --mlh-text: #f9fafb;
+  --mlh-muted: #9ca3af;
+  --mlh-faint: #6b7280;
 }
 
 /* Base DOM Defaults */
@@ -202,21 +254,64 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased transition-colors duration-200;
   }
   h1, h2, h3, h4 {
     @apply font-heading tracking-tight;
   }
 }
 
-/* Glassmorphism & Solar Glow Utilities */
+/* Jagannatha Hora Ambient Aura Background */
+.bg-jagannatha-aura {
+  background-color: var(--background);
+  background-image: radial-gradient(circle at 50% -10%, rgba(99, 102, 241, 0.14) 0%, rgba(99, 102, 241, 0.03) 40%, transparent 65%);
+}
+
+.dark .bg-jagannatha-aura {
+  background-color: var(--background);
+  background-image: radial-gradient(circle at 50% -10%, rgba(37, 99, 235, 0.18) 0%, rgba(30, 58, 138, 0.06) 45%, transparent 70%);
+}
+
+/* Glassmorphism Styling matching https://jagannathahora.com/api-mcp */
+.glass-card {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(229, 231, 235, 0.85);
+  box-shadow: rgba(99, 102, 241, 0.12) 0px 10px 30px -5px, rgba(0, 0, 0, 0.04) 0px 4px 6px -2px;
+}
+
+.dark .glass-card {
+  background: rgba(26, 31, 46, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: rgba(0, 0, 0, 0.45) 0px 16px 40px -5px, rgba(37, 99, 235, 0.08) 0px 0px 25px;
+}
+
+@media (max-width: 768px) {
+  .glass-card {
+    box-shadow: rgba(99, 102, 241, 0.1) 0px 6px 18px;
+  }
+  .dark .glass-card {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 6px 16px -2px;
+  }
+}
+
 .mlh-card-glass {
-  background: color-mix(in srgb, var(--mlh-surface) 92%, transparent);
-  border: 1px solid var(--mlh-border);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  border: 1px solid var(--border);
+  box-shadow: 
+    0px 10px 25px -3px rgba(0, 0, 0, 0.1),
+    0px 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.dark .mlh-card-glass {
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 
     0px 22px 60px 0px rgba(0, 0, 0, 0.55),
-    0px 0px 48px 0px rgba(255, 112, 16, 0.22),
+    0px 0px 48px 0px rgba(37, 99, 235, 0.22),
     inset 0px 1px 0px 0px rgba(255, 255, 255, 0.08);
 }
 

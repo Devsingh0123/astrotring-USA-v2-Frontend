@@ -23,7 +23,7 @@ export default function BlogCategoryPills({
           type="button"
           onClick={() => handleScroll("left")}
           aria-label="Scroll categories left"
-          className="w-7 h-7 rounded-full bg-[#1b1219] border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-colors shadow-md cursor-pointer"
+          className="w-7 h-7 rounded-full bg-card/90 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors shadow-md cursor-pointer backdrop-blur-md"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -34,7 +34,7 @@ export default function BlogCategoryPills({
           type="button"
           onClick={() => handleScroll("right")}
           aria-label="Scroll categories right"
-          className="w-7 h-7 rounded-full bg-[#1b1219] border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-colors shadow-md cursor-pointer"
+          className="w-7 h-7 rounded-full bg-card/90 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors shadow-md cursor-pointer backdrop-blur-md"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
@@ -58,8 +58,8 @@ export default function BlogCategoryPills({
               onClick={() => onSelectCategory(cat.id)}
               className={`shrink-0 flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium transition-all duration-200 cursor-pointer ${
                 isActive
-                  ? "bg-gradient-to-r from-mlh-plum-500 to-mlh-plum text-white border border-mlh-plum-400/60 shadow-[0_0_18px_rgba(129,23,86,0.45)]"
-                  : "bg-white/[0.04] text-white/70 hover:text-white hover:bg-white/[0.08] border border-white/5"
+                  ? "bg-primary text-primary-foreground font-semibold shadow-xs"
+                  : "bg-accent/40 text-muted-foreground hover:text-foreground hover:bg-accent border border-border/70"
               }`}
             >
               <span>{cat.name}</span>
@@ -67,8 +67,8 @@ export default function BlogCategoryPills({
                 <span
                   className={`inline-flex items-center justify-center rounded-full text-[10px] font-mono px-1.5 py-0.2 ${
                     isActive
-                      ? "bg-white/20 text-white"
-                      : "bg-white/5 text-mlh-faint"
+                      ? "bg-primary-foreground/20 text-primary-foreground"
+                      : "bg-accent text-muted-foreground"
                   }`}
                 >
                   {cat.count}
