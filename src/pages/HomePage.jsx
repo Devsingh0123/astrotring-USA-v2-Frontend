@@ -2,7 +2,6 @@ import { useEffect } from "react"
 import { useOutletContext } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
-import ZodiacWheelBackground from "@/components/sections/ZodiacWheelBackground"
 import HeroChatInput from "@/components/sections/HeroChatInput"
 import JyotishChatConversation from "@/features/jyotish/components/JyotishChatConversation"
 import Footer from "@/components/layout/Footer"
@@ -55,8 +54,6 @@ export default function HomePage() {
           >
             {/* Hero Section with Cosmic Wheel & Input - Full viewport height */}
             <div className="relative flex flex-col items-center justify-center px-4 sm:px-8 py-10 sm:py-16 w-full min-h-[calc(100dvh-3.5rem)] md:min-h-screen">
-              {/* Background Concentric Dial */}
-              <ZodiacWheelBackground />
 
               {/* Hero Form & 4 Example Cards */}
               <HeroChatInput

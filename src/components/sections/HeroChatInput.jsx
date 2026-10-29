@@ -225,14 +225,14 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
 
   return (
     <div className="shrink-0 w-full max-w-[820px] flex flex-col items-center justify-center relative z-10 mx-auto">
-      {/* Central Heading matching Jagannatha Hora */}
+      {/* Central Hero Heading */}
       <motion.h1
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
         className="font-sans font-bold text-foreground text-[30px] sm:text-[38px] tracking-tight leading-[1.15] text-center mb-6 sm:mb-8 transition-colors"
       >
-        What do you want to know?
+        What’s on your mind?
       </motion.h1>
 
       {/* Main Glassmorphic Chat Input Card - Exactly matching conversation composer */}
