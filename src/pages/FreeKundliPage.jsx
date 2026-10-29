@@ -84,7 +84,7 @@ export default function FreeKundliPage() {
           category="BIRTH CHART"
           updatedDate="21 JUL 2026"
           title="Free Kundli Maker"
-          icon="/calculators/free-kundli-maker.png"
+          toolId="free-kundli-maker"
           subtitle="A Kundli, or Janam Kundali, is a birth chart mapping the position of the planets, Sun and Moon across the twelve houses at your moment of birth. AstroTring generates it free using Swiss Ephemeris data, giving you your ascendant, planetary placements, Vimshottari Dasha periods and active yogas in seconds."
           reviewerName="Dr. Vineeta Chandrashekhar Phatak"
           reviewerTitle="CHIEF ASTROLOGER · ASTROTRING"
@@ -103,23 +103,23 @@ export default function FreeKundliPage() {
 
             {/* Error Notice (Matching Melooha's exact copy) */}
             {!isLoading && hasFailed && (
-              <div className="p-6 rounded-2xl border border-mlh-danger/40 bg-mlh-surface/60 text-left space-y-2">
-                <div className="flex items-center gap-2 text-mlh-danger font-serif text-base font-medium">
+              <div className="p-6 rounded-2xl border border-destructive/30 bg-destructive/10 text-left space-y-2">
+                <div className="flex items-center gap-2 text-destructive font-serif text-base font-medium">
                   <AlertCircle className="w-5 h-5 shrink-0" />
                   <span>That calculation did not come back.</span>
                 </div>
-                <p className="text-sm text-mlh-muted leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Check the date, time and place, then run it again.
                 </p>
                 {error && (
-                  <p className="text-xs font-mono text-mlh-faint mt-1">
+                  <p className="text-xs font-mono text-muted-foreground/80 mt-1">
                     Detail: {error}
                   </p>
                 )}
                 <button
                   type="button"
                   onClick={() => dispatch(calculateKundli(lastInput || {}))}
-                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-mlh-border hover:border-mlh-plum-400 text-xs font-sans text-white transition"
+                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-border/80 glass-card bg-card/60 hover:bg-accent/40 text-xs font-sans text-foreground transition cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Try again</span>
@@ -129,15 +129,15 @@ export default function FreeKundliPage() {
 
             {/* Loading Skeletons */}
             {isLoading && (
-              <div className="space-y-4 p-6 rounded-2xl border border-mlh-plum-500/20 bg-mlh-surface/40">
+              <div className="space-y-4 p-6 rounded-2xl border border-border/70 glass-card bg-card/60">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <Skeleton className="h-16 w-full bg-mlh-surface-hi rounded-xl" />
-                  <Skeleton className="h-16 w-full bg-mlh-surface-hi rounded-xl" />
-                  <Skeleton className="h-16 w-full bg-mlh-surface-hi rounded-xl" />
-                  <Skeleton className="h-16 w-full bg-mlh-surface-hi rounded-xl" />
+                  <Skeleton className="h-16 w-full bg-muted/60 rounded-xl" />
+                  <Skeleton className="h-16 w-full bg-muted/60 rounded-xl" />
+                  <Skeleton className="h-16 w-full bg-muted/60 rounded-xl" />
+                  <Skeleton className="h-16 w-full bg-muted/60 rounded-xl" />
                 </div>
                 <div className="flex justify-center py-6">
-                  <Skeleton className="h-[360px] w-full max-w-[400px] bg-mlh-surface-hi rounded-2xl" />
+                  <Skeleton className="h-[360px] w-full max-w-[400px] bg-muted/60 rounded-2xl" />
                 </div>
               </div>
             )}

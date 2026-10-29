@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import CalculatorIcon from "./CalculatorIcon";
 
 export const ALL_CALCULATORS = [
   {
@@ -8,7 +9,6 @@ export const ALL_CALCULATORS = [
     desc: "Full janam kundli: planets, houses, yogas and the Dasha tree, from a single moment.",
     tag: "Birth chart",
     path: "/calculators/free-kundli-maker",
-    image: "/calculators/free-kundli-maker.png",
   },
   {
     id: "shani-sade-sati",
@@ -16,7 +16,6 @@ export const ALL_CALCULATORS = [
     desc: "Whether Saturn is crossing your Moon, which of the three phases you are in, and when it lifts.",
     tag: "Dasha & transit",
     path: "/calculators/shani-sade-sati",
-    image: "/calculators/shani-sade-sati.png",
   },
   {
     id: "kundli-milan",
@@ -24,7 +23,6 @@ export const ALL_CALCULATORS = [
     desc: "Ashtakoot Guna Milan out of 36, with Nadi, Bhakoot and Mangal read separately.",
     tag: "Compatibility",
     path: "/calculators/kundli-milan",
-    image: "/calculators/kundli-milan.png",
   },
   {
     id: "mangal-dosha",
@@ -32,7 +30,6 @@ export const ALL_CALCULATORS = [
     desc: "Manglik status from the Lagna, Moon and Venus, plus every classical cancellation.",
     tag: "Doshas",
     path: "/calculators/mangal-dosha",
-    image: "/calculators/mangal-dosha.png",
   },
   {
     id: "vimshottari-dasha",
@@ -40,7 +37,6 @@ export const ALL_CALCULATORS = [
     desc: "The full 120-year cycle with Maha, Antar and Pratyantar periods, dated to the day.",
     tag: "Dasha & transit",
     path: "/calculators/vimshottari-dasha",
-    image: "/calculators/vimshottari-dasha.png",
   },
   {
     id: "ascendant-calculator",
@@ -48,7 +44,6 @@ export const ALL_CALCULATORS = [
     desc: "Your rising sign to the degree: the frame every house in the chart hangs from.",
     tag: "Birth chart",
     path: "/calculators/ascendant-calculator",
-    image: "/calculators/ascendant-calculator.png",
   },
   {
     id: "nakshatra-finder",
@@ -56,7 +51,6 @@ export const ALL_CALCULATORS = [
     desc: "Birth star, Pada, ruling planet and Gana: the lunar mansion behind your instincts.",
     tag: "Birth chart",
     path: "/calculators/nakshatra-finder",
-    image: "/calculators/nakshatra-finder.png",
   },
   {
     id: "moon-sign-calculator",
@@ -64,7 +58,6 @@ export const ALL_CALCULATORS = [
     desc: "Your Vedic Rashi, which every daily prediction and Sade Sati calculation is measured from.",
     tag: "Birth chart",
     path: "/calculators/moon-sign-calculator",
-    image: "/calculators/moon-sign-calculator.png",
   },
   {
     id: "kaal-sarp-dosha",
@@ -72,7 +65,6 @@ export const ALL_CALCULATORS = [
     desc: "Whether all seven planets fall between Rahu and Ketu, which of the twelve types, and its span.",
     tag: "Doshas",
     path: "/calculators/kaal-sarp-dosha",
-    image: "/calculators/kaal-sarp-dosha.png",
   },
   {
     id: "numerology-calculator",
@@ -80,7 +72,6 @@ export const ALL_CALCULATORS = [
     desc: "Life Path, Destiny and Name numbers from your birth date and the name you go by.",
     tag: "Numerology",
     path: "/calculators/numerology-calculator",
-    image: "/calculators/numerology-calculator.png",
   },
   {
     id: "ashtakavarga-calculator",
@@ -88,7 +79,6 @@ export const ALL_CALCULATORS = [
     desc: "Bindu counts per house and per planet: the numeric layer behind transit judgement.",
     tag: "Dasha & transit",
     path: "/calculators/ashtakavarga-calculator",
-    image: "/calculators/ashtakavarga-calculator.png",
   },
   {
     id: "gemstone-advisor",
@@ -96,7 +86,6 @@ export const ALL_CALCULATORS = [
     desc: "Which stone your chart supports for love, career and wealth, and how long the recommendation holds.",
     tag: "Remedies",
     path: "/calculators/gemstone-advisor",
-    image: "/calculators/gemstone-advisor.png",
   },
 ];
 
@@ -108,15 +97,7 @@ export function CalculatorCard({ item }) {
     >
       {/* Top Section: Plate Icon + Title */}
       <span className="mb-3.5 flex items-start gap-3.5">
-        <span className="border border-border/80 group-hover:border-primary/50 relative grid h-[42px] w-[42px] flex-none place-items-center overflow-hidden rounded-[12px] transition duration-200 bg-accent/40">
-          <img
-            alt={item.title}
-            src={item.image}
-            width="34"
-            height="34"
-            className="pointer-events-none object-contain select-none transition duration-200 ease-out group-hover:scale-110"
-          />
-        </span>
+        <CalculatorIcon toolId={item.id} size="sm" />
         <span className="line-clamp-2 min-w-0 flex-1 font-serif text-[19px] leading-[1.25] text-foreground sm:text-[20px] group-hover:text-primary transition-colors">
           {item.title}
         </span>

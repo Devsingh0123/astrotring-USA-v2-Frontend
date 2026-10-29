@@ -84,33 +84,33 @@ function PartnerInputCard({
 
   const isBoy = partnerType === "boy";
   const borderColor = isBoy
-    ? "focus-within:border-amber-400/50"
-    : "focus-within:border-mlh-plum-400/50";
+    ? "focus-within:border-amber-500/60"
+    : "focus-within:border-primary/60";
 
   return (
-    <div className="flex-1 rounded-2xl border border-white/10 bg-[#16121f]/80 backdrop-blur-xl p-5 sm:p-6 space-y-4 shadow-xl">
-      <div className="flex items-center justify-between pb-3 border-b border-white/10">
+    <div className="flex-1 rounded-2xl border border-border/80 glass-card bg-card/85 dark:bg-card/70 backdrop-blur-xl p-5 sm:p-6 space-y-4 shadow-md">
+      <div className="flex items-center justify-between pb-3 border-b border-border/60">
         <div>
           <div className="flex items-center gap-2">
             <span
               className={`w-2.5 h-2.5 rounded-full ${
-                isBoy ? "bg-amber-400" : "bg-mlh-plum-400"
+                isBoy ? "bg-amber-500" : "bg-primary"
               }`}
             />
-            <h3 className="text-base font-semibold text-white tracking-wide">
+            <h3 className="text-base font-semibold text-foreground tracking-wide font-serif">
               {title}
             </h3>
           </div>
-          <p className="text-[12px] text-mlh-muted mt-0.5">{subtitle}</p>
+          <p className="text-[12px] text-muted-foreground mt-0.5">{subtitle}</p>
         </div>
 
         {canAutoFill && onAutoFill && (
           <button
             type="button"
             onClick={onAutoFill}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/15 text-white/80 hover:text-white text-[11px] font-mono transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border/70 glass-card bg-card/60 hover:bg-accent/40 text-foreground text-[11px] font-mono transition-colors cursor-pointer"
           >
-            <Sparkles className="w-3 h-3 text-amber-300" />
+            <Sparkles className="w-3 h-3 text-amber-500 dark:text-amber-400" />
             <span>Use My Profile</span>
           </button>
         )}
@@ -119,51 +119,50 @@ function PartnerInputCard({
       <div className="space-y-3.5">
         {/* Name */}
         <div>
-          <label className="block text-[11px] font-mono uppercase tracking-wider text-mlh-muted mb-1">
+          <label className="block text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-1">
             Full Name
           </label>
           <div
-            className={`flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3.5 py-2.5 ${borderColor} transition-colors`}
+            className={`flex items-center gap-2 rounded-xl border border-border/80 bg-accent/30 dark:bg-accent/20 px-3.5 py-2.5 ${borderColor} transition-colors`}
           >
-            <User className="w-4 h-4 text-mlh-muted shrink-0" />
+            <User className="w-4 h-4 text-muted-foreground shrink-0" />
             <input
               type="text"
               required
               value={data.name}
               onChange={(e) => onChange({ name: e.target.value })}
               placeholder={isBoy ? "Groom's Name" : "Bride's Name"}
-              className="w-full bg-transparent text-sm text-white placeholder:text-white/30 outline-none"
+              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/60 outline-none"
             />
           </div>
         </div>
 
         {/* Date of Birth */}
         <div className="space-y-1">
-          <label className="block text-[11px] font-mono uppercase tracking-wider text-mlh-muted">
+          <label className="block text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
             Date of Birth *
           </label>
           <MeloohaDatePicker
             value={data.dob}
             onChange={(newDob) => onChange({ dob: newDob })}
             placeholder="Select date of birth"
-            className="bg-black/40 border-white/10"
           />
         </div>
 
         {/* Time of Birth */}
         <div className="space-y-1">
           <div className="flex items-center justify-between">
-            <label className="text-[11px] font-mono uppercase tracking-wider text-mlh-muted">
+            <label className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
               Time of Birth
             </label>
-            <label className="flex items-center gap-1.5 text-[11px] text-mlh-muted cursor-pointer hover:text-white transition">
+            <label className="flex items-center gap-1.5 text-[11px] text-muted-foreground cursor-pointer hover:text-foreground transition">
               <input
                 type="checkbox"
                 checked={data.isTimeUnknown}
                 onChange={(e) =>
                   onChange({ isTimeUnknown: e.target.checked })
                 }
-                className="w-3.5 h-3.5 rounded border-white/20 bg-black/50 accent-mlh-plum"
+                className="w-3.5 h-3.5 rounded border-border bg-accent/40 accent-primary"
               />
               <span>Time Unknown</span>
             </label>
@@ -173,19 +172,18 @@ function PartnerInputCard({
             onChange={(newTob) => onChange({ tob: newTob })}
             disabled={data.isTimeUnknown}
             placeholder="Select time of birth"
-            className="bg-black/40 border-white/10"
           />
         </div>
 
         {/* Location Autocomplete */}
         <div className="relative" ref={dropdownRef}>
-          <label className="block text-[11px] font-mono uppercase tracking-wider text-mlh-muted mb-1">
+          <label className="block text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-1">
             Birth City & Location
           </label>
           <div
-            className={`flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3.5 py-2.5 ${borderColor} transition-colors`}
+            className={`flex items-center gap-2 rounded-xl border border-border/80 bg-accent/30 dark:bg-accent/20 px-3.5 py-2.5 ${borderColor} transition-colors`}
           >
-            <MapPin className="w-4 h-4 text-mlh-muted shrink-0" />
+            <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
             <input
               type="text"
               required
@@ -196,24 +194,24 @@ function PartnerInputCard({
               }}
               onFocus={() => setShowDropdown(true)}
               placeholder="Search birth city, state, country..."
-              className="w-full bg-transparent text-sm text-white placeholder:text-white/30 outline-none"
+              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/60 outline-none"
             />
             {isSearching && (
-              <Loader2 className="w-4 h-4 text-mlh-muted animate-spin shrink-0" />
+              <Loader2 className="w-4 h-4 text-muted-foreground animate-spin shrink-0" />
             )}
           </div>
 
           {/* Location Dropdown */}
           {showDropdown && suggestions.length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-xl border border-white/15 bg-[#12111d] shadow-2xl backdrop-blur-2xl overflow-hidden py-1">
+            <div className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-2xl border border-border/80 bg-popover shadow-2xl backdrop-blur-2xl overflow-hidden py-1.5">
               {suggestions.map((loc, idx) => (
                 <button
                   key={`${loc.displayName || loc.place}-${idx}`}
                   type="button"
                   onClick={() => handleSelectLocation(loc)}
-                  className="w-full px-3.5 py-2 text-left text-xs text-white/80 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-2"
+                  className="w-full px-3.5 py-2.5 text-left text-xs text-popover-foreground hover:bg-accent/50 transition-colors flex items-center gap-2.5"
                 >
-                  <MapPin className="w-3.5 h-3.5 text-mlh-plum-400 shrink-0" />
+                  <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
                   <span className="truncate">
                     {loc.displayName || `${loc.place}, ${loc.country || ""}`}
                   </span>
@@ -295,8 +293,8 @@ export default function DualBirthForm({ onSubmit, isLoading = false }) {
   return (
     <form onSubmit={handleSubmit} className="w-full space-y-6">
       {errorMsg && (
-        <div className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 text-xs flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+        <div className="p-3.5 rounded-xl border border-destructive/30 bg-destructive/10 text-destructive text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 text-destructive" />
           <span>{errorMsg}</span>
         </div>
       )}
@@ -330,7 +328,7 @@ export default function DualBirthForm({ onSubmit, isLoading = false }) {
           type="submit"
           disabled={isLoading}
           size="lg"
-          className="w-full sm:w-auto px-10 py-6 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-mlh-plum hover:from-amber-400 hover:to-mlh-plum-400 text-black font-semibold text-base shadow-[0_10px_30px_rgba(245,158,11,0.25)] transition-all cursor-pointer flex items-center justify-center gap-2"
+          className="w-full sm:w-auto px-10 py-4 h-auto rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base shadow-md shadow-primary/25 transition-all cursor-pointer flex items-center justify-center gap-2"
         >
           {isLoading ? (
             <>

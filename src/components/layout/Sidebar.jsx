@@ -80,52 +80,64 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`h-screen sticky top-0 bg-card/85 backdrop-blur-2xl border-r border-border flex flex-col justify-between transition-all duration-300 z-40 shrink-0 ${
-        isCollapsed ? "w-[72px]" : "w-[260px] lg:w-[280px]"
-      }`}
+      className={`h-screen sticky top-0 bg-card/85 backdrop-blur-2xl border-r border-border flex flex-col justify-between transition-all duration-300 z-40 shrink-0 ${isCollapsed ? "w-[72px]" : "w-[260px] lg:w-[280px]"
+        }`}
     >
       {/* Top Header & Navigation Rail */}
       <div className="flex flex-col h-full overflow-y-auto no-scrollbar p-3 space-y-4">
         {/* Brand & Collapse Header */}
-        <div className="flex items-center justify-between pb-1 px-1">
-          <Link to="/" className="flex items-center gap-2.5 overflow-hidden group">
-            <img
-              src="/logo-192.jpg"
-              alt="AstroTring"
-              className="w-8 h-8 rounded-full object-cover shrink-0 border border-border shadow-xs group-hover:scale-105 transition-transform"
-            />
-            {!isCollapsed && (
+        {isCollapsed ? (
+          <div className="flex items-center justify-center pb-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onToggleCollapse}
+              aria-label="Expand navigation"
+              title="Expand navigation"
+              className="w-9 h-9 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer"
+            >
+              <PanelLeftOpen className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between pb-1 px-1">
+            <Link
+              to="/"
+              className="flex items-center gap-2.5 shrink-0 group"
+              title="AstroTring Home"
+            >
+              <img
+                src="/logo-192.jpg"
+                alt="AstroTring"
+                className="w-8 h-8 min-w-8 min-h-8 rounded-full object-cover shrink-0 aspect-square border border-border shadow-xs group-hover:scale-105 transition-transform"
+              />
               <span className="font-serif font-bold text-lg tracking-tight text-foreground whitespace-nowrap">
                 AstroTring
               </span>
-            )}
-          </Link>
+            </Link>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleCollapse}
-            aria-label="Collapse navigation"
-            className="w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent shrink-0 cursor-pointer"
-          >
-            {isCollapsed ? (
-              <PanelLeftOpen className="w-4 h-4" />
-            ) : (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onToggleCollapse}
+              aria-label="Collapse navigation"
+              title="Collapse navigation"
+              className="w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent shrink-0 cursor-pointer"
+            >
               <PanelLeftClose className="w-4 h-4" />
-            )}
-          </Button>
-        </div>
+            </Button>
+          </div>
+        )}
 
         {/* Engine Quick Action Cards for Jyotish & Shastra */}
         <div className="space-y-1.5 pt-1">
           <Link
             to="/?engine=jyotish"
             onClick={(e) => handleEngineClick(e, "jyotish")}
-            className={`-mx-1 flex items-center gap-3 rounded-2xl p-1 text-left transition-all duration-200 cursor-pointer ${
-              isJyotishActive
+            className={`-mx-1 flex items-center gap-3 rounded-2xl p-1 text-left transition-all duration-200 cursor-pointer ${isJyotishActive
                 ? "bg-primary text-primary-foreground font-semibold shadow-md shadow-primary/25 border border-primary"
                 : "bg-accent/40 border border-border/80 text-muted-foreground hover:bg-accent hover:border-primary/40 hover:text-foreground"
-            } ${isCollapsed ? "justify-center" : ""}`}
+              } ${isCollapsed ? "justify-center" : ""}`}
           >
             <span className="grid h-[36px] w-[40px] flex-none place-items-center">
               <Sparkles className={`w-4 h-4 ${isJyotishActive ? "text-primary-foreground" : "text-primary"}`} />
@@ -140,11 +152,10 @@ export default function Sidebar({
           <Link
             to="/?engine=shastra"
             onClick={(e) => handleEngineClick(e, "shastra")}
-            className={`-mx-1 flex items-center gap-3 rounded-2xl p-1 text-left transition-all duration-200 cursor-pointer ${
-              isShastraActive
+            className={`-mx-1 flex items-center gap-3 rounded-2xl p-1 text-left transition-all duration-200 cursor-pointer ${isShastraActive
                 ? "bg-amber-500 text-white font-semibold shadow-md shadow-amber-500/25 border border-amber-500"
                 : "bg-accent/40 border border-border/80 text-muted-foreground hover:bg-accent hover:border-amber-500/40 hover:text-foreground"
-            } ${isCollapsed ? "justify-center" : ""}`}
+              } ${isCollapsed ? "justify-center" : ""}`}
           >
             <span className="grid h-[36px] w-[40px] flex-none place-items-center">
               <BookOpen className={`w-4 h-4 ${isShastraActive ? "text-white" : "text-amber-500"}`} />
@@ -186,12 +197,10 @@ export default function Sidebar({
                 to={item.path}
                 onClick={handleItemClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-xl text-xs lg:text-sm font-medium transition-all duration-150 ${
-                    isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"
-                  } ${
-                    isActive
-                      ? "text-primary dark:text-foreground bg-primary/10 dark:bg-card border border-primary/25 dark:border-border font-semibold shadow-xs"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent/60"
+                  `flex items-center gap-3 rounded-xl text-xs lg:text-sm font-medium transition-all duration-150 ${isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"
+                  } ${isActive
+                    ? "text-primary dark:text-foreground bg-primary/10 dark:bg-card border border-primary/25 dark:border-border font-semibold shadow-xs"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/60"
                   }`
                 }
               >
@@ -210,11 +219,10 @@ export default function Sidebar({
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
-                  className={`flex-1 py-1 rounded-lg transition-all cursor-pointer text-center ${
-                    activeFilter === filter
+                  className={`flex-1 py-1 rounded-lg transition-all cursor-pointer text-center ${activeFilter === filter
                       ? "bg-card text-foreground font-semibold shadow-xs border border-border/60"
                       : "text-muted-foreground hover:text-foreground"
-                  }`}
+                    }`}
                 >
                   {filter}
                 </button>
@@ -347,13 +355,12 @@ export default function Sidebar({
                                 <button
                                   type="button"
                                   onClick={() => handleItemClick(item)}
-                                  className={`w-full text-left p-2.5 rounded-xl text-xs font-sans transition-all cursor-pointer flex items-start gap-2 pr-7 ${
-                                    isSelected
+                                  className={`w-full text-left p-2.5 rounded-xl text-xs font-sans transition-all cursor-pointer flex items-start gap-2 pr-7 ${isSelected
                                       ? item.engine === "shastra"
                                         ? "bg-amber-500/15 text-foreground border border-amber-500/40 shadow-xs"
                                         : "bg-primary/10 text-foreground border border-primary/30 shadow-xs"
                                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50 border border-transparent"
-                                  }`}
+                                    }`}
                                 >
                                   <span className="flex-none pt-0.5">
                                     {item.engine === "shastra" ? (
@@ -404,9 +411,8 @@ export default function Sidebar({
               dispatch(openAuthModal())
               if (typeof onOpenBindModal === "function") onOpenBindModal()
             }}
-            className={`w-full flex items-center gap-3 rounded-2xl p-2.5 hover:bg-accent border border-border/60 hover:border-primary/40 bg-card/60 transition-all group cursor-pointer text-left shadow-xs ${
-              isCollapsed ? "justify-center" : ""
-            }`}
+            className={`w-full flex items-center gap-3 rounded-2xl p-2.5 hover:bg-accent border border-border/60 hover:border-primary/40 bg-card/60 transition-all group cursor-pointer text-left shadow-xs ${isCollapsed ? "justify-center" : ""
+              }`}
           >
             <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all shrink-0">
               <LogIn className="w-4 h-4" />

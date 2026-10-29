@@ -58,24 +58,24 @@ export default function CompatibilityPage() {
       <div className="w-full max-w-5xl mx-auto px-4 py-8 sm:py-12 space-y-8 flex-1">
         {/* Header Breadcrumbs & Title */}
         <div className="space-y-3">
-          <div className="text-[11px] font-mono tracking-widest text-mlh-muted uppercase flex items-center gap-2">
+          <div className="text-[11px] font-mono tracking-widest text-muted-foreground uppercase flex items-center gap-2">
             <span>ASTROTRING / COMPATIBILITY</span>
-            <span className="text-white/20">·</span>
-            <span className="text-amber-300">ASHTAKOOTA MILAN</span>
+            <span className="text-muted-foreground/40">·</span>
+            <span className="text-primary font-medium">ASHTAKOOTA MILAN</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-foreground tracking-tight">
             Kundli Milan & Compatibility
           </h1>
 
-          <p className="text-sm sm:text-base text-mlh-muted font-sans max-w-2xl leading-relaxed">
+          <p className="text-sm sm:text-base text-muted-foreground font-sans max-w-2xl leading-relaxed">
             Ashtakoot Guna Milan calculated out of 36 points on classical Jyotish principles, with separate evaluation for Mangal Dosha, Nadi, and Bhakoot exceptions.
           </p>
         </div>
 
         {error && (
-          <div className="p-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 text-rose-300 text-xs flex items-center gap-2.5">
-            <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+          <div className="p-4 rounded-2xl border border-destructive/30 bg-destructive/10 text-destructive text-xs flex items-center gap-2.5">
+            <AlertCircle className="w-4 h-4 shrink-0 text-destructive" />
             <span>{error}</span>
           </div>
         )}

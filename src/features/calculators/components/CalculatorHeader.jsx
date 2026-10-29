@@ -1,12 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle2 } from "lucide-react";
+import CalculatorIcon from "./CalculatorIcon";
 
 export default function CalculatorHeader({
   category = "BIRTH CHART",
   updatedDate = "21 JUL 2026",
   title = "Free Kundli Maker",
-  icon = "/calculators/free-kundli-maker.png",
+  toolId = "free-kundli-maker",
   subtitle = "A Kundli, or Janam Kundali, is a birth chart mapping the position of the planets, Sun and Moon across the twelve houses at your moment of birth. AstroTring generates it free using Swiss Ephemeris data, giving you your ascendant, planetary placements, Vimshottari Dasha periods and active yogas in seconds.",
   reviewerName = "Dr. Vineeta Chandrashekhar Phatak",
   reviewerTitle = "CHIEF ASTROLOGER · ASTROTRING",
@@ -41,17 +42,7 @@ export default function CalculatorHeader({
 
       {/* Header with Left Plate Icon + Title */}
       <div className="flex items-start gap-4 sm:gap-5 pt-2">
-        {icon && (
-          <span className="border-border/60 grid h-[54px] w-[54px] flex-none place-items-center overflow-hidden rounded-[16px] sm:h-[62px] sm:w-[62px] border glass-card shadow-sm">
-            <img
-              src={icon}
-              alt=""
-              width="46"
-              height="46"
-              className="pointer-events-none object-contain select-none"
-            />
-          </span>
-        )}
+        <CalculatorIcon toolId={toolId} size="lg" />
 
         <div className="min-w-0 flex-1">
           <h1 className="font-serif text-[32px] leading-tight text-foreground sm:text-[38px] tracking-tight">
