@@ -112,41 +112,41 @@ export default function HoroscopeDetailPage() {
         {loading && !forecast && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
             <div className="lg:col-span-8 space-y-6">
-              <Skeleton className="h-44 w-full rounded-3xl bg-white/5" />
+              <Skeleton className="h-44 w-full rounded-3xl bg-accent/40" />
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <Skeleton className="h-24 rounded-2xl bg-white/5" />
-                <Skeleton className="h-24 rounded-2xl bg-white/5" />
-                <Skeleton className="h-24 rounded-2xl bg-white/5" />
+                <Skeleton className="h-24 rounded-2xl bg-accent/40" />
+                <Skeleton className="h-24 rounded-2xl bg-accent/40" />
+                <Skeleton className="h-24 rounded-2xl bg-accent/40" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Skeleton className="h-40 rounded-2xl bg-white/5" />
-                <Skeleton className="h-40 rounded-2xl bg-white/5" />
+                <Skeleton className="h-40 rounded-2xl bg-accent/40" />
+                <Skeleton className="h-40 rounded-2xl bg-accent/40" />
               </div>
             </div>
             <div className="lg:col-span-4 space-y-4">
-              <Skeleton className="h-64 rounded-2xl bg-white/5" />
-              <Skeleton className="h-48 rounded-2xl bg-white/5" />
+              <Skeleton className="h-64 rounded-2xl bg-accent/40" />
+              <Skeleton className="h-48 rounded-2xl bg-accent/40" />
             </div>
           </div>
         )}
 
         {/* Error State: Retry Button */}
         {error && !forecast && !loading && (
-          <div className="p-8 sm:p-12 rounded-3xl border border-rose-500/30 bg-rose-950/15 backdrop-blur-xl text-center space-y-5">
-            <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto">
+          <div className="p-8 sm:p-12 rounded-3xl border border-destructive/30 bg-destructive/10 backdrop-blur-xl text-center space-y-5">
+            <div className="w-12 h-12 rounded-2xl bg-destructive/15 border border-destructive/30 text-destructive flex items-center justify-center mx-auto">
               <AlertCircle className="w-6 h-6" />
             </div>
             <div className="space-y-2 max-w-md mx-auto">
-              <h3 className="text-xl font-serif font-medium text-white">
+              <h3 className="text-xl font-serif font-medium text-foreground">
                 Unable to Load {signTitle} Horoscope
               </h3>
-              <p className="text-xs sm:text-sm text-mlh-muted font-sans leading-relaxed">
+              <p className="text-xs sm:text-sm text-muted-foreground font-sans leading-relaxed">
                 {error || "An unexpected error occurred while calculating planetary transits."}
               </p>
             </div>
             <Button
               onClick={handleRetry}
-              className="h-10 px-6 rounded-xl bg-mlh-plum hover:bg-mlh-plum/90 text-white font-semibold text-xs font-mono tracking-wider flex items-center gap-2 mx-auto cursor-pointer"
+              className="h-10 px-6 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-xs font-mono tracking-wider flex items-center gap-2 mx-auto cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Retry Reading</span>

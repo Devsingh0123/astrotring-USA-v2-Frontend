@@ -39,11 +39,16 @@ export default function CalculatorFaqSection({
   faqs = DEFAULT_FAQS,
   toolName = "Free Kundli Maker",
 }) {
+  const formattedToolName = (toolName || "Kundli")
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+
   return (
     <div className="space-y-12 mt-12 text-left">
       {/* How it works */}
       <div className="space-y-4">
-        <h2 className="font-serif text-[24px] text-white sm:text-[28px] font-medium">
+        <h2 className="font-serif text-[24px] text-foreground sm:text-[28px] font-medium tracking-tight">
           How it works
         </h2>
 
@@ -51,12 +56,12 @@ export default function CalculatorFaqSection({
           {howItWorks.map(({ step, desc }) => (
             <div
               key={step}
-              className="flex items-start gap-4 rounded-xl border border-mlh-border/70 bg-mlh-surface/50 p-4 transition-colors hover:border-mlh-plum-400/30"
+              className="flex items-start gap-4 rounded-2xl border border-border/80 glass-card bg-card/60 p-4 transition-colors hover:border-primary/40 shadow-xs"
             >
-              <span className="font-mono text-sm font-semibold text-mlh-plum-300 shrink-0 mt-0.5">
+              <span className="font-mono text-sm font-semibold text-primary shrink-0 mt-0.5">
                 {step}
               </span>
-              <p className="text-sm text-mlh-text leading-relaxed">
+              <p className="text-sm text-foreground/90 leading-relaxed font-sans">
                 {desc}
               </p>
             </div>
@@ -66,20 +71,20 @@ export default function CalculatorFaqSection({
 
       {/* Understanding Tool */}
       <div className="space-y-5">
-        <h2 className="font-serif text-[24px] text-white sm:text-[28px] font-medium">
-          Understanding {toolName}
+        <h2 className="font-serif text-[24px] text-foreground sm:text-[28px] font-medium tracking-tight">
+          Understanding {formattedToolName}
         </h2>
 
         <div className="space-y-3.5">
           {faqs.map(({ q, a }, idx) => (
             <div
               key={idx}
-              className="rounded-2xl border border-mlh-border/70 bg-mlh-surface/50 p-5 space-y-2 transition-colors hover:border-mlh-plum-400/30"
+              className="rounded-2xl border border-border/80 glass-card bg-card/60 p-5 space-y-2 transition-colors hover:border-primary/40 shadow-xs"
             >
-              <h3 className="font-serif text-[17px] text-white font-medium">
+              <h3 className="font-serif text-[17px] text-foreground font-medium tracking-tight">
                 {q}
               </h3>
-              <p className="text-sm text-mlh-muted leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed font-sans">
                 {a}
               </p>
             </div>

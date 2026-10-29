@@ -24,9 +24,26 @@ const PLANET_CYCLES = [
 
 export default function DashaTreeView({ kundliData, onReset }) {
   const dashas = kundliData?.dashas || {};
-  const majorDasha = dashas.current_mahadasha || dashas.major || "Jupiter";
-  const subDasha = dashas.current_antardasha || dashas.sub || "Saturn";
-  const pratyantar = dashas.current_pratyantar || dashas.sub_sub || "Mercury";
+  const majorDasha =
+    dashas.current_mahadasha && dashas.current_mahadasha !== "—"
+      ? dashas.current_mahadasha
+      : dashas.major && dashas.major !== "—"
+      ? dashas.major
+      : "Jupiter";
+
+  const subDasha =
+    dashas.current_antardasha && dashas.current_antardasha !== "—"
+      ? dashas.current_antardasha
+      : dashas.sub && dashas.sub !== "—"
+      ? dashas.sub
+      : "Saturn";
+
+  const pratyantar =
+    dashas.current_pratyantar && dashas.current_pratyantar !== "—"
+      ? dashas.current_pratyantar
+      : dashas.sub_sub && dashas.sub_sub !== "—"
+      ? dashas.sub_sub
+      : "Mercury";
 
   const [expandedPlanet, setExpandedPlanet] = useState(majorDasha);
 
@@ -47,17 +64,17 @@ export default function DashaTreeView({ kundliData, onReset }) {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full rounded-3xl border border-amber-500/30 bg-gradient-to-br from-[#1d1424] via-[#14121a] to-[#0e0c14] p-6 sm:p-8 backdrop-blur-2xl relative overflow-hidden shadow-[0_0_40px_rgba(245,158,11,0.15)]"
+        className="w-full rounded-3xl border border-amber-500/30 glass-card bg-amber-500/5 dark:bg-amber-950/20 p-6 sm:p-8 backdrop-blur-2xl relative overflow-hidden shadow-[0_0_40px_rgba(245,158,11,0.1)]"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
           <div className="flex items-center gap-2.5">
             <Badge
               variant="outline"
-              className="border-amber-400/40 bg-amber-400/10 text-amber-300 font-mono text-xs uppercase tracking-wider rounded-full"
+              className="border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-mono text-xs uppercase tracking-wider rounded-full"
             >
               Active Planetary Cycle
             </Badge>
-            <span className="text-xs text-mlh-muted font-mono">
+            <span className="text-xs text-muted-foreground font-mono">
               Vimshottari 120-Year Timeline
             </span>
           </div>
@@ -66,7 +83,7 @@ export default function DashaTreeView({ kundliData, onReset }) {
             <button
               type="button"
               onClick={onReset}
-              className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white text-xs font-mono transition-colors cursor-pointer"
+              className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent/50 hover:bg-accent border border-border/70 text-foreground text-xs font-mono transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Change Birth Details</span>
@@ -77,41 +94,41 @@ export default function DashaTreeView({ kundliData, onReset }) {
         {/* Active Period Triad */}
         <div className="py-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Mahadasha */}
-          <div className="p-4 rounded-2xl border border-amber-400/50 bg-amber-500/10 space-y-1.5">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-amber-300">
+          <div className="p-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 space-y-1.5">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-amber-700 dark:text-amber-300 font-semibold">
               Running Mahadasha
             </div>
-            <div className="text-2xl font-serif text-white flex items-center gap-2">
+            <div className="text-2xl font-serif text-foreground flex items-center gap-2">
               <span>{majorDasha}</span>
-              <Sparkles className="w-4 h-4 text-amber-300" />
+              <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" />
             </div>
-            <p className="text-xs text-white/70 leading-relaxed pt-1">
+            <p className="text-xs text-muted-foreground leading-relaxed pt-1">
               The primary governing planet shaping overarching life purpose, mindset, and circumstances.
             </p>
           </div>
 
           {/* Antardasha */}
-          <div className="p-4 rounded-2xl border border-white/10 bg-black/40 space-y-1.5">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-mlh-muted">
+          <div className="p-4 rounded-2xl border border-border/70 bg-accent/25 space-y-1.5">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
               Active Antardasha (Sub-Period)
             </div>
-            <div className="text-2xl font-serif text-white">
+            <div className="text-2xl font-serif text-foreground">
               {subDasha}
             </div>
-            <p className="text-xs text-white/70 leading-relaxed pt-1">
+            <p className="text-xs text-muted-foreground leading-relaxed pt-1">
               Secondary planetary filter triggering specific career opportunities, relocations, or relationship changes.
             </p>
           </div>
 
           {/* Pratyantardasha */}
-          <div className="p-4 rounded-2xl border border-white/10 bg-black/40 space-y-1.5">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-mlh-muted">
+          <div className="p-4 rounded-2xl border border-border/70 bg-accent/25 space-y-1.5">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
               Current Pratyantardasha
             </div>
-            <div className="text-2xl font-serif text-white">
+            <div className="text-2xl font-serif text-foreground">
               {pratyantar}
             </div>
-            <p className="text-xs text-white/70 leading-relaxed pt-1">
+            <p className="text-xs text-muted-foreground leading-relaxed pt-1">
               Micro-period dictating immediate month-to-month focus, health vitality, and weekly events.
             </p>
           </div>
@@ -119,14 +136,14 @@ export default function DashaTreeView({ kundliData, onReset }) {
       </motion.div>
 
       {/* 9-Planet 120-Year Mahadasha Explorer */}
-      <div className="rounded-3xl border border-white/10 bg-[#16121f]/90 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-white/10">
+      <div className="rounded-3xl border border-border/80 glass-card bg-card/80 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-border/60">
           <div>
-            <h3 className="text-lg font-serif text-white flex items-center gap-2">
-              <Layers className="w-4 h-4 text-amber-400" />
+            <h3 className="text-lg font-serif text-foreground flex items-center gap-2">
+              <Layers className="w-4 h-4 text-amber-500 dark:text-amber-400" />
               <span>Full 9-Graha Vimshottari Cycle</span>
             </h3>
-            <p className="text-xs text-mlh-muted mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               Click any planetary period to expand its 9 sub-period (Antardasha) dates and karmic themes.
             </p>
           </div>
@@ -137,14 +154,14 @@ export default function DashaTreeView({ kundliData, onReset }) {
             const isRunning = p.planet.toLowerCase() === majorDasha.toLowerCase();
             const isExpanded = expandedPlanet?.toLowerCase() === p.planet.toLowerCase();
 
-            let statusPill = "text-white/40 border-white/10 bg-white/5";
+            let statusPill = "text-muted-foreground border-border/70 bg-accent/30";
             let statusLabel = "Upcoming";
 
             if (isRunning) {
-              statusPill = "text-amber-300 border-amber-400/40 bg-amber-400/10";
+              statusPill = "text-amber-700 dark:text-amber-300 border-amber-500/40 bg-amber-500/10";
               statusLabel = "Active Now";
             } else if (runningIndex !== -1 && idx < runningIndex) {
-              statusPill = "text-emerald-400 border-emerald-500/30 bg-emerald-500/10";
+              statusPill = "text-emerald-700 dark:text-emerald-300 border-emerald-500/30 bg-emerald-500/10";
               statusLabel = "Completed";
             }
 
@@ -153,8 +170,8 @@ export default function DashaTreeView({ kundliData, onReset }) {
                 key={p.planet}
                 className={`rounded-2xl border transition-all overflow-hidden ${
                   isRunning
-                    ? "border-amber-400/50 bg-amber-500/5 shadow-[0_0_20px_rgba(245,158,11,0.1)]"
-                    : "border-white/10 bg-black/30 hover:border-white/20"
+                    ? "border-amber-500/50 bg-amber-500/10 shadow-[0_0_20px_rgba(245,158,11,0.08)] ring-1 ring-amber-500/30"
+                    : "border-border/70 bg-accent/15 hover:border-border hover:bg-accent/25"
                 }`}
               >
                 {/* Header row */}
@@ -167,22 +184,22 @@ export default function DashaTreeView({ kundliData, onReset }) {
                     <div
                       className={`w-9 h-9 rounded-xl flex items-center justify-center font-serif text-sm font-bold shrink-0 ${
                         isRunning
-                          ? "bg-amber-400 text-black shadow-md"
-                          : "bg-white/10 text-white"
+                          ? "bg-amber-500 text-white dark:text-black shadow-md"
+                          : "bg-accent/60 text-foreground"
                       }`}
                     >
                       {p.planet[0]}
                     </div>
                     <div>
                       <div className="flex items-center gap-2.5">
-                        <span className="text-base font-semibold text-white">
+                        <span className="text-base font-semibold text-foreground">
                           {p.planet} Mahadasha
                         </span>
-                        <span className="text-xs font-mono text-mlh-muted">
+                        <span className="text-xs font-mono text-muted-foreground">
                           ({p.years} Years)
                         </span>
                       </div>
-                      <p className="text-xs text-white/60 line-clamp-1 mt-0.5">
+                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
                         {p.element}
                       </p>
                     </div>
@@ -195,9 +212,9 @@ export default function DashaTreeView({ kundliData, onReset }) {
                       {statusLabel}
                     </span>
                     {isExpanded ? (
-                      <ChevronUp className="w-4 h-4 text-mlh-muted" />
+                      <ChevronUp className="w-4 h-4 text-muted-foreground" />
                     ) : (
-                      <ChevronDown className="w-4 h-4 text-mlh-muted" />
+                      <ChevronDown className="w-4 h-4 text-muted-foreground" />
                     )}
                   </div>
                 </button>
@@ -209,9 +226,9 @@ export default function DashaTreeView({ kundliData, onReset }) {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="border-t border-white/10 bg-black/40 p-4 sm:p-5 space-y-3"
+                      className="border-t border-border/60 bg-accent/20 p-4 sm:p-5 space-y-3"
                     >
-                      <div className="text-xs font-mono text-mlh-muted uppercase tracking-wider">
+                      <div className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
                         9 Sub-Periods (Antardashas) of {p.planet}:
                       </div>
 
@@ -226,15 +243,15 @@ export default function DashaTreeView({ kundliData, onReset }) {
                               key={`${p.planet}-${sub.planet}`}
                               className={`p-3 rounded-xl border text-xs flex items-center justify-between ${
                                 isSubActive
-                                  ? "border-amber-400/60 bg-amber-400/15 text-white font-medium ring-1 ring-amber-400/40"
-                                  : "border-white/5 bg-white/5 text-white/70"
+                                  ? "border-amber-500/60 bg-amber-500/15 text-foreground font-medium ring-1 ring-amber-500/40"
+                                  : "border-border/60 bg-accent/30 text-muted-foreground"
                               }`}
                             >
                               <span>
                                 {p.planet}-{sub.planet}
                               </span>
                               {isSubActive && (
-                                <span className="text-[10px] font-mono text-amber-300 font-bold uppercase">
+                                <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 font-bold uppercase">
                                   Running
                                 </span>
                               )}

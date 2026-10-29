@@ -46,25 +46,25 @@ export default function SadeSatiView({ data, onReset }) {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`w-full rounded-3xl border p-6 sm:p-8 backdrop-blur-2xl relative overflow-hidden ${
+        className={`w-full rounded-3xl border p-6 sm:p-8 glass-card backdrop-blur-2xl relative overflow-hidden shadow-xl ${
           isSadeSatiActive
-            ? "border-amber-500/30 bg-gradient-to-br from-[#1d141e] via-[#14121a] to-[#0e0c14] shadow-[0_0_40px_rgba(245,158,11,0.15)]"
-            : "border-emerald-500/30 bg-gradient-to-br from-[#121c17] via-[#111618] to-[#0e0c14] shadow-[0_0_40px_rgba(16,185,129,0.15)]"
+            ? "border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/20 shadow-[0_0_40px_rgba(245,158,11,0.1)]"
+            : "border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20 shadow-[0_0_40px_rgba(16,185,129,0.1)]"
         }`}
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
           <div className="flex items-center gap-2.5">
             <Badge
               variant="outline"
               className={`px-3 py-1 text-xs font-mono uppercase tracking-wider rounded-full ${
                 isSadeSatiActive
-                  ? "border-amber-400/40 bg-amber-400/10 text-amber-300"
-                  : "border-emerald-400/40 bg-emerald-400/10 text-emerald-300"
+                  ? "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300"
+                  : "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
               }`}
             >
               {isSadeSatiActive ? "Sade Sati Active" : "No Active Sade Sati"}
             </Badge>
-            <span className="text-xs text-mlh-muted font-mono">
+            <span className="text-xs text-muted-foreground font-mono">
               Natal Moon in {moonSign}
             </span>
           </div>
@@ -73,7 +73,7 @@ export default function SadeSatiView({ data, onReset }) {
             <button
               type="button"
               onClick={onReset}
-              className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white text-xs font-mono transition-colors cursor-pointer"
+              className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent/50 hover:bg-accent border border-border/70 text-foreground text-xs font-mono transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Change Birth Details</span>
@@ -82,7 +82,7 @@ export default function SadeSatiView({ data, onReset }) {
         </div>
 
         <div className="py-6 space-y-3">
-          <h2 className="text-2xl sm:text-3xl font-serif text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-serif text-foreground tracking-tight">
             {isSadeSatiActive ? (
               <span>Currently Experiencing {currentPhase}</span>
             ) : (
@@ -90,7 +90,7 @@ export default function SadeSatiView({ data, onReset }) {
             )}
           </h2>
 
-          <p className="text-xs sm:text-sm text-mlh-muted max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
             {isSadeSatiActive ? (
               activePhaseObj?.description ||
               "Saturn transits the signs adjacent to your natal Moon. This 7.5-year cycle cultivates resilience, structural reform, and spiritual maturity."
@@ -100,21 +100,21 @@ export default function SadeSatiView({ data, onReset }) {
           </p>
 
           {nextCycle && nextCycle !== "—" && (
-            <div className="text-xs font-mono text-amber-300/80 pt-1">
-              Estimated Next Sade Sati Window: <span className="text-white font-semibold">{nextCycle}</span>
+            <div className="text-xs font-mono text-amber-600 dark:text-amber-400 pt-1">
+              Estimated Next Sade Sati Window: <span className="text-foreground font-semibold">{nextCycle}</span>
             </div>
           )}
         </div>
       </motion.div>
 
       {/* 3-Phase Interactive Timeline */}
-      <div className="rounded-3xl border border-white/10 bg-[#16121f]/90 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-white/10">
+      <div className="rounded-3xl border border-border/80 glass-card bg-card/80 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-border/60">
           <div>
-            <h3 className="text-lg font-serif text-white">
+            <h3 className="text-lg font-serif text-foreground">
               The 3 Phases of Sade Sati (7.5-Year Transit)
             </h3>
-            <p className="text-xs text-mlh-muted mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               Each phase lasts approximately 2.5 years as Saturn transits 12th, 1st, and 2nd houses from Moon.
             </p>
           </div>
@@ -128,36 +128,36 @@ export default function SadeSatiView({ data, onReset }) {
                 key={phase.phaseNumber}
                 className={`p-5 rounded-2xl border transition-all relative overflow-hidden flex flex-col justify-between ${
                   isActive
-                    ? "border-amber-400/60 bg-amber-500/10 shadow-[0_0_30px_rgba(245,158,11,0.15)] ring-1 ring-amber-400/40"
-                    : "border-white/10 bg-black/30 hover:border-white/20"
+                    ? "border-amber-500/60 bg-amber-500/10 shadow-[0_0_30px_rgba(245,158,11,0.12)] ring-1 ring-amber-500/40"
+                    : "border-border/70 bg-accent/20 hover:border-border hover:bg-accent/30"
                 }`}
               >
                 {isActive && (
-                  <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-400 text-black text-[9.5px] font-mono font-bold uppercase tracking-wider">
-                    <span className="w-1.5 h-1.5 rounded-full bg-black animate-ping" />
+                  <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500 text-white dark:text-black text-[9.5px] font-mono font-bold uppercase tracking-wider">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white dark:bg-black animate-ping" />
                     <span>Running</span>
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <div className="text-[11px] font-mono uppercase tracking-wider text-mlh-muted">
+                  <div className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
                     {phase.house}
                   </div>
-                  <h4 className="text-base font-semibold text-white">
+                  <h4 className="text-base font-semibold text-foreground">
                     {phase.shortName}
                   </h4>
-                  <div className="text-xs font-mono text-amber-300">
+                  <div className="text-xs font-mono text-amber-600 dark:text-amber-400">
                     Sign: {phase.sign}
                   </div>
 
-                  <p className="text-xs text-white/70 leading-relaxed pt-1">
+                  <p className="text-xs text-muted-foreground leading-relaxed pt-1">
                     {phase.description}
                   </p>
                 </div>
 
-                <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between text-[11px] font-mono">
-                  <span className="text-mlh-muted">Dates:</span>
-                  <span className="font-semibold text-white">
+                <div className="pt-4 mt-4 border-t border-border/60 flex items-center justify-between text-[11px] font-mono">
+                  <span className="text-muted-foreground">Dates:</span>
+                  <span className="font-semibold text-foreground">
                     {phase.startDate && phase.startDate !== "—"
                       ? `${phase.startDate} to ${phase.endDate}`
                       : "Dasha Timing Required"}
@@ -170,16 +170,16 @@ export default function SadeSatiView({ data, onReset }) {
       </div>
 
       {/* Classical Remedies Card */}
-      <div className="rounded-3xl border border-white/10 bg-[#16121f]/90 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex items-center gap-3 pb-4 border-b border-white/10">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+      <div className="rounded-3xl border border-border/80 glass-card bg-card/80 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="flex items-center gap-3 pb-4 border-b border-border/60">
+          <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
             <ShieldCheck className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-white">
+            <h3 className="text-base font-semibold text-foreground">
               Classical Saturn Remedies & Karmic Guidance
             </h3>
-            <p className="text-xs text-mlh-muted mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               Constructive practices to harmonize Saturn's energy and neutralize transit stress.
             </p>
           </div>
@@ -189,13 +189,13 @@ export default function SadeSatiView({ data, onReset }) {
           {SATURN_REMEDIES.map((rem, idx) => (
             <div
               key={idx}
-              className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-1.5"
+              className="p-4 rounded-2xl bg-accent/25 border border-border/70 space-y-1.5"
             >
-              <h5 className="text-xs font-semibold text-amber-300 flex items-center gap-2">
+              <h5 className="text-xs font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 shrink-0" />
                 <span>{rem.title}</span>
               </h5>
-              <p className="text-xs text-white/70 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 {rem.desc}
               </p>
             </div>

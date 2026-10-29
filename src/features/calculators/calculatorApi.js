@@ -362,14 +362,15 @@ export function normalizeSaturnTimeline(raw = {}, fallbackInput = {}) {
   const sadeSati = timeline.sadeSati || timeline.sade_sati || {};
   const signBased = sadeSati.signBased || sadeSati.sign_based || {};
   const degreeBased = sadeSati.degreeBased || sadeSati.degree_based || {};
+  const cyclePhases = sadeSati.cycle?.phases || [];
 
   const moonSign = timeline.moonSign || timeline.moon_sign || fallbackInput.moonSign || "—";
   const moonDegree = timeline.moonDegree || timeline.moon_degree || 0;
 
   const today = new Date().toISOString().split("T")[0];
-  const p1 = signBased.phase1 || signBased.phase_1 || {};
-  const p2 = signBased.phase2 || signBased.phase_2 || {};
-  const p3 = signBased.phase3 || signBased.phase_3 || {};
+  const p1 = signBased.phase1 || signBased.phase_1 || cyclePhases[0] || {};
+  const p2 = signBased.phase2 || signBased.phase_2 || cyclePhases[1] || {};
+  const p3 = signBased.phase3 || signBased.phase_3 || cyclePhases[2] || {};
 
   const phases = [
     {
@@ -378,10 +379,10 @@ export function normalizeSaturnTimeline(raw = {}, fallbackInput = {}) {
       shortName: "Rising Phase",
       house: p1.house || "12th House",
       sign: p1.sign || "—",
-      startDate: p1.startDate || p1.start_date || p1.from || "—",
-      endDate: p1.endDate || p1.end_date || p1.to || "—",
+      startDate: typeof p1.startDate === "string" ? p1.startDate : (p1.start_date || p1.from || "—"),
+      endDate: typeof p1.endDate === "string" ? p1.endDate : (p1.end_date || p1.to || "—"),
       description: "Saturn crosses the sign immediately preceding your natal Moon. Financial restructuring, foreign travel, and internal contemplation are emphasized.",
-      isActive: Boolean(p1.is_active || (p1.startDate && p1.endDate && today >= p1.startDate && today <= p1.endDate)),
+      isActive: Boolean(p1.is_active || (p1.startDate && p1.endDate && typeof p1.startDate === "string" && typeof p1.endDate === "string" && today >= p1.startDate && today <= p1.endDate)),
     },
     {
       phaseNumber: 2,
@@ -389,10 +390,10 @@ export function normalizeSaturnTimeline(raw = {}, fallbackInput = {}) {
       shortName: "Peak Phase (Janma Shani)",
       house: p2.house || "1st House / Natal Moon",
       sign: p2.sign || moonSign,
-      startDate: p2.startDate || p2.start_date || p2.from || "—",
-      endDate: p2.endDate || p2.end_date || p2.to || "—",
+      startDate: typeof p2.startDate === "string" ? p2.startDate : (p2.start_date || p2.from || "—"),
+      endDate: typeof p2.endDate === "string" ? p2.endDate : (p2.end_date || p2.to || "—"),
       description: "Saturn transits directly over your natal Moon sign. Core period of profound karmic maturity, psychological resilience, and major career restructuring.",
-      isActive: Boolean(p2.is_active || (p2.startDate && p2.endDate && today >= p2.startDate && today <= p2.endDate)),
+      isActive: Boolean(p2.is_active || (p2.startDate && p2.endDate && typeof p2.startDate === "string" && typeof p2.endDate === "string" && today >= p2.startDate && today <= p2.endDate)),
     },
     {
       phaseNumber: 3,
@@ -400,15 +401,25 @@ export function normalizeSaturnTimeline(raw = {}, fallbackInput = {}) {
       shortName: "Setting Phase",
       house: p3.house || "2nd House",
       sign: p3.sign || "—",
-      startDate: p3.startDate || p3.start_date || p3.from || "—",
-      endDate: p3.endDate || p3.end_date || p3.to || "—",
+      startDate: typeof p3.startDate === "string" ? p3.startDate : (p3.start_date || p3.from || "—"),
+      endDate: typeof p3.endDate === "string" ? p3.endDate : (p3.end_date || p3.to || "—"),
       description: "Saturn moves into the 2nd sign from Moon. Focus shifts to financial recovery, family speech, and consolidating the wisdom earned during the cycle.",
-      isActive: Boolean(p3.is_active || (p3.startDate && p3.endDate && today >= p3.startDate && today <= p3.endDate)),
+      isActive: Boolean(p3.is_active || (p3.startDate && p3.endDate && typeof p3.startDate === "string" && typeof p3.endDate === "string" && today >= p3.startDate && today <= p3.endDate)),
     },
   ];
 
   const activePhase = phases.find((p) => p.isActive);
-  const isSadeSatiActive = Boolean(activePhase || sadeSati.isActive || sadeSati.is_active);
+  const isSadeSatiActive = Boolean(sadeSati.active ?? sadeSati.isActive ?? sadeSati.is_active ?? activePhase);
+
+  // Safely format nextCycle (which may be an object {startDate, endDate})
+  let formattedNextCycle = "—";
+  if (typeof timeline.nextCycle === "string") {
+    formattedNextCycle = timeline.nextCycle;
+  } else if (timeline.nextCycle && typeof timeline.nextCycle === "object") {
+    if (timeline.nextCycle.startDate && timeline.nextCycle.endDate) {
+      formattedNextCycle = `${timeline.nextCycle.startDate} to ${timeline.nextCycle.endDate}`;
+    }
+  }
 
   return {
     moonSign,
@@ -418,7 +429,7 @@ export function normalizeSaturnTimeline(raw = {}, fallbackInput = {}) {
     phases,
     degreeBased,
     dhaiyya: timeline.dhaiyya || timeline.small_panoti || {},
-    nextCycle: timeline.nextCycle || timeline.next_cycle || "—",
+    nextCycle: formattedNextCycle,
     computedAt: new Date().toISOString(),
   };
 }

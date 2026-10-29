@@ -70,21 +70,21 @@ export default function MangalDoshaView({ kundliData, onReset }) {
   const hasCancellation = isOwnSign || isExalted || isJupiterAspect;
 
   let severity = "Non-Manglik";
-  let statusBadge = "border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
-  let glowColor = "shadow-[0_0_40px_rgba(16,185,129,0.15)]";
+  let statusBadge = "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
+  let glowColor = "shadow-[0_0_40px_rgba(16,185,129,0.1)]";
 
   if (manglikCount >= 2) {
     severity = hasCancellation ? "High Manglik (Neutralized)" : "Purna (High) Manglik";
     statusBadge = hasCancellation
-      ? "border-amber-500/40 bg-amber-500/10 text-amber-300"
-      : "border-rose-500/40 bg-rose-500/10 text-rose-300";
+      ? "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300"
+      : "border-rose-500/40 bg-rose-500/10 text-rose-700 dark:text-rose-300";
     glowColor = hasCancellation
-      ? "shadow-[0_0_40px_rgba(245,158,11,0.15)]"
-      : "shadow-[0_0_40px_rgba(244,63,94,0.15)]";
+      ? "shadow-[0_0_40px_rgba(245,158,11,0.1)]"
+      : "shadow-[0_0_40px_rgba(244,63,94,0.1)]";
   } else if (manglikCount === 1) {
     severity = hasCancellation ? "Mild Manglik (Neutralized)" : "Anshik (Mild) Manglik";
-    statusBadge = "border-amber-500/40 bg-amber-500/10 text-amber-300";
-    glowColor = "shadow-[0_0_40px_rgba(245,158,11,0.15)]";
+    statusBadge = "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300";
+    glowColor = "shadow-[0_0_40px_rgba(245,158,11,0.1)]";
   }
 
   return (
@@ -93,9 +93,9 @@ export default function MangalDoshaView({ kundliData, onReset }) {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`w-full rounded-3xl border border-white/10 bg-gradient-to-br from-[#1d141e] via-[#14121a] to-[#0e0c14] p-6 sm:p-8 backdrop-blur-2xl relative overflow-hidden ${glowColor}`}
+        className={`w-full rounded-3xl border border-border/80 glass-card bg-card/80 p-6 sm:p-8 backdrop-blur-2xl relative overflow-hidden ${glowColor}`}
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
           <div className="flex items-center gap-2.5">
             <Badge
               variant="outline"
@@ -103,7 +103,7 @@ export default function MangalDoshaView({ kundliData, onReset }) {
             >
               {severity}
             </Badge>
-            <span className="text-xs text-mlh-muted font-mono">
+            <span className="text-xs text-muted-foreground font-mono">
               Mars in {marsSign} (House {marsHouse})
             </span>
           </div>
@@ -112,7 +112,7 @@ export default function MangalDoshaView({ kundliData, onReset }) {
             <button
               type="button"
               onClick={onReset}
-              className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white text-xs font-mono transition-colors cursor-pointer"
+              className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent/50 hover:bg-accent border border-border/70 text-foreground text-xs font-mono transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Change Birth Details</span>
@@ -121,7 +121,7 @@ export default function MangalDoshaView({ kundliData, onReset }) {
         </div>
 
         <div className="py-6 space-y-3">
-          <h2 className="text-2xl sm:text-3xl font-serif text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-serif text-foreground tracking-tight">
             {manglikCount === 0 ? (
               <span>Your Birth Chart is Completely Free of Mangal Dosha</span>
             ) : hasCancellation ? (
@@ -131,7 +131,7 @@ export default function MangalDoshaView({ kundliData, onReset }) {
             )}
           </h2>
 
-          <p className="text-xs sm:text-sm text-mlh-muted max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
             {manglikCount === 0
               ? "Mars is stationed in a harmonious house that does not cast conflict aspects onto the marital 7th house. No special partner considerations or remedies are necessary."
               : hasCancellation
@@ -142,13 +142,13 @@ export default function MangalDoshaView({ kundliData, onReset }) {
       </motion.div>
 
       {/* Triple Reference Check Matrix */}
-      <div className="rounded-3xl border border-white/10 bg-[#16121f]/90 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-white/10">
+      <div className="rounded-3xl border border-border/80 glass-card bg-card/80 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-border/60">
           <div>
-            <h3 className="text-lg font-serif text-white">
+            <h3 className="text-lg font-serif text-foreground">
               Triple-Check Manglik Reference Matrix
             </h3>
-            <p className="text-xs text-mlh-muted mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               Classical Jyotish requires verifying Mars from the Ascendant (Lagna), Moon (Chandra), and Venus (Shukra).
             </p>
           </div>
@@ -156,14 +156,14 @@ export default function MangalDoshaView({ kundliData, onReset }) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* Lagna Reference */}
-          <div className="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+          <div className="p-5 rounded-2xl bg-accent/25 border border-border/70 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase text-mlh-muted">
+              <span className="text-[11px] font-mono uppercase text-muted-foreground">
                 From Lagna (Ascendant)
               </span>
               <span
                 className={`text-xs font-semibold ${
-                  isLagnaManglik ? "text-rose-400" : "text-emerald-400"
+                  isLagnaManglik ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400"
                 }`}
               >
                 {isLagnaManglik ? "House " + marsHouse : "House " + marsHouse}
@@ -171,15 +171,15 @@ export default function MangalDoshaView({ kundliData, onReset }) {
             </div>
             <div className="flex items-center gap-2">
               {isLagnaManglik ? (
-                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0" />
               ) : (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
               )}
-              <span className="text-sm font-semibold text-white">
+              <span className="text-sm font-semibold text-foreground">
                 {isLagnaManglik ? "Lagna Manglik" : "Clear from Lagna"}
               </span>
             </div>
-            <p className="text-xs text-white/60 leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               {isLagnaManglik
                 ? `Mars in house ${marsHouse} directly impacts marital stamina and personal temperament.`
                 : "Mars is positioned outside the 1, 2, 4, 7, 8, 12 conflict houses from Ascendant."}
@@ -187,14 +187,14 @@ export default function MangalDoshaView({ kundliData, onReset }) {
           </div>
 
           {/* Moon Reference */}
-          <div className="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+          <div className="p-5 rounded-2xl bg-accent/25 border border-border/70 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase text-mlh-muted">
+              <span className="text-[11px] font-mono uppercase text-muted-foreground">
                 From Moon (Chandra)
               </span>
               <span
                 className={`text-xs font-semibold ${
-                  isChandraManglik ? "text-amber-400" : "text-emerald-400"
+                  isChandraManglik ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
                 }`}
               >
                 {isChandraManglik ? "House " + marsFromMoon : "House " + marsFromMoon}
@@ -202,15 +202,15 @@ export default function MangalDoshaView({ kundliData, onReset }) {
             </div>
             <div className="flex items-center gap-2">
               {isChandraManglik ? (
-                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
               ) : (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
               )}
-              <span className="text-sm font-semibold text-white">
+              <span className="text-sm font-semibold text-foreground">
                 {isChandraManglik ? "Chandra Manglik" : "Clear from Moon"}
               </span>
             </div>
-            <p className="text-xs text-white/60 leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               {isChandraManglik
                 ? `Mars is ${marsFromMoon} houses away from Moon, modulating emotional reactivity in relationships.`
                 : "Mars causes no emotional friction relative to your natal Moon sign."}
@@ -218,14 +218,14 @@ export default function MangalDoshaView({ kundliData, onReset }) {
           </div>
 
           {/* Venus Reference */}
-          <div className="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+          <div className="p-5 rounded-2xl bg-accent/25 border border-border/70 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase text-mlh-muted">
+              <span className="text-[11px] font-mono uppercase text-muted-foreground">
                 From Venus (Shukra)
               </span>
               <span
                 className={`text-xs font-semibold ${
-                  isShukraManglik ? "text-amber-400" : "text-emerald-400"
+                  isShukraManglik ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
                 }`}
               >
                 {isShukraManglik ? "House " + marsFromVenus : "House " + marsFromVenus}
@@ -233,15 +233,15 @@ export default function MangalDoshaView({ kundliData, onReset }) {
             </div>
             <div className="flex items-center gap-2">
               {isShukraManglik ? (
-                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
               ) : (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
               )}
-              <span className="text-sm font-semibold text-white">
+              <span className="text-sm font-semibold text-foreground">
                 {isShukraManglik ? "Shukra Manglik" : "Clear from Venus"}
               </span>
             </div>
-            <p className="text-xs text-white/60 leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               {isShukraManglik
                 ? `Mars is ${marsFromVenus} houses from Venus, the significator of romantic passion and marital bliss.`
                 : "Mars is comfortably harmonized relative to Venus."}
@@ -251,9 +251,9 @@ export default function MangalDoshaView({ kundliData, onReset }) {
       </div>
 
       {/* Cancellation Rules Checklist */}
-      <div className="rounded-3xl border border-white/10 bg-[#16121f]/90 backdrop-blur-xl p-6 sm:p-8 space-y-4 shadow-xl">
-        <h4 className="text-base font-semibold text-white flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+      <div className="rounded-3xl border border-border/80 glass-card bg-card/80 backdrop-blur-xl p-6 sm:p-8 space-y-4 shadow-xl">
+        <h4 className="text-base font-semibold text-foreground flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-emerald-500" />
           <span>Classical Shloka Cancellation Factors</span>
         </h4>
 
@@ -261,49 +261,49 @@ export default function MangalDoshaView({ kundliData, onReset }) {
           <div
             className={`p-3.5 rounded-xl border flex items-center gap-2.5 ${
               isOwnSign
-                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
-                : "border-white/10 bg-black/30 text-white/60"
+                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                : "border-border/70 bg-accent/20 text-muted-foreground"
             }`}
           >
-            <CheckCircle2 className={`w-4 h-4 ${isOwnSign ? "text-emerald-400" : "opacity-30"}`} />
+            <CheckCircle2 className={`w-4 h-4 ${isOwnSign ? "text-emerald-500" : "opacity-30"}`} />
             <span>Mars in Own Sign ({isOwnSign ? "Yes - " + marsSign : "No"})</span>
           </div>
 
           <div
             className={`p-3.5 rounded-xl border flex items-center gap-2.5 ${
               isExalted
-                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
-                : "border-white/10 bg-black/30 text-white/60"
+                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                : "border-border/70 bg-accent/20 text-muted-foreground"
             }`}
           >
-            <CheckCircle2 className={`w-4 h-4 ${isExalted ? "text-emerald-400" : "opacity-30"}`} />
+            <CheckCircle2 className={`w-4 h-4 ${isExalted ? "text-emerald-500" : "opacity-30"}`} />
             <span>Mars Exalted in Capricorn ({isExalted ? "Yes" : "No"})</span>
           </div>
 
           <div
             className={`p-3.5 rounded-xl border flex items-center gap-2.5 ${
               isJupiterAspect
-                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
-                : "border-white/10 bg-black/30 text-white/60"
+                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                : "border-border/70 bg-accent/20 text-muted-foreground"
             }`}
           >
-            <CheckCircle2 className={`w-4 h-4 ${isJupiterAspect ? "text-emerald-400" : "opacity-30"}`} />
+            <CheckCircle2 className={`w-4 h-4 ${isJupiterAspect ? "text-emerald-500" : "opacity-30"}`} />
             <span>Jupiter Aspect on Mars ({isJupiterAspect ? "Yes - Aspecting" : "No"})</span>
           </div>
         </div>
       </div>
 
       {/* Constructive Remedies Card */}
-      <div className="rounded-3xl border border-white/10 bg-[#16121f]/90 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex items-center gap-3 pb-4 border-b border-white/10">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+      <div className="rounded-3xl border border-border/80 glass-card bg-card/80 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="flex items-center gap-3 pb-4 border-b border-border/60">
+          <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-white">
+            <h3 className="text-base font-semibold text-foreground">
               Vedic Remedies for Mangal Energy
             </h3>
-            <p className="text-xs text-mlh-muted mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               Channel intense martial energy into courage, executive protection, and mutual devotion.
             </p>
           </div>
@@ -313,13 +313,13 @@ export default function MangalDoshaView({ kundliData, onReset }) {
           {MANGAL_REMEDIES.map((rem, idx) => (
             <div
               key={idx}
-              className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-1.5"
+              className="p-4 rounded-2xl bg-accent/25 border border-border/70 space-y-1.5"
             >
-              <h5 className="text-xs font-semibold text-amber-300 flex items-center gap-2">
+              <h5 className="text-xs font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 shrink-0" />
                 <span>{rem.title}</span>
               </h5>
-              <p className="text-xs text-white/70 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 {rem.desc}
               </p>
             </div>

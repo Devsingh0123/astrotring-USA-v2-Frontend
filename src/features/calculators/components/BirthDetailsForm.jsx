@@ -243,16 +243,16 @@ export default function BirthDetailsForm({
           </div>
         </div>
 
-        {/* Compute CTA Button (Melooha mlh-cta-plum) */}
+        {/* Compute CTA Button */}
         <button
           type="submit"
           disabled={isLoading}
           aria-busy={isLoading}
-          className="mt-[18px] w-full cursor-pointer rounded-full py-3 text-center font-sans text-[16.5px] font-semibold transition mlh-cta-plum text-white flex items-center justify-center gap-2"
+          className="mt-[18px] w-full cursor-pointer rounded-full py-3.5 text-center font-sans text-sm font-medium transition shadow-md bg-primary hover:bg-primary/90 text-primary-foreground shadow-primary/20 disabled:opacity-40 flex items-center justify-center gap-2"
         >
           {isLoading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin text-white" />
+              <Loader2 className="w-4 h-4 animate-spin text-primary-foreground" />
               <span>Computing...</span>
             </>
           ) : (

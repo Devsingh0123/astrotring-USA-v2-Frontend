@@ -12,8 +12,16 @@ const DEFAULT_PROMPTS = [
 
 export default function AskJyotishPromptCard({
   chartSummary = {},
+  prompts = DEFAULT_PROMPTS,
+  title,
 }) {
-  const ascendant = chartSummary?.ascendantSign || "your Lagna";
+  const displayTitle =
+    title ||
+    (chartSummary?.ascendantSign
+      ? `Have questions about your ${chartSummary.ascendantSign} Ascendant?`
+      : "Have questions about your Vedic Chart?");
+
+  const activePrompts = Array.isArray(prompts) && prompts.length > 0 ? prompts : DEFAULT_PROMPTS;
 
   return (
     <div className="relative rounded-2xl border border-primary/30 glass-card p-5 sm:p-7 shadow-xl overflow-hidden">
@@ -28,7 +36,7 @@ export default function AskJyotishPromptCard({
           </div>
 
           <h3 className="text-xl sm:text-2xl font-serif font-medium text-foreground">
-            Have questions about your {ascendant} Ascendant?
+            {displayTitle}
           </h3>
 
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
@@ -51,7 +59,7 @@ export default function AskJyotishPromptCard({
           Popular Questions For This Chart:
         </div>
         <div className="flex flex-wrap gap-2">
-          {DEFAULT_PROMPTS.map((prompt, idx) => (
+          {activePrompts.map((prompt, idx) => (
             <Link
               key={idx}
               to={`/?engine=jyotish&q=${encodeURIComponent(prompt)}`}
