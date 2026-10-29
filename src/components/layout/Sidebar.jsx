@@ -13,7 +13,6 @@ import {
   LogIn,
   Compass,
   Trash2,
-  Coins,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { openAuthModal } from "@/features/auth"
@@ -28,7 +27,6 @@ const navItems = [
   { label: "Blogs", path: "/blogs", icon: Newspaper },
   { label: "Calculators", path: "/calculators", icon: Calculator },
   { label: "Reports", path: "/reports", icon: FileText },
-  { label: "Artha Sutram", path: "/reports/artha-sutram", icon: Coins },
 ]
 
 function getTimelineBucket(dateInput) {

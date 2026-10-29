@@ -13,7 +13,6 @@ import {
   User,
   LogOut,
   Compass,
-  Coins,
   Sun,
   Moon,
 } from "lucide-react"
@@ -26,7 +25,6 @@ const mobileNavLinks = [
   { label: "Blogs", path: "/blogs", icon: Newspaper },
   { label: "Calculators", path: "/calculators", icon: Calculator },
   { label: "Reports", path: "/reports", icon: FileText },
-  { label: "Artha Sutram", path: "/reports/artha-sutram", icon: Coins },
 ]
 
 export default function MobileHeader({ onOpenBindModal }) {

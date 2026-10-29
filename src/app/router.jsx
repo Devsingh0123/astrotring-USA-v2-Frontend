@@ -16,7 +16,6 @@ import BlogDetailPage from "@/pages/BlogDetailPage"
 import ProtectedRoute from "@/components/common/ProtectedRoute"
 import CompatibilityPage from "@/pages/CompatibilityPage"
 import CalculatorRunnerPage from "@/pages/CalculatorRunnerPage"
-import ArthaSutramPage from "@/pages/ArthaSutramPage"
 import NotFoundPage from "@/pages/NotFoundPage"
 
 function JyotishRedirect() {
@@ -89,14 +88,6 @@ export const router = createBrowserRouter([
       {
         path: "reports",
         element: <ReportsListingPage />,
-      },
-      {
-        path: "reports/artha-sutram",
-        element: <ArthaSutramPage />,
-      },
-      {
-        path: "artha-sutram",
-        element: <ArthaSutramPage />,
       },
       {
         path: "reports/:slug",

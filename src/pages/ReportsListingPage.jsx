@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { Link, useOutletContext } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { motion } from "framer-motion"
-import { FileText, ArrowRight, Sparkles, Unlock, Plus } from "lucide-react"
+import { FileText, ArrowRight, Unlock, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { fetchReportsCatalog, fetchMyReports } from "@/features/reports"
 import Footer from "@/components/layout/Footer"
@@ -68,7 +68,7 @@ export default function ReportsListingPage() {
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            <Link to="/reports/artha-sutram" className="w-full sm:w-auto">
+            <Link to="/reports/career" className="w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="sm"
@@ -91,51 +91,6 @@ export default function ReportsListingPage() {
               <Plus className="w-3.5 h-3.5 mr-1.5" />
               <span>Get Credits</span>
             </Button>
-          </div>
-        </motion.div>
-
-        {/* Flagship Artha Sutram Master Blueprint Feature Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-3xl border border-amber-500/40 glass-card bg-amber-500/[0.03] p-6 sm:p-8 space-y-4 shadow-md relative overflow-hidden group"
-        >
-          <div className="absolute -right-20 -top-20 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-3 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/40 bg-amber-500/15 text-amber-600 dark:text-amber-300 text-xs font-mono uppercase tracking-widest font-semibold">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>अर्थ सूत्रम् · Flagship Master Wealth Blueprint</span>
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-serif font-medium text-foreground tracking-tight">
-                Artha Sutram — 23-Chapter Wealth Destiny
-              </h2>
-
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-sans">
-                The premier master reading analyzing your 2nd house treasury, 11th house of profits, Indu Lagna prosperity point, and Hora (D-2) chart to map lifetime accumulation and harvest windows.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-muted-foreground pt-1">
-                <span className="text-amber-600 dark:text-amber-300 font-medium">✦ 23 Analytical Sections</span>
-                <span>•</span>
-                <span>108-Year Mahadasha Timeline</span>
-                <span>•</span>
-                <span>D-2 & D-10 Charts</span>
-              </div>
-            </div>
-
-            <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <Link to="/reports/artha-sutram">
-                <Button
-                  className="w-full sm:w-auto h-11 px-6 rounded-xl bg-amber-500 hover:bg-amber-600 text-white dark:text-black font-semibold text-xs font-mono tracking-wider uppercase shadow-md cursor-pointer"
-                >
-                  <span>Explore Blueprint & Sample Chapters</span>
-                  <ArrowRight className="w-3.5 h-3.5 ml-2" />
-                </Button>
-              </Link>
-            </div>
           </div>
         </motion.div>
 
