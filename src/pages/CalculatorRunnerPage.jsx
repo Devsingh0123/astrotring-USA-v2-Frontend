@@ -163,7 +163,7 @@ export default function CalculatorRunnerPage() {
           </div>
         )}
 
-        {/* 2-Column Responsive Layout Matching Melooha */}
+        {/* 2-Column Responsive Layout */}
         <div className="mt-8 grid grid-cols-1 items-start gap-x-8 gap-y-9 lg:grid-cols-[minmax(0,1fr)_320px] xl:gap-x-10">
           {/* Main Area (Form + Results + FAQs + Related) */}
           <div className="min-w-0 space-y-8">
@@ -259,7 +259,7 @@ export default function CalculatorRunnerPage() {
         <RelatedCalculatorsGrid currentToolId={toolName} />
       </div>
 
-      {/* Right Column: Sticky Sidebar matching Melooha architecture */}
+      {/* Right Column: Sticky Sidebar */}
       <aside className="space-y-6 lg:sticky lg:top-24">
         {/* Calculator Metric Highlight Card */}
         <div className="glass-card rounded-2xl border border-border/80 bg-card/85 p-6 shadow-md dark:bg-card/70 backdrop-blur-xl">

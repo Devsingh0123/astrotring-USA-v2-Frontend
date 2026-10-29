@@ -229,7 +229,7 @@ export default function InvoicesPage() {
           </div>
         )}
 
-        {/* ================= EMPTY STATE (Melooha Ref 14) ================= */}
+        {/* ================= EMPTY STATE ================= */}
         {filteredInvoices.length === 0 ? (
           <div className="rounded-3xl border border-white/10 bg-[#14101e]/70 p-8 sm:p-14 text-center space-y-4">
             <div className="w-14 h-14 mx-auto rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-300">

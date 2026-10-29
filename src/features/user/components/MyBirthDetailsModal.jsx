@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import MeloohaDatePicker from "@/components/common/MeloohaDatePicker"
-import MeloohaTimePicker from "@/components/common/MeloohaTimePicker"
+import VedicDatePicker from "@/components/common/VedicDatePicker"
+import VedicTimePicker from "@/components/common/VedicTimePicker"
 import { updateUserBirthDetails } from "@/features/auth/authSlice"
 import { apiClient } from "@/lib/api-client"
 
@@ -235,7 +235,7 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
                 <Calendar className="w-3.5 h-3.5 text-primary" />
                 <span>Date of birth *</span>
               </label>
-              <MeloohaDatePicker
+              <VedicDatePicker
                 value={dob}
                 onChange={setDob}
                 placeholder="Select a date"
@@ -248,7 +248,7 @@ export default function MyBirthDetailsModal({ isOpen, onClose }) {
                 <Clock className="w-3.5 h-3.5 text-amber-500" />
                 <span>Time of birth</span>
               </label>
-              <MeloohaTimePicker
+              <VedicTimePicker
                 value={isTimeUnknown ? "12:00" : tob}
                 onChange={setTob}
                 disabled={isTimeUnknown}

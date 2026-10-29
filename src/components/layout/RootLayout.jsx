@@ -146,7 +146,7 @@ export default function RootLayout() {
         onClose={() => dispatch(closeAuthModal())}
       />
 
-      {/* Global Question Packs 2-Step Purchase Modal (Melooha Ref 10 & 16 + Razorpay) */}
+      {/* Global Question Packs 2-Step Purchase Modal (Razorpay) */}
       <QuestionPacksModal
         isOpen={isBuyModalOpen}
         onClose={() => {
@@ -172,7 +172,7 @@ export default function RootLayout() {
         currency={buyReportsModalOptions?.currency || user?.currency || "INR"}
       />
 
-      {/* My Birth Details Edit Modal (Melooha Ref 09) */}
+      {/* My Birth Details Edit Modal */}
       <MyBirthDetailsModal
         isOpen={isBirthDetailsModalOpen}
         onClose={() => setIsBirthDetailsModalOpen(false)}

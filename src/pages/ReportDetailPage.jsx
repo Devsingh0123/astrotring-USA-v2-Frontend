@@ -702,7 +702,7 @@ export default function ReportDetailPage() {
         )}
       </div>
 
-      {/* Report Packs Purchase Modal (Melooha 2-Step Flow) */}
+      {/* Report Packs Purchase Modal (2-Step Flow) */}
       <ReportPacksModal
         isOpen={isBuyModalOpen}
         onClose={() => setIsBuyModalOpen(false)}

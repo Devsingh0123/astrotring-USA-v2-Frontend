@@ -11,8 +11,8 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import MeloohaDatePicker from "@/components/common/MeloohaDatePicker"
-import MeloohaTimePicker from "@/components/common/MeloohaTimePicker"
+import VedicDatePicker from "@/components/common/VedicDatePicker"
+import VedicTimePicker from "@/components/common/VedicTimePicker"
 import { toast } from "sonner"
 import { apiClient } from "@/lib/api-client"
 import {
@@ -422,7 +422,7 @@ export default function OnboardingPage() {
                     <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground block">
                       DATE OF BIRTH *
                     </label>
-                    <MeloohaDatePicker
+                    <VedicDatePicker
                       value={dob}
                       onChange={setDob}
                       placeholder="Select a date"
@@ -433,7 +433,7 @@ export default function OnboardingPage() {
                     <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground block">
                       TIME OF BIRTH
                     </label>
-                    <MeloohaTimePicker
+                    <VedicTimePicker
                       value={isTimeUnknown ? "12:00" : tob}
                       onChange={setTob}
                       disabled={isTimeUnknown}

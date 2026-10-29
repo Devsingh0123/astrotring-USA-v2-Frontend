@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/api-client";
-import MeloohaDatePicker from "@/components/common/MeloohaDatePicker";
-import MeloohaTimePicker from "@/components/common/MeloohaTimePicker";
+import VedicDatePicker from "@/components/common/VedicDatePicker";
+import VedicTimePicker from "@/components/common/VedicTimePicker";
 
 function PartnerInputCard({
   partnerType, // 'boy' | 'girl'
@@ -142,7 +142,7 @@ function PartnerInputCard({
           <label className="block text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
             Date of Birth *
           </label>
-          <MeloohaDatePicker
+          <VedicDatePicker
             value={data.dob}
             onChange={(newDob) => onChange({ dob: newDob })}
             placeholder="Select date of birth"
@@ -167,7 +167,7 @@ function PartnerInputCard({
               <span>Time Unknown</span>
             </label>
           </div>
-          <MeloohaTimePicker
+          <VedicTimePicker
             value={data.isTimeUnknown ? "12:00" : data.tob}
             onChange={(newTob) => onChange({ tob: newTob })}
             disabled={data.isTimeUnknown}

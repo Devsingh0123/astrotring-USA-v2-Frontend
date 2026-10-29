@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import MeloohaDatePicker from "@/components/common/MeloohaDatePicker"
-import MeloohaTimePicker from "@/components/common/MeloohaTimePicker"
+import VedicDatePicker from "@/components/common/VedicDatePicker"
+import VedicTimePicker from "@/components/common/VedicTimePicker"
 import { toast } from "sonner"
 import {
   closeAuthModal,
@@ -567,7 +567,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                     <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground block">
                       DATE OF BIRTH
                     </label>
-                    <MeloohaDatePicker
+                    <VedicDatePicker
                       value={birthDate}
                       onChange={setBirthDate}
                       placeholder="Select a date"
@@ -578,7 +578,7 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
                     <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground block">
                       TIME OF BIRTH
                     </label>
-                    <MeloohaTimePicker
+                    <VedicTimePicker
                       value={unknownTime ? "12:00" : birthTime}
                       onChange={setBirthTime}
                       disabled={unknownTime}

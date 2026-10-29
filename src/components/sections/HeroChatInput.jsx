@@ -36,7 +36,7 @@ const limitToMaxWords = (text, max = MAX_WORDS) => {
   return text.slice(0, cutIndex)
 }
 
-// Exact Melooha 4 Prompts for Personal Jyotish
+// 4 Prompts for Personal Jyotish
 const JYOTISH_PROMPTS = [
   "What is Saturn doing to my chart right now?",
   "Which gemstone suits my chart, if any?",
@@ -44,7 +44,7 @@ const JYOTISH_PROMPTS = [
   "Which yogas are present in my chart?",
 ]
 
-// Exact Melooha 4 Prompts for Shastra
+// 4 Prompts for Shastra
 const SHASTRA_PROMPTS = [
   "What is Kaal Sarp dosha and how seriously should it be taken?",
   "What does Moon in 7th house mean for marriage and public life?",

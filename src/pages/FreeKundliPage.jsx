@@ -79,7 +79,7 @@ export default function FreeKundliPage() {
       </Helmet>
 
       <div className="relative px-6 pt-9 pb-20 sm:px-10 sm:pt-11 lg:px-14 xl:px-20 max-w-[1400px] mx-auto">
-        {/* Melooha Header */}
+        {/* Calculator Header */}
         <CalculatorHeader
           category="BIRTH CHART"
           updatedDate="21 JUL 2026"
@@ -90,7 +90,7 @@ export default function FreeKundliPage() {
           reviewerTitle="CHIEF ASTROLOGER · ASTROTRING"
         />
 
-        {/* 2-Column Responsive Layout Matching Melooha */}
+        {/* 2-Column Responsive Layout */}
         <div className="mt-8 grid grid-cols-1 items-start gap-x-8 gap-y-9 lg:grid-cols-[minmax(0,1fr)_320px] xl:gap-x-10">
           {/* Main Area (Form + Results + FAQs) */}
           <div className="min-w-0 space-y-8">
@@ -101,7 +101,7 @@ export default function FreeKundliPage() {
               initialValues={lastInput}
             />
 
-            {/* Error Notice (Matching Melooha's exact copy) */}
+            {/* Error Notice */}
             {!isLoading && hasFailed && (
               <div className="p-6 rounded-2xl border border-destructive/30 bg-destructive/10 text-left space-y-2">
                 <div className="flex items-center gap-2 text-destructive font-serif text-base font-medium">
@@ -299,7 +299,7 @@ export default function FreeKundliPage() {
             <RelatedCalculatorsGrid currentToolId="free-kundli-maker" />
           </div>
 
-          {/* Right Complementary Sidebar (320px) matching Melooha */}
+          {/* Right Complementary Sidebar (320px) */}
           <aside className="space-y-4 lg:sticky lg:top-8">
             {/* Metric Card */}
             <div className="glass-card rounded-2xl border border-border/70 p-5 text-left shadow-sm">

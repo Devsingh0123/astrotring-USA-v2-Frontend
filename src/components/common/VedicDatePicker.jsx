@@ -18,7 +18,7 @@ const MONTH_SHORT = [
 
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
 
-export default function MeloohaDatePicker({
+export default function VedicDatePicker({
   value,
   onChange,
   placeholder = "Select a date",

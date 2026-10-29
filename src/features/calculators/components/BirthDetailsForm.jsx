@@ -6,8 +6,8 @@ import {
   AlertCircle,
   Search,
 } from "lucide-react";
-import MeloohaDatePicker from "@/components/common/MeloohaDatePicker";
-import MeloohaTimePicker from "@/components/common/MeloohaTimePicker";
+import VedicDatePicker from "@/components/common/VedicDatePicker";
+import VedicTimePicker from "@/components/common/VedicTimePicker";
 import {
   searchLocations,
   clearLocationSuggestions,
@@ -143,7 +143,7 @@ export default function BirthDetailsForm({
             <span className="block font-mono text-[9.5px] tracking-[0.22em] text-muted-foreground mb-1.5 uppercase font-medium">
               DATE OF BIRTH
             </span>
-            <MeloohaDatePicker
+            <VedicDatePicker
               value={formData.dob}
               onChange={(newDob) =>
                 setFormData((prev) => ({ ...prev, dob: newDob }))
@@ -173,7 +173,7 @@ export default function BirthDetailsForm({
                 <span>Time unknown</span>
               </label>
             </div>
-            <MeloohaTimePicker
+            <VedicTimePicker
               value={formData.isTimeUnknown ? "12:00" : formData.tob}
               onChange={(newTob) =>
                 setFormData((prev) => ({ ...prev, tob: newTob }))
