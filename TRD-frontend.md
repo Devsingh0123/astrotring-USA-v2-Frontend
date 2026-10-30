@@ -1,7 +1,7 @@
 # Technical Requirements Document (TRD) — Japaika Frontend
 
 ## 1. Overview
-This document specifies the technical architecture, component standards, data pipelines, and error protocols for the Japaika frontend SPA (`https://japaika.com`, API `https://backend.japaika.com`). Built on **React 19**, **Vite**, and **JavaScript**, the application interfaces with AI and Swiss-Ephemeris microservices to power personal Vedic readings, interactive calculators, and deep report previews.
+This document specifies the technical architecture, component standards, data pipelines, and error protocols for the Japaika frontend SPA. Built on **React 19**, **Vite**, and **JavaScript**, the application interfaces with AI and Swiss-Ephemeris microservices to power personal Vedic readings, interactive calculators, and deep report previews.
 
 ---
 

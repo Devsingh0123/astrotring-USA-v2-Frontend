@@ -52,7 +52,6 @@ export default function CompatibilityPage() {
           property="og:description"
           content="Ashtakoot Guna Milan out of 36, Nadi, Bhakoot and Mangal read separately on classical Vedic algorithms."
         />
-        <link rel="canonical" href="https://japaika.com/compatibility" />
       </Helmet>
 
       {/* Main Page Container */}

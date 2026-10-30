@@ -322,8 +322,8 @@ export default function BlogDetailPage() {
     );
   }
 
-  const shareUrl = typeof window !== "undefined" ? window.location.href : `https://japaika.com/blogs/${slug}`;
-  const metaTitle = (blog.meta_title || `${blog.title} | Japaika`).replace(/AstroTring/gi, "Japaika");
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+  const metaTitle = blog.meta_title || `${blog.title} | Japaika`;
   const metaDesc =
     blog.meta_description || blog.excerpt || "In-depth Vedic astrology publication by Japaika.";
 
@@ -341,7 +341,7 @@ export default function BlogDetailPage() {
         {blog.featured_image && <meta property="og:image" content={blog.featured_image} />}
         <meta property="og:type" content="article" />
         <meta property="article:published_time" content={blog.published_at || blog.created_at} />
-        <link rel="canonical" href={(blog.canonical_url || shareUrl).replace("https://astrotring.com", "https://japaika.com")} />
+        <link rel="canonical" href={blog.canonical_url || shareUrl} />
       </Helmet>
 
       {/* Main Container */}

@@ -54,9 +54,7 @@ export default function InvoicesPage() {
     const loadInvoices = async () => {
       // 1. Initial load from localStorage for fast render
       try {
-        const stored =
-          localStorage.getItem("japaika_invoices") ||
-          localStorage.getItem("astrotring_invoices")
+        const stored = localStorage.getItem("japaika_invoices")
         if (stored) {
           setInvoices(JSON.parse(stored))
         }
@@ -82,9 +80,7 @@ export default function InvoicesPage() {
     loadInvoices()
     const handleStorageChange = () => {
       try {
-        const stored =
-          localStorage.getItem("japaika_invoices") ||
-          localStorage.getItem("astrotring_invoices")
+        const stored = localStorage.getItem("japaika_invoices")
         if (stored) setInvoices(JSON.parse(stored))
       } catch (e) {
         console.error(e)

@@ -68,7 +68,6 @@ export default function HoroscopesListingPage() {
           name="description"
           content="Explore daily, monthly and yearly Vedic horoscopes computed through authentic Nirayana astronomy and live Gochara planetary transits across all 12 Rashis."
         />
-        <link rel="canonical" href="https://japaika.com/horoscopes" />
       </Helmet>
 
       <div className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-12 space-y-10">

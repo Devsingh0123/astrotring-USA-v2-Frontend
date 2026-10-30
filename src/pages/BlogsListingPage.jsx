@@ -166,7 +166,6 @@ export default function BlogsListingPage() {
           property="og:description"
           content="In-depth analysis of Saturn Sade Sati, Jupiter transits, Navamsa charts, and Vedic remedies."
         />
-        <link rel="canonical" href="https://japaika.com/blogs" />
       </Helmet>
 
       {/* Main Content Area */}

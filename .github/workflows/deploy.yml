@@ -1,4 +1,4 @@
-name: Deploy Frontend 
+name: Deploy Frontend
 
 on:
   push:
@@ -20,8 +20,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL || 'https://backend.japaika.com/api/v1' }}" >> .env
-          echo "VITE_SITE_URL=${{ secrets.VITE_SITE_URL || 'https://japaika.com' }}" >> .env
+          echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env
 
       - name: Install Dependencies
         run: npm install

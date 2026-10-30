@@ -402,9 +402,7 @@ export default function QuestionPacksModal({
               // Save local invoice copy
               try {
                 const existingInvoices = JSON.parse(
-                  localStorage.getItem("japaika_invoices") ||
-                    localStorage.getItem("astrotring_invoices") ||
-                    "[]"
+                  localStorage.getItem("japaika_invoices") || "[]"
                 )
                 const inv = verifyRes.data?.invoice || {
                   id: "INV-" + Date.now().toString().slice(-6),

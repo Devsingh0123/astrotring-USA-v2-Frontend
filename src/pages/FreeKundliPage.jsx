@@ -76,7 +76,6 @@ export default function FreeKundliPage() {
           name="description"
           content="A Kundli, or Janam Kundali, is a birth chart mapping the position of the planets, Sun and Moon across the twelve houses at your moment of birth. Japaika generates it free using Swiss Ephemeris data."
         />
-        <link rel="canonical" href="https://japaika.com/free-kundli" />
       </Helmet>
 
       <div className="relative px-6 pt-9 pb-20 sm:px-10 sm:pt-11 lg:px-14 xl:px-20 max-w-[1400px] mx-auto">

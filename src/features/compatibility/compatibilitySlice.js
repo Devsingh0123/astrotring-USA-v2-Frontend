@@ -8,9 +8,7 @@ export { calculateMarriageMatch, normalizeMarriageMatchData };
 
 const getInitialMatchData = () => {
   try {
-    const cached =
-      localStorage.getItem("japaika_last_compatibility") ||
-      localStorage.getItem("astrotring_last_compatibility");
+    const cached = localStorage.getItem("japaika_last_compatibility");
     if (cached) {
       const parsed = JSON.parse(cached);
       return {
@@ -43,7 +41,6 @@ export const compatibilitySlice = createSlice({
       state.error = null;
       try {
         localStorage.removeItem("japaika_last_compatibility");
-        localStorage.removeItem("astrotring_last_compatibility");
       } catch {
         // Ignore
       }

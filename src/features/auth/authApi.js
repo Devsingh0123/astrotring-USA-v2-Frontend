@@ -15,9 +15,7 @@ export { STORAGE_KEYS };
 
 export const getInitialUser = () => {
   try {
-    const raw =
-      localStorage.getItem(STORAGE_KEYS.USER) ||
-      localStorage.getItem("astrotring_user");
+    const raw = localStorage.getItem(STORAGE_KEYS.USER);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
@@ -26,9 +24,7 @@ export const getInitialUser = () => {
 
 export const getInitialBirthDetails = () => {
   try {
-    const raw =
-      localStorage.getItem(STORAGE_KEYS.BIRTH_DETAILS) ||
-      localStorage.getItem("astrotring_birth_details");
+    const raw = localStorage.getItem(STORAGE_KEYS.BIRTH_DETAILS);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;

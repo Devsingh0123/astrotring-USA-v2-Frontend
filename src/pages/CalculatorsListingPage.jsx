@@ -37,7 +37,6 @@ export default function CalculatorsListingPage() {
           name="description"
           content="12 instruments on the same Swiss Ephemeris the readings run on. Compute here, then hand the result to Jyotish."
         />
-        <link rel="canonical" href="https://japaika.com/calculators" />
       </Helmet>
 
       <div className="relative px-6 pt-9 pb-20 sm:px-10 sm:pt-11 lg:px-14 xl:px-20 max-w-[1400px] mx-auto">
