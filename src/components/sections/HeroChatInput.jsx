@@ -252,28 +252,6 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
               : "border-border/80 focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/15"
           }`}
         >
-<<<<<<< HEAD
-          {/* Top input row with glowing ✦ symbol */}
-          <div className="relative flex gap-3 px-4 pt-4 sm:px-5 sm:pt-4">
-            <span
-              aria-hidden="true"
-              className={`shrink-0 pt-1 text-[16px] leading-none select-none ${engine === "shastra" ? "text-amber-500 animate-pulse" : "text-primary animate-pulse"
-                }`}
-            >
-              {engine === "shastra" ? <BookOpen className="size-5 shrink-0 stroke-[2]" /> : <SunMedium className="size-5 shrink-0 stroke-[2]" />}
-            </span>
-            <textarea
-              ref={textareaRef}
-              rows={4}
-              value={query}
-              onChange={handleTextareaChange}
-              onKeyDown={handleKeyDown}
-              placeholder={inputPlaceholder}
-              className="text-foreground placeholder:text-muted-foreground min-w-0 flex-1 resize-none overflow-hidden bg-transparent font-sans text-[15px] sm:text-[20px] leading-[1.5] outline-none disabled:cursor-not-allowed disabled:opacity-60 caret-primary"
-              style={{ minHeight: "120px" }}
-            />
-          </div>
-=======
           {/* Textarea */}
           <textarea
             ref={textareaRef}
@@ -282,43 +260,30 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
             onChange={handleTextareaChange}
             onKeyDown={handleKeyDown}
             placeholder={inputPlaceholder}
-            className="w-full resize-none overflow-y-auto bg-transparent px-5 pt-4 pb-2 text-[15px] sm:text-[16px] text-foreground placeholder:text-muted-foreground/60 outline-none leading-relaxed caret-primary disabled:cursor-not-allowed disabled:opacity-60"
-            style={{ minHeight: "56px", maxHeight: "220px" }}
+            className="w-full min-h-[56px] max-h-[220px] resize-none overflow-y-auto bg-transparent px-5 pt-4 pb-2 text-[15px] sm:text-[17px] text-foreground placeholder:text-muted-foreground/60 outline-none leading-relaxed caret-primary disabled:cursor-not-allowed disabled:opacity-60"
           />
->>>>>>> f8489c93108ab28250d9b46ebbee8549051998e2
 
           {/* Bottom Action Controls */}
-          <div className="flex items-center justify-between gap-3 px-3.5 pb-3 pt-1">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sm:gap-3 px-3 sm:px-3.5 pb-3 pt-1">
             {/* Left: Engine Selector Segmented Pill */}
             <div
               role="radiogroup"
               aria-label="Answer source"
-<<<<<<< HEAD
               className="inline-flex items-center rounded-full border border-border/80 bg-accent/40 p-1 shadow-sm"
-=======
-              className="inline-flex items-center rounded-full border border-border/60 bg-muted/50 p-0.5 sm:p-1"
->>>>>>> f8489c93108ab28250d9b46ebbee8549051998e2
             >
               <Button
                 type="button"
                 role="radio"
                 aria-checked={engine === "jyotish"}
                 onClick={() => handleSelectEngine("jyotish")}
-<<<<<<< HEAD
                 variant={engine === "jyotish" ? "default" : "ghost"}
-                className={`h-10 rounded-full px-5 sm:px-6 gap-2.5 text-[16px] font-semibold transition-all cursor-pointer ${engine === "jyotish"
-                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary/90 hover:text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent/70 font-medium"
-                  }`}
-=======
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                className={`h-9 sm:h-10 rounded-full px-3.5 sm:px-6 gap-2 sm:gap-2.5 text-[14.5px] sm:text-[16px] font-semibold transition-all cursor-pointer ${
                   engine === "jyotish"
-                    ? "bg-primary text-primary-foreground font-semibold shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary/90 hover:text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/70 font-medium"
                 }`}
->>>>>>> f8489c93108ab28250d9b46ebbee8549051998e2
               >
-                <SunMedium className="size-5 shrink-0 stroke-[2]" />
+                <SunMedium className="size-4.5 sm:size-5 shrink-0 stroke-[2]" />
                 <span>Jyotish</span>
               </Button>
               <Button
@@ -326,38 +291,27 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
                 role="radio"
                 aria-checked={engine === "shastra"}
                 onClick={() => handleSelectEngine("shastra")}
-<<<<<<< HEAD
                 variant={engine === "shastra" ? "default" : "ghost"}
-                className={`h-10 rounded-full px-5 sm:px-6 gap-2.5 text-[16px] font-semibold transition-all cursor-pointer ${engine === "shastra"
-                  ? "bg-amber-500 text-white shadow-md shadow-amber-500/25 hover:bg-amber-600 hover:text-white"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent/70 font-medium"
-                  }`}
-=======
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                className={`h-9 sm:h-10 rounded-full px-3.5 sm:px-6 gap-2 sm:gap-2.5 text-[14.5px] sm:text-[16px] font-semibold transition-all cursor-pointer ${
                   engine === "shastra"
-                    ? "bg-amber-500 text-white font-semibold shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-amber-500 text-white shadow-md shadow-amber-500/25 hover:bg-amber-600 hover:text-white"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/70 font-medium"
                 }`}
->>>>>>> f8489c93108ab28250d9b46ebbee8549051998e2
               >
-                <BookOpen className="size-5 shrink-0 stroke-[2]" />
+                <BookOpen className="size-4.5 sm:size-5 shrink-0 stroke-[2]" />
                 <span>Shastra</span>
               </Button>
             </div>
 
             {/* Right: Controls & Send Button */}
-            <div className="flex items-center gap-2 sm:gap-2.5">
+            <div className="flex items-center gap-2 sm:gap-2.5 ml-auto">
               {currentWordCount > 0 && (
                 <span
-<<<<<<< HEAD
-                  className={`font-mono text-[10.5px] tracking-wider transition-colors ${currentWordCount >= MAX_WORDS
-=======
                   className={`font-mono text-[11px] tracking-wider transition-colors ${
                     currentWordCount >= MAX_WORDS
->>>>>>> f8489c93108ab28250d9b46ebbee8549051998e2
                       ? "text-amber-500 font-semibold"
                       : "text-muted-foreground/60"
-                    }`}
+                  }`}
                 >
                   {currentWordCount}/{MAX_WORDS}
                 </span>
@@ -365,86 +319,48 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
 
               {engine === "jyotish" ? (
                 isAuthenticated ? (
-<<<<<<< HEAD
                   <div className="flex items-stretch overflow-hidden rounded-full border border-amber-500/40 bg-amber-500/10 font-mono text-[10px] font-medium tracking-[0.14em] whitespace-nowrap uppercase text-amber-600 dark:text-amber-300 shadow-xs h-8">
-                    <span className="flex items-center px-3.5">
-                      <span>{activeQuestionQuota}</span> questions left
-=======
-                  <div className="flex items-center gap-1.5 text-[11px] font-mono">
-                    <span className="rounded-full bg-amber-500/10 px-2.5 py-0.5 text-amber-600 dark:text-amber-300 border border-amber-500/20 font-medium">
-                      {activeQuestionQuota} left
->>>>>>> f8489c93108ab28250d9b46ebbee8549051998e2
+                    <span className="flex items-center px-2.5 sm:px-3.5">
+                      <span>{activeQuestionQuota}</span>
+                      <span className="hidden sm:inline">&nbsp;questions</span>&nbsp;left
                     </span>
                     <Button
                       type="button"
                       variant="ghost"
                       onClick={handleBuyQuestions}
-<<<<<<< HEAD
-                      className="h-full rounded-none border-l border-amber-500/30 px-3.5 transition-colors bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-200 font-semibold cursor-pointer text-[10px] font-mono tracking-wider"
+                      className="h-full rounded-none border-l border-amber-500/30 px-2.5 sm:px-3.5 transition-colors bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-200 font-semibold cursor-pointer text-[10px] font-mono tracking-wider"
                     >
                       Buy more
                     </Button>
-=======
-                      className="cursor-pointer text-xs font-medium text-primary hover:underline px-1"
-                    >
-                      Top up
-                    </button>
->>>>>>> f8489c93108ab28250d9b46ebbee8549051998e2
                   </div>
                 ) : (
                   <Button
                     type="button"
                     variant="outline"
                     onClick={handleBuyQuestions}
-<<<<<<< HEAD
-                    className="h-9 rounded-full border-amber-500/40 bg-amber-500/10 font-mono text-[10px] font-semibold tracking-[0.14em] whitespace-nowrap uppercase text-amber-600 dark:text-amber-300 px-4 hover:bg-amber-500/20 hover:text-amber-600 dark:hover:text-amber-300 transition-all shadow-xs cursor-pointer"
+                    className="h-8 sm:h-9 rounded-full border-amber-500/40 bg-amber-500/10 font-mono text-[10px] font-semibold tracking-[0.12em] sm:tracking-[0.14em] whitespace-nowrap uppercase text-amber-600 dark:text-amber-300 px-3 sm:px-4 hover:bg-amber-500/20 hover:text-amber-600 dark:hover:text-amber-300 transition-all shadow-xs cursor-pointer"
                   >
                     Question packs
                   </Button>
                 )
               ) : (
-                <div className="flex items-center gap-1.5 text-[11px] font-mono tracking-wider text-amber-600 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3.5 py-1 rounded-full uppercase h-8">
+                <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-mono tracking-wider text-amber-600 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3.5 py-1 rounded-full uppercase h-8">
                   <BookOpen className="size-3.5 text-amber-500" />
                   <span>Free knowledge · Unlimited</span>
                 </div>
               )}
 
               <Button
-=======
-                    className="cursor-pointer text-[11px] font-mono font-medium rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-amber-600 dark:text-amber-300 hover:bg-amber-500/20 transition-all"
-                  >
-                    Get questions
-                  </button>
-                )
-              ) : (
-                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono text-muted-foreground/70">
-                  <BookOpen className="w-3 h-3 text-amber-500" />
-                  <span>Free · Unlimited</span>
-                </span>
-              )}
-
-              {/* Send Button */}
-              <button
->>>>>>> f8489c93108ab28250d9b46ebbee8549051998e2
                 type="button"
                 size="icon"
                 disabled={!query.trim() || isGenerating}
                 onClick={() => executeQuestion(query)}
                 aria-label="Send question"
-<<<<<<< HEAD
-                className={`size-11 rounded-full transition-all duration-200 cursor-pointer disabled:opacity-40 shadow-md ${engine === "shastra"
+                className={`size-10 sm:size-11 shrink-0 rounded-full transition-all duration-200 cursor-pointer disabled:opacity-40 shadow-md ${
+                  engine === "shastra"
                     ? "text-white bg-amber-500 hover:bg-amber-600 hover:scale-105 shadow-amber-500/25"
                     : "text-primary-foreground bg-primary hover:bg-primary/90 hover:scale-105 shadow-primary/25"
-                  }`}
-=======
-                className={`grid h-8 w-8 sm:h-9 sm:w-9 flex-none place-items-center rounded-full transition-all duration-200 ${
-                  !query.trim() || isGenerating
-                    ? "bg-muted text-muted-foreground/30 cursor-not-allowed"
-                    : engine === "shastra"
-                    ? "bg-amber-500 text-white hover:bg-amber-600 hover:scale-105 active:scale-95 shadow-md shadow-amber-500/20 cursor-pointer"
-                    : "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 shadow-md shadow-primary/20 cursor-pointer"
                 }`}
->>>>>>> f8489c93108ab28250d9b46ebbee8549051998e2
               >
                 <ArrowUp className="size-5 stroke-[2.5]" />
               </Button>
@@ -454,7 +370,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
 
         {/* ChatGPT-style Subtitle hint */}
         <p className="mt-2.5 text-center text-[11px] sm:text-[11.5px] text-muted-foreground/60 font-sans">
-          AstroTring can make mistakes. Verify important astrological insights.
+          Japaika can make mistakes. Verify important astrological insights.
         </p>
       </motion.div>
 
