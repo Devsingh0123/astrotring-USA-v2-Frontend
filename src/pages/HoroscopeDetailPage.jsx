@@ -89,7 +89,7 @@ export default function HoroscopeDetailPage() {
     <div className="min-h-full flex flex-col bg-transparent text-foreground">
       <Helmet>
         <title>
-          {signTitle} ({vedicTitle}) {periodTitle} Horoscope | AstroTring Vedic Astrology
+          {signTitle} ({vedicTitle}) {periodTitle} Horoscope | Japaika Vedic Astrology
         </title>
         <meta
           name="description"

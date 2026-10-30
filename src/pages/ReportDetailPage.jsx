@@ -616,7 +616,7 @@ export default function ReportDetailPage() {
               <div className="rounded-2xl border border-white/10 bg-[#07273c] overflow-hidden text-xs sm:text-sm font-sans">
                 <div className="grid grid-cols-2 p-4 bg-white/5 border-b border-white/10 font-mono uppercase tracking-wider text-mlh-muted text-[11px]">
                   <div>Other reports</div>
-                  <div className="text-amber-300 font-bold">AstroTring</div>
+                  <div className="text-amber-300 font-bold">Japaika</div>
                 </div>
 
                 <div className="divide-y divide-white/5">

@@ -2,23 +2,32 @@ import { Link } from "react-router-dom"
 import { QrCode, Sun, Moon } from "lucide-react"
 import { useTheme } from "@/hooks/useTheme"
 
+const SOCIAL_LINKS = [
+  { name: "LinkedIn", url: "https://www.linkedin.com" },
+  { name: "Facebook", url: "https://www.facebook.com" },
+  { name: "Instagram", url: "https://instagram.com" },
+  { name: "X", url: "https://twitter.com" },
+  { name: "YouTube", url: "https://youtube.com" },
+  { name: "Quora", url: "https://quora.com" },
+]
+
 export default function Footer() {
   const { isDark, toggleTheme } = useTheme()
 
   return (
-    <footer className="w-full border-t border-border bg-card/70 backdrop-blur-xl text-muted-foreground mt-12 sm:mt-16 transition-colors">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
-          {/* Brand & Socials Column */}
-          <div className="space-y-4">
+    <footer className="w-full border-t border-border bg-card/70 backdrop-blur-xl text-muted-foreground mt-8 sm:mt-16 transition-colors">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
+          {/* Brand & Socials Column - Full width on mobile, 1 col on md+ */}
+          <div className="col-span-2 md:col-span-1 space-y-4">
             <Link to="/" className="flex items-center gap-2">
               <img
                 src="/logo-192.jpg"
-                alt="AstroTring"
+                alt="Japaika"
                 className="w-7 h-7 rounded-full object-cover shrink-0 border border-border shadow-xs"
               />
-              <span className="font-serif font-bold text-lg text-foreground">
-                AstroTring
+              <span className="font-serif font-bold text-lg text-foreground tracking-tight">
+                Japaika
               </span>
             </Link>
 
@@ -26,99 +35,114 @@ export default function Footer() {
               World’s Most Accurate Astrology Engine.
             </p>
 
-            {/* Social Links List */}
-            <ul className="flex flex-wrap items-center gap-3 pt-1 text-xs text-muted-foreground/80">
-              <li>
-                <a href="https://www.linkedin.com" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
-                  LinkedIn
+            {/* Social Links as touch-friendly badges */}
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              {SOCIAL_LINKS.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center px-2.5 py-1 rounded-lg bg-accent/40 hover:bg-accent border border-border/50 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-all cursor-pointer shadow-2xs"
+                >
+                  {social.name}
                 </a>
-              </li>
-              <li>•</li>
-              <li>
-                <a href="https://www.facebook.com" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
-                  Facebook
-                </a>
-              </li>
-              <li>•</li>
-              <li>
-                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
-                  Instagram
-                </a>
-              </li>
-              <li>•</li>
-              <li>
-                <a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
-                  X
-                </a>
-              </li>
-              <li>•</li>
-              <li>
-                <a href="https://youtube.com" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
-                  YouTube
-                </a>
-              </li>
-              <li>•</li>
-              <li>
-                <a href="https://quora.com" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
-                  Quora
-                </a>
-              </li>
-            </ul>
+              ))}
+            </div>
           </div>
 
-          {/* Company Column */}
-          <div className="space-y-3">
+          {/* Company Column - 1 col on mobile and md+ */}
+          <div className="col-span-1 space-y-3">
             <p className="text-xs font-semibold text-foreground font-mono tracking-wider uppercase">
               Company
             </p>
-            <ul className="space-y-2 text-xs">
-              <li><Link to="/jobs" className="hover:text-foreground transition-colors">Join Us</Link></li>
-              <li><Link to="/review" className="hover:text-foreground transition-colors">Add a Review</Link></li>
-              <li><Link to="/contact" className="hover:text-foreground transition-colors">Contact Us</Link></li>
+            <ul className="space-y-2.5 text-xs">
+              <li>
+                <Link to="/jobs" className="hover:text-foreground transition-colors">
+                  Join Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/review" className="hover:text-foreground transition-colors">
+                  Add a Review
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="hover:text-foreground transition-colors">
+                  Contact Us
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Help & Legal Column */}
-          <div className="space-y-3">
+          {/* Help & Legal Column - 1 col on mobile and md+ */}
+          <div className="col-span-1 space-y-3">
             <p className="text-xs font-semibold text-foreground font-mono tracking-wider uppercase">
               Help & Legal
             </p>
-            <ul className="space-y-2 text-xs">
-              <li><Link to="/faq" className="hover:text-foreground transition-colors">FAQs</Link></li>
-              <li><Link to="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms-and-conditions" className="hover:text-foreground transition-colors">Terms & Conditions</Link></li>
-              <li><Link to="/refund-policy" className="hover:text-foreground transition-colors">Refund Policy</Link></li>
-              <li><Link to="/disclaimer" className="hover:text-foreground transition-colors">Disclaimer</Link></li>
+            <ul className="space-y-2.5 text-xs">
+              <li>
+                <Link to="/faq" className="hover:text-foreground transition-colors">
+                  FAQs
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy-policy" className="hover:text-foreground transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms-and-conditions" className="hover:text-foreground transition-colors">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link to="/refund-policy" className="hover:text-foreground transition-colors">
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/disclaimer" className="hover:text-foreground transition-colors">
+                  Disclaimer
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* App Downloads & QR Code Column */}
-          <div className="space-y-3">
+          {/* App Downloads & QR Code Column - Full width on mobile, 1 col on md+ */}
+          <div className="col-span-2 md:col-span-1 space-y-3">
             <p className="text-xs font-semibold text-foreground font-mono tracking-wider uppercase">
               Mobile App
             </p>
             <div className="flex items-center gap-3">
-              <div className="w-16 h-16 rounded-2xl bg-card/80 border border-border/80 flex items-center justify-center text-primary shadow-xs">
+              {/* QR Code only on tablet / desktop */}
+              <div className="hidden sm:flex w-16 h-16 rounded-2xl bg-card/80 border border-border/80 items-center justify-center text-primary shadow-xs shrink-0">
                 <QrCode className="w-10 h-10 text-primary" />
               </div>
-              <div className="space-y-2">
+
+              {/* Side-by-side on mobile, stacked on desktop */}
+              <div className="grid grid-cols-2 sm:grid-cols-1 gap-2.5 w-full sm:w-auto">
                 <a
                   href="https://apps.apple.com"
                   target="_blank"
                   rel="noreferrer"
-                  className="block px-3.5 py-1.5 rounded-xl bg-card/80 hover:bg-card border border-border/80 hover:border-primary/40 text-[10px] text-foreground transition-all shadow-xs"
+                  className="block px-3.5 py-2 rounded-xl bg-card/80 hover:bg-card border border-border/80 hover:border-primary/40 text-[10px] text-foreground transition-all shadow-xs text-center sm:text-left"
                 >
-                  <span className="block text-[8px] text-muted-foreground uppercase">Download From</span>
-                  <span className="font-semibold">App Store</span>
+                  <span className="block text-[8px] text-muted-foreground uppercase tracking-wide">
+                    Download From
+                  </span>
+                  <span className="font-semibold text-xs">App Store</span>
                 </a>
                 <a
                   href="https://play.google.com"
                   target="_blank"
                   rel="noreferrer"
-                  className="block px-3.5 py-1.5 rounded-xl bg-card/80 hover:bg-card border border-border/80 hover:border-primary/40 text-[10px] text-foreground transition-all shadow-xs"
+                  className="block px-3.5 py-2 rounded-xl bg-card/80 hover:bg-card border border-border/80 hover:border-primary/40 text-[10px] text-foreground transition-all shadow-xs text-center sm:text-left"
                 >
-                  <span className="block text-[8px] text-muted-foreground uppercase">Download From</span>
-                  <span className="font-semibold">Play Store</span>
+                  <span className="block text-[8px] text-muted-foreground uppercase tracking-wide">
+                    Download From
+                  </span>
+                  <span className="font-semibold text-xs">Play Store</span>
                 </a>
               </div>
             </div>
@@ -126,8 +150,10 @@ export default function Footer() {
         </div>
 
         {/* Bottom Copyright & Theme Toggle */}
-        <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground font-mono">
-          <div>© 2026 AstroTring Technologies Private Limited</div>
+        <div className="mt-8 sm:mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+          <div className="text-center sm:text-left font-mono">
+            © 2026 Japaika Technologies Private Limited
+          </div>
           <button
             type="button"
             onClick={toggleTheme}

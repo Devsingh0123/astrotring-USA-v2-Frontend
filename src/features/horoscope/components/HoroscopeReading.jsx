@@ -33,7 +33,7 @@ export default function HoroscopeReading({ forecast, timeframe = "daily" }) {
         </div>
         <div>
           <h3 className="text-sm font-semibold text-foreground">
-            AstroTring Vedic Astronomy Engine
+            Japaika Vedic Astronomy Engine
           </h3>
           <p className="text-[10px] font-mono tracking-wider text-muted-foreground uppercase">
             NIRAYANA LAHIRI AYANAMSHA · SWISS EPHEMERIS

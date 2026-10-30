@@ -22,7 +22,9 @@ export {
  */
 const getInitialKundli = () => {
   try {
-    const cached = localStorage.getItem("astrotring_last_kundli");
+    const cached =
+      localStorage.getItem("japaika_last_kundli") ||
+      localStorage.getItem("astrotring_last_kundli");
     if (cached) {
       const parsed = JSON.parse(cached);
       return {
@@ -73,6 +75,7 @@ export const calculatorSlice = createSlice({
       state.status = "idle";
       state.error = null;
       try {
+        localStorage.removeItem("japaika_last_kundli");
         localStorage.removeItem("astrotring_last_kundli");
       } catch {
         // Ignore

@@ -187,7 +187,7 @@ export const calculateMarriageMatch = createAsyncThunk(
         // Cache last calculation in local storage
         try {
           localStorage.setItem(
-            "astrotring_last_compatibility",
+            "japaika_last_compatibility",
             JSON.stringify({
               input: { boy, girl },
               data: normalized,

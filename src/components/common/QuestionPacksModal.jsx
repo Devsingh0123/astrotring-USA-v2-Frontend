@@ -373,7 +373,7 @@ export default function QuestionPacksModal({
           amountSubunits: amountSubunits,
           amount: finalAmount,
           currency: orderCurrency,
-          name: "AstroTring",
+          name: "Japaika",
           description: `${selectedPack.name} Pack (${selectedPack.credits} questions)`,
           user: {
             name: user?.name,
@@ -402,7 +402,9 @@ export default function QuestionPacksModal({
               // Save local invoice copy
               try {
                 const existingInvoices = JSON.parse(
-                  localStorage.getItem("astrotring_invoices") || "[]"
+                  localStorage.getItem("japaika_invoices") ||
+                    localStorage.getItem("astrotring_invoices") ||
+                    "[]"
                 )
                 const inv = verifyRes.data?.invoice || {
                   id: "INV-" + Date.now().toString().slice(-6),
@@ -423,7 +425,7 @@ export default function QuestionPacksModal({
                   userName: user?.name || "Customer",
                   userEmail: user?.email || "",
                 }
-                localStorage.setItem("astrotring_invoices", JSON.stringify([inv, ...existingInvoices]))
+                localStorage.setItem("japaika_invoices", JSON.stringify([inv, ...existingInvoices]))
               } catch (e) {
                 console.warn("Failed to save local invoice:", e)
               }

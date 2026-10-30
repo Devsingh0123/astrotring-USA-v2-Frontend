@@ -123,7 +123,12 @@ export default function RootLayout() {
       {/* Main Viewport Container */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-jagannatha-aura relative transition-colors duration-200">
         {/* Mobile Top Header */}
-        <MobileHeader onOpenBindModal={handleOpenAuth} />
+        <MobileHeader
+          onOpenBindModal={handleOpenAuth}
+          onOpenBirthDetailsModal={() => setIsBirthDetailsModalOpen(true)}
+          onOpenBuyQuestionsModal={() => handleOpenBuyModal()}
+          onOpenBuyReportsModal={() => handleOpenBuyReportsModal()}
+        />
 
         {/* Dynamic Page Outlet */}
         <main className="flex-1 flex flex-col min-h-0 relative overflow-y-auto">

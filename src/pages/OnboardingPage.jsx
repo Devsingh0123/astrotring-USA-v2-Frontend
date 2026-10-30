@@ -208,26 +208,26 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-[calc(100dvh-3.5rem)] md:min-h-screen bg-transparent flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden font-sans">
+    <div className="min-h-full w-full py-4 sm:py-8 lg:py-12 px-3 sm:px-6 lg:px-8 flex flex-col items-center justify-start lg:justify-center relative overflow-x-hidden font-sans">
       {/* Background Celestial Glowing Orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 dark:bg-primary/15 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-500/10 dark:bg-amber-500/15 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Main Glassmorphic Onboarding Card */}
-      <div className="w-full max-w-4xl bg-card/90 dark:bg-card/80 backdrop-blur-2xl border border-border/80 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-5 relative z-10 transition-colors duration-200">
-        {/* ================= LEFT HERO COLUMN ================= */}
-        <div className="md:col-span-2 p-6 sm:p-8 bg-accent/40 dark:bg-accent/20 border-b md:border-b-0 md:border-r border-border/80 flex flex-col justify-between relative overflow-hidden">
+      <div className="w-full max-w-xl lg:max-w-4xl lg:my-auto bg-card/90 dark:bg-card/80 backdrop-blur-2xl border border-border/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-5 relative z-10 transition-colors duration-200">
+        {/* ================= LEFT HERO COLUMN (Desktop Only) ================= */}
+        <div className="hidden lg:flex lg:col-span-2 p-6 lg:p-8 bg-accent/40 dark:bg-accent/20 border-r border-border/80 flex-col justify-between relative overflow-hidden">
           <div className="space-y-6 relative z-10">
             {/* Brand Logo & Name */}
             <div className="flex items-center gap-2.5">
               <img
                 src="/logo-192.jpg"
-                alt="AstroTring"
+                alt="Japaika"
                 className="w-9 h-9 rounded-full object-cover shrink-0 border border-border/80 shadow-md"
               />
               <div>
                 <span className="font-serif font-bold text-xl tracking-tight text-foreground block">
-                  AstroTring
+                  Japaika
                 </span>
                 <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 uppercase tracking-widest block font-medium">
                   Vedic Astrology Engine
@@ -283,13 +283,13 @@ export default function OnboardingPage() {
         </div>
 
         {/* ================= RIGHT INTERACTIVE FORM COLUMN ================= */}
-        <div className="md:col-span-3 p-6 sm:p-8 sm:py-10 flex flex-col justify-between bg-card/60 dark:bg-card/40">
+        <div className="lg:col-span-3 p-5 sm:p-7 lg:p-8 flex flex-col justify-between bg-card/60 dark:bg-card/40">
           <div>
             {/* Top Step Progress Bar */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between text-[10px] font-mono tracking-[0.2em] mb-2.5">
+            <div className="mb-5 sm:mb-6">
+              <div className="flex items-center justify-between text-[10px] font-mono tracking-[0.2em] mb-2">
                 <span className="text-primary font-semibold flex items-center gap-1.5 uppercase">
-                  <Compass className="w-3 h-3 text-primary" />
+                  <Compass className="w-3 h-3 text-primary shrink-0" />
                   {onboardingStep === 1
                     ? "Step 1 of 2: About you"
                     : "Step 2 of 2: Your birth details"}
@@ -314,16 +314,16 @@ export default function OnboardingPage() {
 
             {/* Error Banner */}
             {onboardingError && (
-              <div className="mb-5 p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-xs text-destructive">
+              <div className="mb-4 p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-xs text-destructive">
                 {onboardingError}
               </div>
             )}
 
             {/* ---------------- STEP 1: ABOUT YOU ---------------- */}
             {onboardingStep === 1 && (
-              <form onSubmit={handleStep1Submit} className="space-y-6">
-                <div className="space-y-1.5">
-                  <h3 className="text-2xl sm:text-3xl font-serif font-normal text-foreground">
+              <form onSubmit={handleStep1Submit} className="space-y-5 sm:space-y-6">
+                <div className="space-y-1">
+                  <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif font-normal text-foreground">
                     A little about you
                   </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed font-sans">
@@ -332,7 +332,7 @@ export default function OnboardingPage() {
                 </div>
 
                 {/* Name Input */}
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground block">
                     FULL NAME *
                   </label>
@@ -341,18 +341,18 @@ export default function OnboardingPage() {
                     placeholder="Enter your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-2xl border border-border/80 bg-accent/30 dark:bg-accent/20 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all h-auto"
+                    className="w-full rounded-xl sm:rounded-2xl border border-border/80 bg-accent/30 dark:bg-accent/20 px-3.5 sm:px-4 py-3 sm:py-3.5 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all h-auto"
                     autoFocus
                     required
                   />
                 </div>
 
                 {/* Gender Pills Selection */}
-                <div className="space-y-2.5">
+                <div className="space-y-1.5">
                   <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground block">
                     GENDER *
                   </label>
-                  <div className="grid grid-cols-3 gap-2.5">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
                     {[
                       { key: "female", label: "Female" },
                       { key: "male", label: "Male" },
@@ -365,7 +365,7 @@ export default function OnboardingPage() {
                           key={item.key}
                           type="button"
                           onClick={() => setGender(item.key)}
-                          className={`rounded-2xl py-3 px-4 text-xs sm:text-sm font-medium transition-all text-center cursor-pointer border ${
+                          className={`rounded-xl sm:rounded-2xl py-2.5 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium transition-all text-center cursor-pointer border ${
                             isSelected
                               ? "border-primary bg-primary/10 text-primary shadow-xs font-semibold"
                               : "border-border/80 bg-accent/30 dark:bg-accent/20 text-muted-foreground hover:bg-accent/60 hover:text-foreground"
@@ -382,7 +382,7 @@ export default function OnboardingPage() {
                   <Button
                     type="submit"
                     disabled={!name.trim()}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3.5 rounded-full transition shadow-md shadow-primary/20 disabled:opacity-40 cursor-pointer text-sm h-auto"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 sm:py-3.5 rounded-full transition shadow-md shadow-primary/20 disabled:opacity-40 cursor-pointer text-sm h-auto"
                   >
                     Continue to Birth Details
                   </Button>
@@ -392,23 +392,23 @@ export default function OnboardingPage() {
 
             {/* ---------------- STEP 2: BIRTH DETAILS & AUTOCOMPLETE ---------------- */}
             {onboardingStep === 2 && (
-              <form onSubmit={handleStep2Submit} className="space-y-5">
-                <div className="flex items-center justify-between">
+              <form onSubmit={handleStep2Submit} className="space-y-4 sm:space-y-5">
+                <div className="flex items-center justify-between gap-2">
                   <button
                     type="button"
                     onClick={handleBackToStep1}
-                    className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-xs font-mono tracking-wider cursor-pointer transition mb-1"
+                    className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-xs font-mono tracking-wider cursor-pointer transition"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     <span>BACK TO STEP 1</span>
                   </button>
-                  <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                  <span className="text-[10px] sm:text-[11px] font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20 whitespace-nowrap">
                     Step 2: Coordinates
                   </span>
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="text-2xl sm:text-3xl font-serif font-normal text-foreground">
+                  <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif font-normal text-foreground">
                     Your birth details
                   </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed font-sans">
@@ -416,8 +416,8 @@ export default function OnboardingPage() {
                   </p>
                 </div>
 
-                {/* Date & Time Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                {/* Date & Time Row - Stacks on mobile, 2 columns on tablet/desktop */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-0.5">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground block">
                       DATE OF BIRTH *
@@ -448,7 +448,7 @@ export default function OnboardingPage() {
                     type="checkbox"
                     checked={isTimeUnknown}
                     onChange={(e) => setIsTimeUnknown(e.target.checked)}
-                    className="w-4 h-4 rounded border-border accent-primary cursor-pointer"
+                    className="w-4 h-4 rounded border-border accent-primary cursor-pointer shrink-0"
                   />
                   <span>I don&apos;t know my exact time of birth</span>
                 </label>
@@ -468,7 +468,7 @@ export default function OnboardingPage() {
                   </div>
 
                   <div className="relative">
-                    <MapPin className="w-4 h-4 text-muted-foreground absolute left-3.5 top-3.5 z-10" />
+                    <MapPin className="w-4 h-4 text-muted-foreground absolute left-3.5 top-3.5 z-10 shrink-0" />
                     <Input
                       type="text"
                       placeholder="Search city, state, country..."
@@ -485,7 +485,7 @@ export default function OnboardingPage() {
                           setShowLocationDropdown(true)
                         }
                       }}
-                      className="w-full rounded-2xl border border-border/80 bg-accent/30 dark:bg-accent/20 pl-10 pr-10 py-3 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all h-auto"
+                      className="w-full rounded-xl sm:rounded-2xl border border-border/80 bg-accent/30 dark:bg-accent/20 pl-10 pr-10 py-2.5 sm:py-3 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all h-auto"
                       required
                     />
 
@@ -496,7 +496,7 @@ export default function OnboardingPage() {
 
                   {/* Autocomplete Dropdown Menu */}
                   {showLocationDropdown && locationSuggestions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-1.5 bg-popover border border-border/80 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-56 overflow-y-auto no-scrollbar">
+                    <div className="absolute top-full left-0 right-0 mt-1.5 bg-popover border border-border/80 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-48 sm:max-h-56 overflow-y-auto no-scrollbar">
                       {locationSuggestions.map((loc, idx) => {
                         const displayName =
                           loc.displayName ||
@@ -514,9 +514,9 @@ export default function OnboardingPage() {
                             key={idx}
                             type="button"
                             onClick={() => handleSelectLocation(loc)}
-                            className="w-full text-left px-4 py-2.5 hover:bg-accent transition-colors border-b border-border/40 last:border-0 flex items-center justify-between group cursor-pointer"
+                            className="w-full text-left px-3.5 sm:px-4 py-2.5 hover:bg-accent transition-colors border-b border-border/40 last:border-0 flex items-center justify-between group cursor-pointer gap-2"
                           >
-                            <div className="flex items-center gap-2.5 overflow-hidden">
+                            <div className="flex items-center gap-2 overflow-hidden min-w-0">
                               <MapPin className="w-3.5 h-3.5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
                               <span className="text-xs text-foreground truncate font-medium">
                                 {displayName}
@@ -541,7 +541,7 @@ export default function OnboardingPage() {
                       !selectedLocation ||
                       isOnboardingSubmitting
                     }
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3.5 rounded-full transition shadow-md shadow-primary/20 disabled:opacity-40 cursor-pointer text-sm h-auto"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 sm:py-3.5 rounded-full transition shadow-md shadow-primary/20 disabled:opacity-40 cursor-pointer text-sm h-auto"
                   >
                     {isOnboardingSubmitting ? (
                       <span className="inline-flex items-center gap-2">
@@ -558,8 +558,8 @@ export default function OnboardingPage() {
           </div>
 
           {/* Footer Security / Engine Notice */}
-          <div className="text-[10px] text-center font-mono text-muted-foreground/70 pt-4 flex items-center justify-center gap-2">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+          <div className="text-[10px] text-center font-mono text-muted-foreground/70 pt-4 flex items-center justify-center gap-1.5 sm:gap-2">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
             <span>
               {onboardingStep === 1
                 ? "STEP 1 SAVES YOUR IDENTITY TO MEMORY"

@@ -65,7 +65,7 @@ export const FALLBACK_BLOGS = [
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80",
       bio: "Over 22 years of dedicated practice in Parashari & Jaimini Jyotish, guiding seekers through karmic cycles with precision.",
     },
-    meta_title: "Saturn Sade Sati: Impact, Phases & Vedic Remedies | AstroTring",
+    meta_title: "Saturn Sade Sati: Impact, Phases & Vedic Remedies | Japaika",
     meta_description:
       "Learn what Saturn Sade Sati means for your Moon sign, its three distinct phases, and classical Vedic upayas including Hanuman Chalisa and oil offerings.",
     content: `
@@ -139,7 +139,7 @@ If you are currently experiencing the intensity of Saturn's transit, the followi
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80",
       bio: "Specializing in Jaimini Chara Karakas, divisional chart syntheses, and relationship astrology with modern psychospiritual applications.",
     },
-    meta_title: "Navamsa D-9 Chart Decoded: Marriage & Soul Purpose | AstroTring",
+    meta_title: "Navamsa D-9 Chart Decoded: Marriage & Soul Purpose | Japaika",
     meta_description:
       "Explore how the Navamsa (D-9) chart acts as the fruit of the tree shown in your D-1 Rashi chart. Understand spouse characteristics and dharma.",
     content: `
@@ -188,7 +188,7 @@ Thus, the 108 Padas of the 27 lunar constellations map 1:1 onto the 12 signs of 
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80",
       bio: "Over 22 years of dedicated practice in Parashari & Jaimini Jyotish, guiding seekers through karmic cycles with precision.",
     },
-    meta_title: "Jupiter Transit in Taurus: Wealth & Spiritual Growth | AstroTring",
+    meta_title: "Jupiter Transit in Taurus: Wealth & Spiritual Growth | Japaika",
     meta_description:
       "Read our in-depth analysis of Jupiter's transit through Taurus and its impact on all 12 Moon signs for career, finance, and personal relationships.",
     content: `
@@ -234,7 +234,7 @@ Unlike the fiery, impulsive leaps of Jupiter in Aries, Taurus anchors Guru's vis
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80",
       bio: "Specializing in Jaimini Chara Karakas, divisional chart syntheses, and relationship astrology with modern psychospiritual applications.",
     },
-    meta_title: "Kundli Milan Ashta Koota Explained: 36 Gunas & Doshas | AstroTring",
+    meta_title: "Kundli Milan Ashta Koota Explained: 36 Gunas & Doshas | Japaika",
     meta_description:
       "A complete guide to Vedic marriage matching. Understand Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, and Nadi Kootas.",
     content: `
@@ -283,7 +283,7 @@ True Vedic matchmaking integrates Guna Milan, longevity analysis (*Ayushya*), an
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80",
       bio: "Over 22 years of dedicated practice in Parashari & Jaimini Jyotish, guiding seekers through karmic cycles with precision.",
     },
-    meta_title: "Dhana Yogas in Vedic Astrology: Wealth Combinations | AstroTring",
+    meta_title: "Dhana Yogas in Vedic Astrology: Wealth Combinations | Japaika",
     meta_description:
       "Explore the astrological houses of wealth (2nd, 5th, 9th, 11th) and the powerful Lakshmi and Chandra-Mangala yogas that generate immense prosperity.",
     content: `
@@ -323,7 +323,7 @@ In Parashari astrology, wealth is governed by the intricate interweaving of **Dh
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80",
       bio: "Specializing in Jaimini Chara Karakas, divisional chart syntheses, and relationship astrology with modern psychospiritual applications.",
     },
-    meta_title: "Vedic Gemstones Science: Rules, Selection & Risks | AstroTring",
+    meta_title: "Vedic Gemstones Science: Rules, Selection & Risks | Japaika",
     meta_description:
       "A complete guide to wearing Vedic gemstones (Ruby, Pearl, Emerald, Yellow Sapphire, Blue Sapphire, Diamond). Never wear gemstones for dusthana lords.",
     content: `

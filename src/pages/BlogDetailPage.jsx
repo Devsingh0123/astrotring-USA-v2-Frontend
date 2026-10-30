@@ -255,9 +255,9 @@ export default function BlogDetailPage() {
   }, [slug, dispatch]);
 
   const authorName = useMemo(() => {
-    if (!blog) return "AstroTring Scholar";
+    if (!blog) return "Japaika Scholar";
     if (typeof blog.author === "string") return blog.author;
-    return blog.author?.name || blog.author?.email?.split("@")[0] || "AstroTring Vedic Scholar";
+    return blog.author?.name || blog.author?.email?.split("@")[0] || "Japaika Vedic Scholar";
   }, [blog]);
 
   const authorBio = useMemo(() => {
@@ -322,10 +322,10 @@ export default function BlogDetailPage() {
     );
   }
 
-  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
-  const metaTitle = blog.meta_title || `${blog.title} | AstroTring`;
+  const shareUrl = typeof window !== "undefined" ? window.location.href : `https://japaika.com/blogs/${slug}`;
+  const metaTitle = (blog.meta_title || `${blog.title} | Japaika`).replace(/AstroTring/gi, "Japaika");
   const metaDesc =
-    blog.meta_description || blog.excerpt || "In-depth Vedic astrology publication by AstroTring.";
+    blog.meta_description || blog.excerpt || "In-depth Vedic astrology publication by Japaika.";
 
   return (
     <div className="min-h-full flex flex-col justify-between bg-transparent text-foreground">
@@ -341,14 +341,14 @@ export default function BlogDetailPage() {
         {blog.featured_image && <meta property="og:image" content={blog.featured_image} />}
         <meta property="og:type" content="article" />
         <meta property="article:published_time" content={blog.published_at || blog.created_at} />
-        <link rel="canonical" href={blog.canonical_url || shareUrl} />
+        <link rel="canonical" href={(blog.canonical_url || shareUrl).replace("https://astrotring.com", "https://japaika.com")} />
       </Helmet>
 
       {/* Main Container */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
         {/* Navigation Breadcrumbs */}
         <nav aria-label="Breadcrumbs" className="flex items-center gap-1.5 font-mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-muted-foreground flex-wrap">
-          <Link to="/" className="hover:text-foreground transition-colors">AstroTring</Link>
+          <Link to="/" className="hover:text-foreground transition-colors">Japaika</Link>
           <span>/</span>
           <Link to="/blogs" className="hover:text-foreground transition-colors">Publications</Link>
           <span>/</span>

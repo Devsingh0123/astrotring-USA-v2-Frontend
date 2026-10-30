@@ -54,7 +54,9 @@ export default function InvoicesPage() {
     const loadInvoices = async () => {
       // 1. Initial load from localStorage for fast render
       try {
-        const stored = localStorage.getItem("astrotring_invoices")
+        const stored =
+          localStorage.getItem("japaika_invoices") ||
+          localStorage.getItem("astrotring_invoices")
         if (stored) {
           setInvoices(JSON.parse(stored))
         }
@@ -69,7 +71,7 @@ export default function InvoicesPage() {
           const serverInvoices = res?.data || res?.invoices
           if (Array.isArray(serverInvoices) && serverInvoices.length > 0) {
             setInvoices(serverInvoices)
-            localStorage.setItem("astrotring_invoices", JSON.stringify(serverInvoices))
+            localStorage.setItem("japaika_invoices", JSON.stringify(serverInvoices))
           }
         } catch {
           // Keep existing local invoices on error
@@ -80,7 +82,9 @@ export default function InvoicesPage() {
     loadInvoices()
     const handleStorageChange = () => {
       try {
-        const stored = localStorage.getItem("astrotring_invoices")
+        const stored =
+          localStorage.getItem("japaika_invoices") ||
+          localStorage.getItem("astrotring_invoices")
         if (stored) setInvoices(JSON.parse(stored))
       } catch (e) {
         console.error(e)
@@ -132,10 +136,10 @@ export default function InvoicesPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen bg-[#0d0a14] text-white font-sans">
       <Helmet>
-        <title>Payments & Invoices | AstroTring</title>
+        <title>Payments & Invoices | Japaika</title>
         <meta
           name="description"
-          content="View and download all your past purchases and official GST tax invoices for question packs and astrology reports on AstroTring."
+          content="View and download all your past purchases and official GST tax invoices for question packs and astrology reports on Japaika."
         />
       </Helmet>
 
@@ -144,7 +148,7 @@ export default function InvoicesPage() {
         {/* Breadcrumb Navigation */}
         <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.2em] text-white/50">
           <Link to="/" className="hover:text-white transition-colors">
-            ASTROTRING
+            JAPAIKA
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-white/30" />
           <span className="text-amber-300/90 font-semibold">INVOICES</span>
@@ -393,7 +397,7 @@ export default function InvoicesPage() {
                 <div className="flex items-start gap-3.5">
                   <img
                     src="/logo-192.jpg"
-                    alt="Astrotring"
+                    alt="Japaika"
                     className="w-12 h-12 rounded-xl object-cover border border-neutral-200 shrink-0 shadow-xs"
                   />
                   <div>
@@ -402,7 +406,7 @@ export default function InvoicesPage() {
                         VELTEX SERVICES PRIVATE LIMITED
                       </h2>
                       <span className="text-[10px] font-mono bg-neutral-100 text-neutral-700 px-1.5 py-0.5 rounded border border-neutral-300">
-                        Astrotring
+                        Japaika
                       </span>
                     </div>
                     <div className="text-[11px] text-neutral-600 mt-1 font-sans space-y-0.5">
@@ -581,7 +585,7 @@ export default function InvoicesPage() {
               {/* Footer Notice */}
               <div className="border-t border-neutral-200 pt-4 text-[10px] text-neutral-500 font-mono text-center space-y-0.5">
                 <div>This is a computer generated invoice and does not require a physical signature.</div>
-                <div>Thank you for trusting AstroTring for your Vedic astrological guidance.</div>
+                <div>Thank you for trusting Japaika for your Vedic astrological guidance.</div>
               </div>
             </div>
           </DialogContent>

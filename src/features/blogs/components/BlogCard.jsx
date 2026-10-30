@@ -31,7 +31,7 @@ export default function BlogCard({ blog, onTagClick }) {
   const authorName =
     typeof blog.author === "string"
       ? blog.author
-      : blog.author?.name || blog.author?.email?.split("@")[0] || "AstroTring Vedic Astrologer";
+      : blog.author?.name || blog.author?.email?.split("@")[0] || "Japaika Vedic Astrologer";
 
   const fallbackImage =
     "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80";

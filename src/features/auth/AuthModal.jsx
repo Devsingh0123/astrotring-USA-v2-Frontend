@@ -251,11 +251,11 @@ export default function AuthModal({ isOpen: propsIsOpen, onClose: propsOnClose }
               <div className="flex items-center gap-2.5">
                 <img
                   src="/logo-192.jpg"
-                  alt="AstroTring"
+                  alt="Japaika"
                   className="w-8 h-8 rounded-full object-cover shrink-0 border border-border shadow-xs"
                 />
                 <span className="font-serif font-bold text-xl tracking-tight text-foreground">
-                  AstroTring
+                  Japaika
                 </span>
               </div>
 

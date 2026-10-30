@@ -1,20 +1,38 @@
 import axios from "axios";
 import { toast } from "sonner";
+import { PRODUCTION_API_BASE_URL } from "@/lib/constants";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD
+    ? PRODUCTION_API_BASE_URL
+    : "http://localhost:5000/api/v1");
 
-// Standardized storage keys across AstroTring
+// Standardized storage keys across Japaika (with legacy AstroTring fallback)
 export const STORAGE_KEYS = {
-  ACCESS_TOKEN: "astrotring_access_token",
-  REFRESH_TOKEN: "astrotring_refresh_token",
-  USER: "astrotring_user",
-  BIRTH_DETAILS: "astrotring_birth_details",
+  ACCESS_TOKEN: "japaika_access_token",
+  REFRESH_TOKEN: "japaika_refresh_token",
+  USER: "japaika_user",
+  BIRTH_DETAILS: "japaika_birth_details",
+};
+
+const LEGACY_KEYS = {
+  ACCESS_TOKEN: [
+    "astrotring_access_token",
+    "astrotring_auth_token",
+    "token",
+    "astrotring_token",
+  ],
+  REFRESH_TOKEN: ["astrotring_refresh_token"],
+  USER: ["astrotring_user"],
+  BIRTH_DETAILS: ["astrotring_birth_details"],
 };
 
 export const getStoredAccessToken = () => {
   return (
     localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN) ||
+    localStorage.getItem("japaika_auth_token") ||
+    localStorage.getItem("astrotring_access_token") ||
     localStorage.getItem("astrotring_auth_token") ||
     localStorage.getItem("token") ||
     localStorage.getItem("astrotring_token") ||
@@ -23,7 +41,11 @@ export const getStoredAccessToken = () => {
 };
 
 export const getStoredRefreshToken = () => {
-  return localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN) || null;
+  return (
+    localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN) ||
+    localStorage.getItem("astrotring_refresh_token") ||
+    null
+  );
 };
 
 export const setStoredAccessToken = (token) => {
@@ -31,9 +53,8 @@ export const setStoredAccessToken = (token) => {
     localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token);
   } else {
     localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-    localStorage.removeItem("astrotring_auth_token");
-    localStorage.removeItem("token");
-    localStorage.removeItem("astrotring_token");
+    localStorage.removeItem("japaika_auth_token");
+    LEGACY_KEYS.ACCESS_TOKEN.forEach((k) => localStorage.removeItem(k));
   }
 };
 
@@ -42,21 +63,23 @@ export const setStoredRefreshToken = (token) => {
     localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, token);
   } else {
     localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+    LEGACY_KEYS.REFRESH_TOKEN.forEach((k) => localStorage.removeItem(k));
   }
 };
 
 export const clearAuthStorage = () => {
   localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-  localStorage.removeItem("astrotring_auth_token");
-  localStorage.removeItem("token");
-  localStorage.removeItem("astrotring_token");
+  localStorage.removeItem("japaika_auth_token");
   localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
   localStorage.removeItem(STORAGE_KEYS.USER);
   localStorage.removeItem(STORAGE_KEYS.BIRTH_DETAILS);
+  Object.values(LEGACY_KEYS)
+    .flat()
+    .forEach((k) => localStorage.removeItem(k));
 };
 
 // Broadcast Channel API for cross-tab auth state synchronization
-export const AUTH_CHANNEL_NAME = "astrotring_auth";
+export const AUTH_CHANNEL_NAME = "japaika_auth";
 
 export const broadcastAuthMessage = (data) => {
   try {

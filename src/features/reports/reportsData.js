@@ -29,7 +29,7 @@ export const REPORTS_CATALOG = [
     badge: "Trending",
     isLocked: true,
     description:
-      "A Vedic marriage report reads the seventh house, its lord, Venus and the Navamsa (D9) to say when marriage is most likely and what the marriage itself will feel like. AstroTring prepares it from your own birth chart, naming the Dasha and transit windows that carry the strongest marriage yoga rather than one fixed date.",
+      "A Vedic marriage report reads the seventh house, its lord, Venus and the Navamsa (D9) to say when marriage is most likely and what the marriage itself will feel like. Japaika prepares it from your own birth chart, naming the Dasha and transit windows that carry the strongest marriage yoga rather than one fixed date.",
     dashaFocus: "7th Lord, Jupiter & Navamsa (D9)",
     jyotishPrompt: "When is marriage most likely according to my 7th house and current Mahadasha?",
   },

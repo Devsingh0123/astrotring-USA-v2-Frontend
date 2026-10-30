@@ -1,38 +1,71 @@
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import {
   Menu,
-  Sparkles,
-  BookOpen,
   X,
   Orbit,
   Newspaper,
   Calculator,
   FileText,
-  User,
-  LogOut,
   Compass,
-  Sun,
-  Moon,
+  Flame,
+  ShoppingBag,
+  BookOpen,
+  SunMedium,
+  Trash2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { logout, openAuthModal } from "@/features/auth"
-import { useTheme } from "@/hooks/useTheme"
+import { openAuthModal } from "@/features/auth"
+import UserProfileMenu from "@/features/user/components/UserProfileMenu"
+import { setActiveConversation, setActiveThreadId, deleteConversation } from "@/features/jyotish"
+import { fetchUserThreads, fetchThreadById, deleteThread } from "@/features/jyotish/jyotishApi"
+import { isToday, isYesterday, differenceInCalendarDays, format } from "date-fns"
 
 const mobileNavLinks = [
   { label: "Horoscopes", path: "/horoscope", icon: Orbit },
   { label: "Blogs", path: "/blogs", icon: Newspaper },
+  { label: "Dosha", path: "/dosha", icon: Flame },
   { label: "Calculators", path: "/calculators", icon: Calculator },
   { label: "Reports", path: "/reports", icon: FileText },
+  { label: "Shop", path: "/shop", icon: ShoppingBag },
 ]
 
-export default function MobileHeader({ onOpenBindModal }) {
+function getTimelineBucket(dateInput) {
+  if (!dateInput) return "TODAY"
+  const date = new Date(dateInput)
+  if (isNaN(date.getTime())) return "TODAY"
+
+  if (isToday(date)) return "TODAY"
+  if (isYesterday(date)) return "YESTERDAY"
+
+  const diff = differenceInCalendarDays(new Date(), date)
+  if (diff <= 7) return "PREVIOUS 7 DAYS"
+  if (diff <= 30) return "PREVIOUS 30 DAYS"
+  return format(date, "MMMM yyyy").toUpperCase()
+}
+
+export default function MobileHeader({
+  onOpenBindModal,
+  onOpenBirthDetailsModal,
+  onOpenBuyQuestionsModal,
+  onOpenBuyReportsModal,
+}) {
   const [isOpen, setIsOpen] = useState(false)
+  const [activeFilter, setActiveFilter] = useState("ALL")
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { isDark, toggleTheme } = useTheme()
+  const location = useLocation()
+
   const { isAuthenticated, user, birthDetails } = useSelector((state) => state.auth || {})
+  const { conversations = [], serverThreads = [], activeConversationId, activeThreadId } =
+    useSelector((state) => state.jyotish || {})
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchUserThreads())
+    }
+  }, [dispatch, isAuthenticated])
 
   return (
     <>
@@ -41,38 +74,35 @@ export default function MobileHeader({ onOpenBindModal }) {
           variant="ghost"
           size="icon"
           onClick={() => setIsOpen(true)}
-          className="text-foreground hover:bg-accent/70 w-9 h-9 rounded-xl cursor-pointer"
+          className="text-foreground hover:bg-accent/70 w-11 h-11 rounded-xl cursor-pointer"
           aria-label="Open navigation"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="size-7 stroke-[2]" />
         </Button>
 
-        <Link to="/" className="flex items-center gap-2">
-          <img
-            src="/logo-192.jpg"
-            alt="AstroTring"
-            className="w-7 h-7 rounded-full object-cover shrink-0 border border-border shadow-xs"
-          />
-          <span className="font-serif font-bold text-base tracking-tight text-foreground">
-            AstroTring
+        <Link to="/" className="flex items-center gap-2 group">
+          <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500/20 via-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center shrink-0 overflow-hidden p-0.5 shadow-xs">
+            <img
+              src="/logo-192.jpg"
+              alt="Japaika"
+              className="w-full h-full object-cover rounded-md"
+            />
+          </div>
+          <span className="font-sans font-bold text-base tracking-tight text-foreground">
+            Japaika
           </span>
         </Link>
 
         {isAuthenticated ? (
-          <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-mono text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
-              Bound
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => dispatch(logout())}
-              className="text-muted-foreground hover:text-destructive w-8 h-8 rounded-lg cursor-pointer"
-              title="Log out"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-            </Button>
-          </div>
+          <UserProfileMenu
+            triggerVariant="avatarOnly"
+            side="bottom"
+            align="end"
+            sideOffset={8}
+            onOpenBirthDetailsModal={onOpenBirthDetailsModal}
+            onOpenBuyQuestionsModal={onOpenBuyQuestionsModal}
+            onOpenBuyReportsModal={onOpenBuyReportsModal}
+          />
         ) : (
           <Button
             variant="ghost"
@@ -93,48 +123,33 @@ export default function MobileHeader({ onOpenBindModal }) {
             onClick={() => setIsOpen(false)}
           />
 
-          <div className="relative w-[290px] max-w-[82%] bg-card/90 backdrop-blur-2xl border-r border-border p-4 flex flex-col justify-between h-full z-10 shadow-2xl animate-in slide-in-from-left duration-200">
-            <div className="space-y-4">
+          <div className="relative w-[310px] max-w-[86%] bg-card/95 backdrop-blur-2xl border-r border-border p-4 flex flex-col h-full z-10 shadow-2xl animate-in slide-in-from-left duration-200">
+            <div className="space-y-4 flex-1 overflow-y-auto no-scrollbar pr-0.5">
               <div className="flex items-center justify-between pb-3 border-b border-border">
                 <div className="flex items-center gap-2.5">
-                  <img
-                    src="/logo-192.jpg"
-                    alt="AstroTring"
-                    className="w-7 h-7 rounded-full object-cover shrink-0 border border-border shadow-xs"
-                  />
-                  <span className="font-serif font-bold text-base text-foreground tracking-tight">
-                    AstroTring
+                  <div className="relative w-8.5 h-8.5 rounded-xl bg-gradient-to-br from-amber-500/20 via-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center shrink-0 overflow-hidden p-0.5 shadow-xs">
+                    <img
+                      src="/logo-192.jpg"
+                      alt="Japaika"
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                  <span className="font-sans font-bold text-lg tracking-tight text-foreground">
+                    Japaika
                   </span>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsOpen(false)}
-                  className="w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer"
+                  className="w-10 h-10 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-6 h-6 stroke-[1.8]" />
                 </Button>
               </div>
 
-              {/* Engine Links with glass styling */}
-              <div className="space-y-2">
-                <Link
-                  to="/?engine=jyotish"
-                  onClick={() => setIsOpen(false)}
-                  className="w-full flex items-center gap-3 rounded-2xl border border-primary/30 bg-primary/10 px-3.5 py-2.5 text-foreground text-xs font-medium shadow-xs hover:bg-primary/15 transition-all"
-                >
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  <span className="font-semibold">Ask Jyotish</span>
-                </Link>
-                <Link
-                  to="/?engine=shastra"
-                  onClick={() => setIsOpen(false)}
-                  className="w-full flex items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-2.5 text-foreground text-xs font-medium shadow-xs hover:bg-amber-500/15 transition-all"
-                >
-                  <BookOpen className="w-4 h-4 text-amber-500" />
-                  <span className="font-semibold">Ask Shastra</span>
-                </Link>
-
+              {/* Navigation Links */}
+              <nav className="space-y-1 pt-1">
                 <Link
                   to="/kundli"
                   onClick={(e) => {
@@ -153,80 +168,208 @@ export default function MobileHeader({ onOpenBindModal }) {
                       navigate("/onboarding")
                     }
                   }}
-                  className="w-full flex items-center gap-3 rounded-2xl border border-border/80 bg-accent/40 px-3.5 py-2.5 text-foreground text-xs font-medium hover:bg-accent transition-all shadow-xs"
+                  className="flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-[17px] font-semibold text-foreground/85 hover:text-foreground hover:bg-accent/70 transition-colors"
                 >
-                  <Compass className="w-4 h-4 text-amber-500" />
+                  <Compass className="size-6 shrink-0 stroke-[1.8] text-amber-500" />
                   <span>My Janam Kundli</span>
                 </Link>
-              </div>
 
-              {/* Navigation Links */}
-              <nav className="space-y-1 pt-1">
                 {mobileNavLinks.map((item) => (
                   <Link
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors"
+                    className="flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-[17px] font-semibold text-foreground/85 hover:text-foreground hover:bg-accent/70 transition-colors"
                   >
-                    <item.icon className="w-4 h-4" />
+                    <item.icon className="size-6 shrink-0 stroke-[1.8]" />
                     <span>{item.label}</span>
                   </Link>
                 ))}
               </nav>
-            </div>
 
-            <div className="pt-4 border-t border-border space-y-3">
-              {/* Theme Toggle Button inside mobile drawer */}
-              <button
-                type="button"
-                onClick={toggleTheme}
-                aria-label="Toggle theme"
-                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-border/80 bg-accent/40 hover:bg-accent text-foreground text-xs font-medium transition-all cursor-pointer shadow-xs"
-              >
-                <span className="flex items-center gap-2">
-                  {isDark ? (
-                    <Sun className="w-4 h-4 text-amber-400" />
-                  ) : (
-                    <Moon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                  )}
-                  <span>{isDark ? "Light Mode" : "Dark Mode"}</span>
-                </span>
-                <span className="text-[10px] font-mono text-muted-foreground uppercase">
-                  {isDark ? "Switch" : "Switch"}
-                </span>
-              </button>
-
-              {isAuthenticated ? (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-accent/40 border border-border text-xs overflow-hidden">
-                    <User className="w-3.5 h-3.5 text-primary shrink-0" />
-                    <span className="text-foreground truncate font-medium">
-                      {user?.email || user?.name || "Verified User"}
-                    </span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setIsOpen(false)
-                      dispatch(logout())
-                    }}
-                    className="w-full border-destructive/30 text-destructive hover:bg-destructive/10 text-xs py-2 rounded-xl cursor-pointer"
-                  >
-                    Log out
-                  </Button>
+              {/* Recent Readings Filter & History (matching desktop sidebar) */}
+              <div className="pt-3 border-t border-border space-y-3">
+                <div className="flex items-center gap-1 text-[11px] font-mono bg-accent/40 p-1 rounded-xl border border-border/70">
+                  {["ALL", "JYOTISH", "SHASTRA"].map((filter) => (
+                    <button
+                      key={filter}
+                      onClick={() => setActiveFilter(filter)}
+                      className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer text-center text-xs ${
+                        activeFilter === filter
+                          ? "bg-card text-foreground font-semibold shadow-xs border border-border/60"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {filter}
+                    </button>
+                  ))}
                 </div>
-              ) : (
-                <Button
-                  onClick={() => {
+
+                {(() => {
+                  const threadMap = new Map()
+
+                  // 1. Add server threads as baseline
+                  serverThreads.forEach((th) => {
+                    threadMap.set(th.id, {
+                      id: th.id,
+                      threadId: th.id,
+                      question: th.title,
+                      engine: th.engine,
+                      createdAt: th.lastMessageAt || th.createdAt,
+                      isServerThread: true,
+                    })
+                  })
+
+                  // 2. Add or update with local conversations
+                  conversations.forEach((c) => {
+                    const key = c.threadId || c.id
+                    if (threadMap.has(key)) {
+                      const existing = threadMap.get(key)
+                      const timeC = new Date(c.createdAt || 0).getTime()
+                      const timeExisting = new Date(existing.createdAt || 0).getTime()
+                      if (timeC > timeExisting) {
+                        threadMap.set(key, {
+                          ...existing,
+                          question: existing.question || c.question,
+                          createdAt: c.createdAt,
+                        })
+                      }
+                    } else {
+                      threadMap.set(key, {
+                        id: c.id,
+                        threadId: c.threadId || c.id,
+                        question: c.question || "Untitled Reading",
+                        engine: c.engine || "jyotish",
+                        createdAt: c.createdAt,
+                        isServerThread: Boolean(c.threadId),
+                      })
+                    }
+                  })
+
+                  const allReadings = Array.from(threadMap.values())
+
+                  const filtered = allReadings.filter((item) => {
+                    if (activeFilter === "JYOTISH") return item.engine === "jyotish"
+                    if (activeFilter === "SHASTRA") return item.engine === "shastra"
+                    return true
+                  })
+
+                  if (filtered.length === 0) {
+                    return (
+                      <div className="py-6 px-1 text-xs text-muted-foreground font-sans">
+                        Your readings will appear here.
+                      </div>
+                    )
+                  }
+
+                  // Sort chronologically newest first
+                  filtered.sort((a, b) => {
+                    const timeA = new Date(a.createdAt || a.timestamp || 0).getTime()
+                    const timeB = new Date(b.createdAt || b.timestamp || 0).getTime()
+                    return timeB - timeA
+                  })
+
+                  // Group readings into timeline buckets
+                  const timelineGroups = []
+                  const groupMap = new Map()
+
+                  filtered.forEach((item) => {
+                    const bucket = getTimelineBucket(item.createdAt || item.timestamp)
+                    if (!groupMap.has(bucket)) {
+                      groupMap.set(bucket, [])
+                      timelineGroups.push(bucket)
+                    }
+                    groupMap.get(bucket).push(item)
+                  })
+
+                  const handleItemClick = (item) => {
+                    const targetId = item.id
+                    const targetThreadId = item.threadId || item.id
+
+                    dispatch(setActiveConversation(targetId))
+                    dispatch(setActiveThreadId(targetThreadId))
+
+                    if (item.isServerThread || targetThreadId) {
+                      dispatch(fetchThreadById(targetThreadId))
+                    }
+                    if (location.pathname !== "/") {
+                      navigate(`/?engine=${item.engine || "jyotish"}`)
+                    }
                     setIsOpen(false)
-                    onOpenBindModal(true)
-                  }}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-xs py-2 rounded-xl cursor-pointer shadow-sm"
-                >
-                  Log in / Bind Chart
-                </Button>
-              )}
+                  }
+
+                  const handleDeleteItem = (e, item) => {
+                    e.stopPropagation()
+                    if (item.isServerThread) {
+                      dispatch(deleteThread(item.id))
+                    }
+                    dispatch(deleteConversation(item.id))
+                  }
+
+                  return (
+                    <div className="space-y-3 pt-1 max-h-[360px] overflow-y-auto no-scrollbar pr-0.5">
+                      {timelineGroups.map((groupKey) => {
+                        const items = groupMap.get(groupKey) || []
+                        return (
+                          <div key={groupKey} className="space-y-1">
+                            <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground px-1.5 pt-1.5 pb-0.5 tracking-wider uppercase select-none">
+                              <span>{groupKey}</span>
+                              <span className="text-[9px] text-muted-foreground/60 font-sans">{items.length}</span>
+                            </div>
+                            <div className="space-y-1">
+                              {items.map((item) => {
+                                const isSelected =
+                                  activeConversationId === item.id ||
+                                  activeConversationId === item.threadId ||
+                                  (activeThreadId && (activeThreadId === item.id || activeThreadId === item.threadId))
+
+                                return (
+                                  <div
+                                    key={item.id}
+                                    className="relative group/reading flex items-center"
+                                  >
+                                    <button
+                                      type="button"
+                                      onClick={() => handleItemClick(item)}
+                                      className={`w-full text-left p-2.5 rounded-xl text-[13.5px] font-sans transition-all cursor-pointer flex items-start gap-2.5 pr-8 ${
+                                        isSelected
+                                          ? item.engine === "shastra"
+                                            ? "bg-amber-500/15 text-foreground border border-amber-500/40 shadow-xs"
+                                            : "bg-primary/10 text-foreground border border-primary/30 shadow-xs"
+                                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50 border border-transparent"
+                                      }`}
+                                    >
+                                      <span className="flex-none pt-0.5">
+                                        {item.engine === "shastra" ? (
+                                          <BookOpen className="w-4 h-4 text-amber-500" />
+                                        ) : (
+                                          <SunMedium className="w-4 h-4 text-primary" />
+                                        )}
+                                      </span>
+                                      <span className="line-clamp-2 leading-snug flex-1">
+                                        {item.question || item.title || "Untitled Reading"}
+                                      </span>
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      onClick={(e) => handleDeleteItem(e, item)}
+                                      title="Delete reading"
+                                      className="absolute right-1.5 top-2.5 opacity-70 hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-accent cursor-pointer"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )
+                })()}
+              </div>
             </div>
           </div>
         </div>

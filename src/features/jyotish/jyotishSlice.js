@@ -5,13 +5,16 @@ import {
   submitMessageFeedback,
   deleteThread,
 } from "./jyotishApi";
-import { getStoredAccessToken } from "@/lib/api-client";
+import { getStoredAccessToken, STORAGE_KEYS } from "@/lib/api-client";
 
-const STORAGE_KEY = "astrotring_jyotish_conversations";
+const STORAGE_KEY = "japaika_jyotish_conversations";
+const LEGACY_STORAGE_KEY = "astrotring_jyotish_conversations";
 
 const loadStoredConversations = () => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw =
+      localStorage.getItem(STORAGE_KEY) ||
+      localStorage.getItem(LEGACY_STORAGE_KEY);
     if (raw) return JSON.parse(raw);
   } catch (err) {
     console.error("Failed to load conversations from localStorage:", err);
@@ -31,7 +34,9 @@ const initialConversations = loadStoredConversations();
 
 const getInitialQuotas = () => {
   try {
-    const raw = localStorage.getItem("astrotring_user");
+    const raw =
+      localStorage.getItem(STORAGE_KEYS.USER) ||
+      localStorage.getItem("astrotring_user");
     if (raw) {
       const user = JSON.parse(raw);
       return {
@@ -144,21 +149,25 @@ export const jyotishSlice = createSlice({
       if (typeof reading.creditsRemaining === "number") {
         state.questionQuota = reading.creditsRemaining;
         try {
-          const raw = localStorage.getItem("astrotring_user");
+          const raw =
+            localStorage.getItem(STORAGE_KEYS.USER) ||
+            localStorage.getItem("astrotring_user");
           if (raw) {
             const user = JSON.parse(raw);
             user.creditBalance = reading.creditsRemaining;
-            localStorage.setItem("astrotring_user", JSON.stringify(user));
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
           }
         } catch {}
       } else if (reading?.engine !== "shastra" && state.questionQuota > 0) {
         state.questionQuota -= 1;
         try {
-          const raw = localStorage.getItem("astrotring_user");
+          const raw =
+            localStorage.getItem(STORAGE_KEYS.USER) ||
+            localStorage.getItem("astrotring_user");
           if (raw) {
             const user = JSON.parse(raw);
             user.creditBalance = state.questionQuota;
-            localStorage.setItem("astrotring_user", JSON.stringify(user));
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
           }
         } catch {}
       }
@@ -175,44 +184,52 @@ export const jyotishSlice = createSlice({
     setQuestionQuota: (state, action) => {
       state.questionQuota = action.payload;
       try {
-        const raw = localStorage.getItem("astrotring_user");
+        const raw =
+          localStorage.getItem(STORAGE_KEYS.USER) ||
+          localStorage.getItem("astrotring_user");
         if (raw) {
           const user = JSON.parse(raw);
           user.creditBalance = action.payload;
-          localStorage.setItem("astrotring_user", JSON.stringify(user));
+          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
         }
       } catch {}
     },
     addQuestionQuota: (state, action) => {
       state.questionQuota += action.payload;
       try {
-        const raw = localStorage.getItem("astrotring_user");
+        const raw =
+          localStorage.getItem(STORAGE_KEYS.USER) ||
+          localStorage.getItem("astrotring_user");
         if (raw) {
           const user = JSON.parse(raw);
           user.creditBalance = (user.creditBalance || 0) + action.payload;
-          localStorage.setItem("astrotring_user", JSON.stringify(user));
+          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
         }
       } catch {}
     },
     setReportQuota: (state, action) => {
       state.reportQuota = action.payload;
       try {
-        const raw = localStorage.getItem("astrotring_user");
+        const raw =
+          localStorage.getItem(STORAGE_KEYS.USER) ||
+          localStorage.getItem("astrotring_user");
         if (raw) {
           const user = JSON.parse(raw);
           user.reportCredits = action.payload;
-          localStorage.setItem("astrotring_user", JSON.stringify(user));
+          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
         }
       } catch {}
     },
     addReportQuota: (state, action) => {
       state.reportQuota += action.payload;
       try {
-        const raw = localStorage.getItem("astrotring_user");
+        const raw =
+          localStorage.getItem(STORAGE_KEYS.USER) ||
+          localStorage.getItem("astrotring_user");
         if (raw) {
           const user = JSON.parse(raw);
           user.reportCredits = (user.reportCredits || 0) + action.payload;
-          localStorage.setItem("astrotring_user", JSON.stringify(user));
+          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
         }
       } catch {}
     },

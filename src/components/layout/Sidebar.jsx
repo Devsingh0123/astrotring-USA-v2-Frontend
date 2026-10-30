@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react"
-import { Link, NavLink, useLocation, useNavigate, useSearchParams } from "react-router-dom"
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import {
-  Sparkles,
   BookOpen,
   Orbit,
   Newspaper,
@@ -13,10 +12,13 @@ import {
   LogIn,
   Compass,
   Trash2,
+  Flame,
+  ShoppingBag,
+  SunMedium,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { openAuthModal } from "@/features/auth"
-import { setActiveConversation, setActiveThreadId, clearActiveConversation, deleteConversation } from "@/features/jyotish"
+import { setActiveConversation, setActiveThreadId, deleteConversation } from "@/features/jyotish"
 import { fetchUserThreads, fetchThreadById, deleteThread } from "@/features/jyotish/jyotishApi"
 import UserProfileMenu from "@/features/user/components/UserProfileMenu"
 import { isToday, isYesterday, differenceInCalendarDays, format } from "date-fns"
@@ -25,8 +27,10 @@ const navItems = [
   { label: "My Kundli", path: "/kundli", icon: Compass },
   { label: "Horoscopes", path: "/horoscope", icon: Orbit },
   { label: "Blogs", path: "/blogs", icon: Newspaper },
+  { label: "Dosha", path: "/dosha", icon: Flame },
   { label: "Calculators", path: "/calculators", icon: Calculator },
   { label: "Reports", path: "/reports", icon: FileText },
+  { label: "Shop", path: "/shop", icon: ShoppingBag },
 ]
 
 function getTimelineBucket(dateInput) {
@@ -56,19 +60,8 @@ export default function Sidebar({
   const { isAuthenticated, user, birthDetails } = useSelector((state) => state.auth || {})
   const { conversations = [], serverThreads = [], activeConversationId, activeThreadId } =
     useSelector((state) => state.jyotish || {})
-  const [searchParams] = useSearchParams()
   const location = useLocation()
   const navigate = useNavigate()
-  const isHomePage = location.pathname === "/"
-  const currentEngine = searchParams.get("engine") || "jyotish"
-  const isJyotishActive = isHomePage && !activeConversationId && currentEngine === "jyotish"
-  const isShastraActive = isHomePage && !activeConversationId && currentEngine === "shastra"
-
-  const handleEngineClick = (e, targetEngine) => {
-    e?.preventDefault()
-    dispatch(clearActiveConversation())
-    navigate(`/?engine=${targetEngine}`)
-  }
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -92,9 +85,9 @@ export default function Sidebar({
               onClick={onToggleCollapse}
               aria-label="Expand navigation"
               title="Expand navigation"
-              className="w-9 h-9 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer"
+              className="w-10 h-10 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer"
             >
-              <PanelLeftOpen className="w-4 h-4" />
+              <PanelLeftOpen className="size-6 stroke-[1.8]" />
             </Button>
           </div>
         ) : (
@@ -102,15 +95,17 @@ export default function Sidebar({
             <Link
               to="/"
               className="flex items-center gap-2.5 shrink-0 group"
-              title="AstroTring Home"
+              title="Japaika"
             >
-              <img
-                src="/logo-192.jpg"
-                alt="AstroTring"
-                className="w-8 h-8 min-w-8 min-h-8 rounded-full object-cover shrink-0 aspect-square border border-border shadow-xs group-hover:scale-105 transition-transform"
-              />
-              <span className="font-serif font-bold text-lg tracking-tight text-foreground whitespace-nowrap">
-                AstroTring
+              <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500/20 via-primary/20 to-primary/5 flex items-center justify-center shrink-0 shadow-xs group-hover:shadow-primary/20 transition-all overflow-hidden p-0.5">
+                <img
+                  src="/logo-192.jpg"
+                  alt="Japaika"
+                  className="w-full h-full object-cover rounded-lg aspect-square group-hover:scale-105 transition-transform"
+                />
+              </div>
+              <span className="font-bold text-[24px] tracking-tight text-foreground group-hover:text-primary transition-colors">
+                Japaika
               </span>
             </Link>
 
@@ -120,54 +115,15 @@ export default function Sidebar({
               onClick={onToggleCollapse}
               aria-label="Collapse navigation"
               title="Collapse navigation"
-              className="w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent shrink-0 cursor-pointer"
+              className="w-10 h-10 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent shrink-0 cursor-pointer"
             >
-              <PanelLeftClose className="w-4 h-4" />
+              <PanelLeftClose className="size-6 stroke-[1.8]" />
             </Button>
           </div>
         )}
 
-        {/* Engine Quick Action Cards for Jyotish & Shastra */}
-        <div className="space-y-1.5 pt-1">
-          <Link
-            to="/?engine=jyotish"
-            onClick={(e) => handleEngineClick(e, "jyotish")}
-            className={`-mx-1 flex items-center gap-3 rounded-2xl p-1 text-left transition-all duration-200 cursor-pointer ${isJyotishActive
-                ? "bg-primary text-primary-foreground font-semibold shadow-md shadow-primary/25 border border-primary"
-                : "bg-accent/40 border border-border/80 text-muted-foreground hover:bg-accent hover:border-primary/40 hover:text-foreground"
-              } ${isCollapsed ? "justify-center" : ""}`}
-          >
-            <span className="grid h-[36px] w-[40px] flex-none place-items-center">
-              <Sparkles className={`w-4 h-4 ${isJyotishActive ? "text-primary-foreground" : "text-primary"}`} />
-            </span>
-            {!isCollapsed && (
-              <span className="font-sans text-[15px] sm:text-[16px] leading-tight font-medium">
-                Ask Jyotish
-              </span>
-            )}
-          </Link>
-
-          <Link
-            to="/?engine=shastra"
-            onClick={(e) => handleEngineClick(e, "shastra")}
-            className={`-mx-1 flex items-center gap-3 rounded-2xl p-1 text-left transition-all duration-200 cursor-pointer ${isShastraActive
-                ? "bg-amber-500 text-white font-semibold shadow-md shadow-amber-500/25 border border-amber-500"
-                : "bg-accent/40 border border-border/80 text-muted-foreground hover:bg-accent hover:border-amber-500/40 hover:text-foreground"
-              } ${isCollapsed ? "justify-center" : ""}`}
-          >
-            <span className="grid h-[36px] w-[40px] flex-none place-items-center">
-              <BookOpen className={`w-4 h-4 ${isShastraActive ? "text-white" : "text-amber-500"}`} />
-            </span>
-            {!isCollapsed && (
-              <span className="font-sans text-[15px] sm:text-[16px] leading-tight font-medium">
-                Ask Shastra
-              </span>
-            )}
-          </Link>
-        </div>
-
         {/* Secondary Navigation List */}
-        <nav className="space-y-1 pt-1">
+        <nav className="space-y-1.5 pt-1">
           {navItems.map((item) => {
             const Icon = item.icon
             const handleItemClick = (e) => {
@@ -195,15 +151,15 @@ export default function Sidebar({
                 to={item.path}
                 onClick={handleItemClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-xl text-xs lg:text-sm font-medium transition-all duration-150 ${isCollapsed ? "justify-center p-2.5" : "px-3.5 py-2.5"
+                  `flex items-center gap-3.5 rounded-xl text-base font-medium transition-all duration-150 ${isCollapsed ? "justify-center p-3" : "px-3.5 py-2.5"
                   } ${isActive
                     ? "text-primary dark:text-foreground bg-primary/10 dark:bg-card border border-primary/25 dark:border-border font-semibold shadow-xs"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent/60"
+                    : "text-foreground/80 hover:text-foreground hover:bg-accent/70"
                   }`
                 }
               >
-                <Icon className="w-4 h-4 shrink-0" />
-                {!isCollapsed && <span>{item.label}</span>}
+                <Icon className="size-6 shrink-0 stroke-[1.8]" />
+                {!isCollapsed && <span className="tracking-tight">{item.label}</span>}
               </NavLink>
             )
           })}
@@ -212,14 +168,14 @@ export default function Sidebar({
         {/* Recent Readings Filter & History */}
         {!isCollapsed && (
           <div className="pt-3 border-t border-border space-y-3">
-            <div className="flex items-center gap-1 text-[10px] font-mono bg-accent/40 p-1 rounded-xl border border-border/70">
+            <div className="flex items-center gap-1 text-[11px] font-mono bg-accent/40 p-1 rounded-xl border border-border/70">
               {["ALL", "JYOTISH", "SHASTRA"].map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
                   className={`flex-1 py-1 rounded-lg transition-all cursor-pointer text-center ${activeFilter === filter
-                      ? "bg-card text-foreground font-semibold shadow-xs border border-border/60"
-                      : "text-muted-foreground hover:text-foreground"
+                    ? "bg-card text-foreground font-semibold shadow-xs border border-border/60"
+                    : "text-muted-foreground hover:text-foreground"
                     }`}
                 >
                   {filter}
@@ -353,18 +309,18 @@ export default function Sidebar({
                                 <button
                                   type="button"
                                   onClick={() => handleItemClick(item)}
-                                  className={`w-full text-left p-2.5 rounded-xl text-xs font-sans transition-all cursor-pointer flex items-start gap-2 pr-7 ${isSelected
-                                      ? item.engine === "shastra"
-                                        ? "bg-amber-500/15 text-foreground border border-amber-500/40 shadow-xs"
-                                        : "bg-primary/10 text-foreground border border-primary/30 shadow-xs"
-                                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50 border border-transparent"
+                                  className={`w-full text-left p-2.5 rounded-xl text-[13px] font-sans transition-all cursor-pointer flex items-start gap-2.5 pr-7 ${isSelected
+                                    ? item.engine === "shastra"
+                                      ? "bg-amber-500/15 text-foreground border border-amber-500/40 shadow-xs"
+                                      : "bg-primary/10 text-foreground border border-primary/30 shadow-xs"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50 border border-transparent"
                                     }`}
                                 >
                                   <span className="flex-none pt-0.5">
                                     {item.engine === "shastra" ? (
-                                      <BookOpen className="w-3.5 h-3.5 text-amber-500" />
+                                      <BookOpen className="w-4 h-4 text-amber-500" />
                                     ) : (
-                                      <Sparkles className="w-3.5 h-3.5 text-primary" />
+                                      <SunMedium className="w-4 h-4 text-primary" />
                                     )}
                                   </span>
                                   <span className="line-clamp-2 leading-snug flex-1">
@@ -376,9 +332,9 @@ export default function Sidebar({
                                   type="button"
                                   onClick={(e) => handleDeleteItem(e, item)}
                                   title="Delete reading"
-                                  className="absolute right-1.5 top-2.5 opacity-0 group-hover/reading:opacity-100 transition-opacity p-1 rounded-md text-muted-foreground hover:text-destructive hover:bg-accent cursor-pointer"
+                                  className="absolute right-1.5 top-2.5 opacity-0 group-hover/reading:opacity-100 transition-opacity p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-accent cursor-pointer"
                                 >
-                                  <Trash2 className="w-3 h-3" />
+                                  <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                               </div>
                             )
@@ -412,12 +368,12 @@ export default function Sidebar({
             className={`w-full flex items-center gap-3 rounded-2xl p-2.5 hover:bg-accent border border-border/60 hover:border-primary/40 bg-card/60 transition-all group cursor-pointer text-left shadow-xs ${isCollapsed ? "justify-center" : ""
               }`}
           >
-            <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all shrink-0">
-              <LogIn className="w-4 h-4" />
+            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all shrink-0">
+              <LogIn className="size-6" />
             </div>
             {!isCollapsed && (
               <div className="overflow-hidden">
-                <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
+                <div className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                   Log in
                 </div>
                 <div className="text-[10px] font-mono text-primary font-medium tracking-wider">

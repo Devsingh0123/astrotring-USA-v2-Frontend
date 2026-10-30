@@ -32,18 +32,19 @@ export default function CalculatorsListingPage() {
   return (
     <div className="min-h-screen bg-transparent text-foreground pb-24">
       <Helmet>
-        <title>12 Free Vedic Astrology Calculators | AstroTring</title>
+        <title>12 Free Vedic Astrology Calculators | Japaika</title>
         <meta
           name="description"
           content="12 instruments on the same Swiss Ephemeris the readings run on. Compute here, then hand the result to Jyotish."
         />
+        <link rel="canonical" href="https://japaika.com/calculators" />
       </Helmet>
 
       <div className="relative px-6 pt-9 pb-20 sm:px-10 sm:pt-11 lg:px-14 xl:px-20 max-w-[1400px] mx-auto">
         {/* Header Section */}
         <header className="min-w-0">
           <div className="text-muted-foreground font-mono text-[10px] tracking-[0.22em] uppercase">
-            ASTROTRING / CALCULATORS
+            JAPAIKA / CALCULATORS
           </div>
 
           <h1 className="mt-3.5 font-serif text-[42px] leading-none tracking-[-0.015em] text-foreground sm:text-[48px]">

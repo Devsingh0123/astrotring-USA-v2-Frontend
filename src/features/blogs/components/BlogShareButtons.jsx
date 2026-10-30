@@ -5,7 +5,7 @@ import { toast } from "sonner";
 export default function BlogShareButtons({ title, url }) {
   const [copied, setCopied] = useState(false);
   const shareUrl = url || (typeof window !== "undefined" ? window.location.href : "");
-  const shareTitle = title || "Vedic Astrology Insights | AstroTring";
+  const shareTitle = title || "Vedic Astrology Insights | Japaika";
 
   const handleCopyLink = async () => {
     try {

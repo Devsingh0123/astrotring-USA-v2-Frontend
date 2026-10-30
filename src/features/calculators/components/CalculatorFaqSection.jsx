@@ -7,7 +7,7 @@ const HOW_IT_WORKS_STEPS = [
   },
   {
     step: "02",
-    desc: "AstroTring computes planetary degrees using Swiss Ephemeris and sets your ascendant.",
+    desc: "Japaika computes planetary degrees using Swiss Ephemeris and sets your ascendant.",
   },
   {
     step: "03",

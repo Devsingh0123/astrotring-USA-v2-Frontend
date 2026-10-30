@@ -117,7 +117,7 @@ export const authSlice = createSlice({
       if (email) {
         try {
           localStorage.setItem(
-            `astrotring_profile_${email.toLowerCase()}`,
+            `japaika_profile_${email.toLowerCase()}`,
             JSON.stringify(updatedProfile),
           );
         } catch {

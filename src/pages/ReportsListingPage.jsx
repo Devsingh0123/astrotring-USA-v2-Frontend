@@ -37,7 +37,7 @@ export default function ReportsListingPage() {
         {/* Page Breadcrumb & Header */}
         <div className="space-y-3">
           <div className="text-[11px] font-mono tracking-widest text-muted-foreground uppercase">
-            ASTROTRING / REPORTS
+            JAPAIKA / REPORTS
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-foreground tracking-tight">
             Deep Vedic Reports

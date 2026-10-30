@@ -12,7 +12,7 @@
  * @param {number} [options.amountSubunits] - Amount in subunits (e.g. 79900 for ₹799)
  * @param {number} [options.amount] - Amount in standard currency units (e.g. 799)
  * @param {string} [options.currency="INR"] - ISO currency code
- * @param {string} [options.name="AstroTring"] - Merchant business name
+ * @param {string} [options.name="Japaika"] - Merchant business name
  * @param {string} [options.description] - Product or pack description
  * @param {string} [options.image="/logo-192.jpg"] - Brand logo URL
  * @param {Object} [options.user] - Prefill user info { name, email, phone }
@@ -27,8 +27,8 @@ export const openRazorpayCheckout = ({
   amountSubunits,
   amount,
   currency = "INR",
-  name = "AstroTring",
-  description = "AstroTring Consultation",
+  name = "Japaika",
+  description = "Japaika Consultation",
   image = "/logo-192.jpg",
   user = {},
   themeColor = "#9a4578",

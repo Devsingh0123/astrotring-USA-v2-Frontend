@@ -72,7 +72,7 @@ export default function MyReportsPage() {
   return (
     <div className="min-h-screen bg-[#0d0914] text-foreground flex flex-col justify-between">
       <Helmet>
-        <title>My Unlocked Reports | AstroTring</title>
+        <title>My Unlocked Reports | Japaika</title>
         <meta
           name="description"
           content="Access and download your permanent library of personalized 10-page executive Vedic astrology reports."
@@ -84,7 +84,7 @@ export default function MyReportsPage() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-white/10">
           <div className="space-y-2">
             <div className="text-[11px] font-mono tracking-widest text-mlh-muted uppercase flex items-center gap-2">
-              <span>ASTROTRING / USER</span>
+              <span>JAPAIKA / USER</span>
               <span className="text-white/20">·</span>
               <span className="text-mlh-plum-300">LIBRARY</span>
             </div>

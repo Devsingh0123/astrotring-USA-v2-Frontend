@@ -8,7 +8,7 @@ import blogsReducer from "@/features/blogs/blogsSlice";
 import compatibilityReducer from "@/features/compatibility/compatibilitySlice";
 
 /**
- * AstroTring Independent Global Redux Store Configuration
+ * Japaika Independent Global Redux Store Configuration
  * Assembles all modular feature slices from their respective feature directories:
  * - @/features/auth/authSlice
  * - @/features/jyotish/jyotishSlice

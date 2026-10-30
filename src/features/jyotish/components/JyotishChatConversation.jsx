@@ -288,7 +288,7 @@ export default function JyotishChatConversation({ onOpenBuyModal }) {
       {/* Monospace Breadcrumb Header */}
       <div className="text-muted-foreground relative z-10 flex flex-none items-center justify-between pt-3 pb-2.5 sm:pt-4 sm:pb-3 border-b border-border/60 font-mono text-[9px] sm:text-[10px] tracking-[0.22em] uppercase">
         <div className="flex items-center gap-1.5">
-          <span>AstroTring</span>
+          <span>Japaika</span>
           <span>/</span>
           <span className={isJyotish ? "text-primary font-semibold" : "text-amber-500 font-semibold"}>
             {isJyotish ? "Ask Jyotish" : "Ask Shastra"}

@@ -22,6 +22,10 @@ export default function UserProfileMenu({
   onOpenBuyQuestionsModal,
   onOpenBuyReportsModal,
   isCollapsed = false,
+  triggerVariant = "default",
+  side = "top",
+  align = "start",
+  sideOffset = 10,
 }) {
   const [open, setOpen] = useState(false)
   const dispatch = useDispatch()
@@ -100,38 +104,48 @@ export default function UserProfileMenu({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label={`${displayName}'s account menu`}
-          className={`w-full flex items-center justify-between rounded-xl p-2 bg-accent/40 border border-border hover:bg-accent hover:border-primary/50 transition-all cursor-pointer group text-left ${
-            isCollapsed ? "justify-center p-2" : ""
-          }`}
-        >
-          <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/80 to-primary border border-primary/30 flex items-center justify-center text-primary-foreground font-mono font-bold text-xs shrink-0 shadow-xs">
-              {initial}
+        {triggerVariant === "avatarOnly" ? (
+          <button
+            type="button"
+            aria-label={`${displayName}'s account menu`}
+            className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-primary border border-primary/30 flex items-center justify-center text-primary-foreground font-mono font-bold text-sm shrink-0 shadow-xs cursor-pointer hover:scale-105 active:scale-95 transition-all"
+          >
+            {initial}
+          </button>
+        ) : (
+          <button
+            type="button"
+            aria-label={`${displayName}'s account menu`}
+            className={`w-full flex items-center justify-between rounded-xl p-2 bg-accent/40 border border-border hover:bg-accent hover:border-primary/50 transition-all cursor-pointer group text-left ${
+              isCollapsed ? "justify-center p-2" : ""
+            }`}
+          >
+            <div className="flex items-center gap-2.5 overflow-hidden">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-primary border border-primary/30 flex items-center justify-center text-primary-foreground font-mono font-bold text-xs shrink-0 shadow-xs">
+                {initial}
+              </div>
+              {!isCollapsed && (
+                <div className="overflow-hidden">
+                  <div className="text-[13px] font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                    {displayName}
+                  </div>
+                  <div className="text-[10px] font-mono text-emerald-500 dark:text-emerald-400 truncate max-w-[130px]">
+                    {displayEmail}
+                  </div>
+                </div>
+              )}
             </div>
             {!isCollapsed && (
-              <div className="overflow-hidden">
-                <div className="text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">
-                  {displayName}
-                </div>
-                <div className="text-[10px] font-mono text-emerald-500 dark:text-emerald-400 truncate max-w-[130px]">
-                  {displayEmail}
-                </div>
-              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
             )}
-          </div>
-          {!isCollapsed && (
-            <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
-          )}
-        </button>
+          </button>
+        )}
       </PopoverTrigger>
 
       <PopoverContent
-        side="top"
-        align="start"
-        sideOffset={10}
+        side={side}
+        align={align}
+        sideOffset={sideOffset}
         className="w-[280px] p-0 bg-card/90 border border-border/80 rounded-2xl shadow-2xl backdrop-blur-2xl overflow-hidden font-sans text-xs text-foreground"
       >
         {/* User Identity Header Card */}
@@ -233,7 +247,7 @@ export default function UserProfileMenu({
           </Link>
 
           <a
-            href="mailto:support@astrotring.com"
+            href="mailto:support@japaika.com"
             onClick={() => setOpen(false)}
             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer text-left font-medium"
           >

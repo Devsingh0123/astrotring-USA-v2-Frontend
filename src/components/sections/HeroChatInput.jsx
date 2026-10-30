@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react"
 import { useSearchParams } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { motion } from "framer-motion"
-import { Sparkles, BookOpen, ArrowUp } from "lucide-react"
+import { SunMedium, BookOpen, ArrowUp } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { openAuthModal } from "@/features/auth/authSlice"
 import { startGenerating, setThinkingStep, stopGenerating, addConversation } from "@/features/jyotish/jyotishSlice"
 import { streamChatTurn } from "@/features/jyotish/jyotishApi"
@@ -38,18 +39,18 @@ const limitToMaxWords = (text, max = MAX_WORDS) => {
 
 // 4 Prompts for Personal Jyotish
 const JYOTISH_PROMPTS = [
-  "What is Saturn doing to my chart right now?",
-  "Which gemstone suits my chart, if any?",
-  "What is my lagna and what does it say about me?",
-  "Which yogas are present in my chart?",
+  "Should I choose a stable corporate job? Or is it the right time to start a business?",
+  "When will I find my true love? Will my next relationship lead to marriage?",
+  "When will my financial situation improve? Will I get rid of my debts soon?",
+  "When is the right time for me to get married? How will my life partner be?"
 ]
 
 // 4 Prompts for Shastra
 const SHASTRA_PROMPTS = [
-  "What is Kaal Sarp dosha and how seriously should it be taken?",
-  "What does Moon in 7th house mean for marriage and public life?",
-  "What is a muhurta and how is an auspicious time chosen?",
-  "What does the twelfth house govern in Vedic astrology?",
+  "How does astrology work? Is it based on science?",
+  "Can stars predict my exact future? Or is it just guidance?",
+  "Vedic vs Western astrology: What is the main difference?",
+  "How do planetary movements affect human life and mind?"
 ]
 
 export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
@@ -255,7 +256,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
               className={`shrink-0 pt-1 text-[16px] leading-none select-none ${engine === "shastra" ? "text-amber-500 animate-pulse" : "text-primary animate-pulse"
                 }`}
             >
-              ✦
+              {engine === "shastra" ? <BookOpen className="size-5 shrink-0 stroke-[2]" /> : <SunMedium className="size-5 shrink-0 stroke-[2]" />}
             </span>
             <textarea
               ref={textareaRef}
@@ -264,7 +265,7 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
               onChange={handleTextareaChange}
               onKeyDown={handleKeyDown}
               placeholder={inputPlaceholder}
-              className="text-foreground placeholder:text-muted-foreground min-w-0 flex-1 resize-none overflow-hidden bg-transparent font-sans text-[15px] sm:text-[17px] leading-[1.5] outline-none disabled:cursor-not-allowed disabled:opacity-60 caret-primary"
+              className="text-foreground placeholder:text-muted-foreground min-w-0 flex-1 resize-none overflow-hidden bg-transparent font-sans text-[15px] sm:text-[20px] leading-[1.5] outline-none disabled:cursor-not-allowed disabled:opacity-60 caret-primary"
               style={{ minHeight: "120px" }}
             />
           </div>
@@ -275,45 +276,46 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
             <div
               role="radiogroup"
               aria-label="Answer source"
-              className="inline-flex items-center rounded-full border border-border/80 bg-accent/40 p-1"
+              className="inline-flex items-center rounded-full border border-border/80 bg-accent/40 p-1 shadow-sm"
             >
-              <button
+              <Button
                 type="button"
                 role="radio"
                 aria-checked={engine === "jyotish"}
                 onClick={() => handleSelectEngine("jyotish")}
-                className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${engine === "jyotish"
-                  ? "bg-primary text-primary-foreground font-semibold shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
+                variant={engine === "jyotish" ? "default" : "ghost"}
+                className={`h-10 rounded-full px-5 sm:px-6 gap-2.5 text-[16px] font-semibold transition-all cursor-pointer ${engine === "jyotish"
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary/90 hover:text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent/70 font-medium"
                   }`}
               >
-                <Sparkles className="w-3.5 h-3.5" />
+                <SunMedium className="size-5 shrink-0 stroke-[2]" />
                 <span>Jyotish</span>
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 role="radio"
                 aria-checked={engine === "shastra"}
                 onClick={() => handleSelectEngine("shastra")}
-                className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${engine === "shastra"
-                  ? "bg-amber-500 text-white font-semibold shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
+                variant={engine === "shastra" ? "default" : "ghost"}
+                className={`h-10 rounded-full px-5 sm:px-6 gap-2.5 text-[16px] font-semibold transition-all cursor-pointer ${engine === "shastra"
+                  ? "bg-amber-500 text-white shadow-md shadow-amber-500/25 hover:bg-amber-600 hover:text-white"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent/70 font-medium"
                   }`}
               >
-                <BookOpen className="w-3.5 h-3.5" />
+                <BookOpen className="size-5 shrink-0 stroke-[2]" />
                 <span>Shastra</span>
-              </button>
+              </Button>
             </div>
 
             {/* Right Action Controls */}
             <div className="ml-auto flex items-center gap-2.5 sm:gap-3">
               {currentWordCount > 0 && (
                 <span
-                  className={`font-mono text-[10.5px] tracking-wider transition-colors ${
-                    currentWordCount >= MAX_WORDS
+                  className={`font-mono text-[10.5px] tracking-wider transition-colors ${currentWordCount >= MAX_WORDS
                       ? "text-amber-500 font-semibold"
                       : "text-muted-foreground/60"
-                  }`}
+                    }`}
                 >
                   {currentWordCount}/{MAX_WORDS} words
                 </span>
@@ -321,46 +323,49 @@ export default function HeroChatInput({ onOpenBindModal, onOpenBuyModal }) {
 
               {engine === "jyotish" ? (
                 isAuthenticated ? (
-                  <div className="flex items-stretch overflow-hidden rounded-full border border-amber-500/40 bg-amber-500/10 font-mono text-[10.5px] font-medium tracking-[0.14em] whitespace-nowrap uppercase text-amber-600 dark:text-amber-300 shadow-xs">
-                    <span className="px-3 py-1.5">
-                      <span>{activeQuestionQuota}</span> {activeQuestionQuota === 1 ? "question left" : "questions left"}
+                  <div className="flex items-stretch overflow-hidden rounded-full border border-amber-500/40 bg-amber-500/10 font-mono text-[10px] font-medium tracking-[0.14em] whitespace-nowrap uppercase text-amber-600 dark:text-amber-300 shadow-xs h-8">
+                    <span className="flex items-center px-3.5">
+                      <span>{activeQuestionQuota}</span> questions left
                     </span>
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
                       onClick={handleBuyQuestions}
-                      className="cursor-pointer border-l border-amber-500/30 px-3 py-1.5 transition-colors bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-200 font-semibold"
+                      className="h-full rounded-none border-l border-amber-500/30 px-3.5 transition-colors bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-200 font-semibold cursor-pointer text-[10px] font-mono tracking-wider"
                     >
                       Buy more
-                    </button>
+                    </Button>
                   </div>
                 ) : (
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={handleBuyQuestions}
-                    className="cursor-pointer flex items-center overflow-hidden rounded-full border border-amber-500/40 bg-amber-500/10 font-mono text-[10.5px] font-semibold tracking-[0.14em] whitespace-nowrap uppercase text-amber-600 dark:text-amber-300 px-3.5 py-1.5 hover:bg-amber-500/20 transition-all shadow-xs"
+                    className="h-9 rounded-full border-amber-500/40 bg-amber-500/10 font-mono text-[10px] font-semibold tracking-[0.14em] whitespace-nowrap uppercase text-amber-600 dark:text-amber-300 px-4 hover:bg-amber-500/20 hover:text-amber-600 dark:hover:text-amber-300 transition-all shadow-xs cursor-pointer"
                   >
-                    Buy questions
-                  </button>
+                    Question packs
+                  </Button>
                 )
               ) : (
-                <div className="flex items-center gap-1.5 text-[11px] font-mono tracking-wider text-amber-600 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-full uppercase">
-                  <BookOpen className="w-3.5 h-3.5 text-amber-500" />
+                <div className="flex items-center gap-1.5 text-[11px] font-mono tracking-wider text-amber-600 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3.5 py-1 rounded-full uppercase h-8">
+                  <BookOpen className="size-3.5 text-amber-500" />
                   <span>Free knowledge · Unlimited</span>
                 </div>
               )}
 
-              <button
+              <Button
                 type="button"
+                size="icon"
                 disabled={!query.trim() || isGenerating}
                 onClick={() => executeQuestion(query)}
                 aria-label="Send question"
-                className={`grid h-10 w-10 flex-none place-items-center rounded-full transition-all duration-200 cursor-pointer disabled:opacity-40 shadow-md ${engine === "shastra"
-                  ? "text-white bg-amber-500 hover:bg-amber-600 hover:scale-105 shadow-amber-500/25"
-                  : "text-primary-foreground bg-primary hover:bg-primary/90 hover:scale-105 shadow-primary/25"
+                className={`size-11 rounded-full transition-all duration-200 cursor-pointer disabled:opacity-40 shadow-md ${engine === "shastra"
+                    ? "text-white bg-amber-500 hover:bg-amber-600 hover:scale-105 shadow-amber-500/25"
+                    : "text-primary-foreground bg-primary hover:bg-primary/90 hover:scale-105 shadow-primary/25"
                   }`}
               >
-                <ArrowUp className="w-4 h-4 stroke-[2.5]" />
-              </button>
+                <ArrowUp className="size-5 stroke-[2.5]" />
+              </Button>
             </div>
           </div>
         </div>

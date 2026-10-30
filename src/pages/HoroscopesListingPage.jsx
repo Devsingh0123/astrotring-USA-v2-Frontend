@@ -63,18 +63,19 @@ export default function HoroscopesListingPage() {
   return (
     <div className="min-h-full flex flex-col bg-transparent text-foreground">
       <Helmet>
-        <title>Vedic Horoscopes by Moon Sign (Rashi) | AstroTring</title>
+        <title>Vedic Horoscopes by Moon Sign (Rashi) | Japaika</title>
         <meta
           name="description"
           content="Explore daily, monthly and yearly Vedic horoscopes computed through authentic Nirayana astronomy and live Gochara planetary transits across all 12 Rashis."
         />
+        <link rel="canonical" href="https://japaika.com/horoscopes" />
       </Helmet>
 
       <div className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-12 space-y-10">
         {/* Top Breadcrumb */}
         <nav className="flex items-center gap-2 text-[11px] font-mono tracking-widest text-muted-foreground uppercase">
           <Link to="/" className="hover:text-foreground transition-colors">
-            AstroTring
+            Japaika
           </Link>
           <span className="text-border">/</span>
           <span className="text-primary font-semibold">Horoscopes</span>
@@ -135,7 +136,7 @@ export default function HoroscopesListingPage() {
               <Moon className="w-4 h-4" />
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              <span className="font-semibold text-foreground">AstroTring reads by your Rashi</span>, where the
+              <span className="font-semibold text-foreground">Japaika reads by your Rashi</span>, where the
               Moon sat at your birth, calculated via Swiss Ephemeris Nirayana planetary coordinates.
             </p>
           </div>

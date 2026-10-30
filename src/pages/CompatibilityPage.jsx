@@ -39,19 +39,20 @@ export default function CompatibilityPage() {
   return (
     <div className="min-h-screen bg-transparent text-foreground flex flex-col justify-between">
       <Helmet>
-        <title>Kundli Milan & Marriage Compatibility (36 Gunas) | AstroTring</title>
+        <title>Kundli Milan & Marriage Compatibility (36 Gunas) | Japaika</title>
         <meta
           name="description"
           content="Accurate Vedic Kundli Milan by date of birth. Calculate 36 Gunas (Ashtakoota), Mangal Dosha cancellations, Nadi & Bhakoot compatibility."
         />
         <meta
           property="og:title"
-          content="Kundli Milan & Marriage Compatibility | AstroTring"
+          content="Kundli Milan & Marriage Compatibility | Japaika"
         />
         <meta
           property="og:description"
           content="Ashtakoot Guna Milan out of 36, Nadi, Bhakoot and Mangal read separately on classical Vedic algorithms."
         />
+        <link rel="canonical" href="https://japaika.com/compatibility" />
       </Helmet>
 
       {/* Main Page Container */}
@@ -59,7 +60,7 @@ export default function CompatibilityPage() {
         {/* Header Breadcrumbs & Title */}
         <div className="space-y-3">
           <div className="text-[11px] font-mono tracking-widest text-muted-foreground uppercase flex items-center gap-2">
-            <span>ASTROTRING / COMPATIBILITY</span>
+            <span>JAPAIKA / COMPATIBILITY</span>
             <span className="text-muted-foreground/40">·</span>
             <span className="text-primary font-medium">ASHTAKOOTA MILAN</span>
           </div>

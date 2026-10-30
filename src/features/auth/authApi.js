@@ -15,7 +15,9 @@ export { STORAGE_KEYS };
 
 export const getInitialUser = () => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.USER);
+    const raw =
+      localStorage.getItem(STORAGE_KEYS.USER) ||
+      localStorage.getItem("astrotring_user");
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
@@ -24,7 +26,9 @@ export const getInitialUser = () => {
 
 export const getInitialBirthDetails = () => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.BIRTH_DETAILS);
+    const raw =
+      localStorage.getItem(STORAGE_KEYS.BIRTH_DETAILS) ||
+      localStorage.getItem("astrotring_birth_details");
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
@@ -97,7 +101,7 @@ export const verifyOtp = createAsyncThunk(
 
       toast.success(
         response.data?.message ||
-          "Authentication successful! Welcome to AstroTring.",
+          "Authentication successful! Welcome to Japaika.",
       );
 
       // Return only user state for Redux
@@ -223,7 +227,7 @@ export const submitOnboarding = createAsyncThunk(
       }
 
       toast.success(
-        response.data?.message || "Birth chart bound! Welcome to AstroTring.",
+        response.data?.message || "Birth chart bound! Welcome to Japaika.",
       );
       return { user, birthDetails, chartSummary };
     } catch (err) {

@@ -139,9 +139,9 @@ export default function CalculatorRunnerPage() {
   return (
     <div className="min-h-screen bg-transparent text-foreground flex flex-col justify-between">
       <Helmet>
-        <title>{currentCalc.title} | AstroTring Vedic Calculators</title>
+        <title>{currentCalc.title} | Japaika Vedic Calculators</title>
         <meta name="description" content={currentCalc.desc} />
-        <meta property="og:title" content={`${currentCalc.title} | AstroTring`} />
+        <meta property="og:title" content={`${currentCalc.title} | Japaika`} />
         <meta property="og:description" content={currentCalc.desc} />
       </Helmet>
 

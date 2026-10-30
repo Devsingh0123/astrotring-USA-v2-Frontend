@@ -205,7 +205,7 @@ export const calculateKundli = createAsyncThunk(
         // Cache last calculation in local storage for quick reload
         try {
           localStorage.setItem(
-            "astrotring_last_kundli",
+            "japaika_last_kundli",
             JSON.stringify({
               input: payload,
               data: normalized,

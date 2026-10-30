@@ -173,7 +173,7 @@ export default function KundliDisplayPage() {
   return (
     <div className="min-h-screen bg-transparent text-foreground pb-24">
       <Helmet>
-        <title>{displayName}'s Janam Kundli | AstroTring Vedic Astrology</title>
+        <title>{displayName}'s Janam Kundli | Japaika Vedic Astrology</title>
         <meta
           name="description"
           content={`Explore the authentic Vedic birth chart (Janam Kundli) for ${displayName}. Discover your Lagna in ${ascSign}, Moon in ${moonSign}, Nakshatra ${nakshatra}, 12 Bhavas, and planetary alignments.`}

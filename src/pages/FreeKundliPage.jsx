@@ -71,11 +71,12 @@ export default function FreeKundliPage() {
   return (
     <div className="min-h-screen bg-transparent text-foreground pb-24">
       <Helmet>
-        <title>Free Kundli Maker & Birth Chart Calculator | AstroTring</title>
+        <title>Free Kundli Maker & Birth Chart Calculator | Japaika</title>
         <meta
           name="description"
-          content="A Kundli, or Janam Kundali, is a birth chart mapping the position of the planets, Sun and Moon across the twelve houses at your moment of birth. AstroTring generates it free using Swiss Ephemeris data."
+          content="A Kundli, or Janam Kundali, is a birth chart mapping the position of the planets, Sun and Moon across the twelve houses at your moment of birth. Japaika generates it free using Swiss Ephemeris data."
         />
+        <link rel="canonical" href="https://japaika.com/free-kundli" />
       </Helmet>
 
       <div className="relative px-6 pt-9 pb-20 sm:px-10 sm:pt-11 lg:px-14 xl:px-20 max-w-[1400px] mx-auto">
@@ -85,9 +86,9 @@ export default function FreeKundliPage() {
           updatedDate="21 JUL 2026"
           title="Free Kundli Maker"
           toolId="free-kundli-maker"
-          subtitle="A Kundli, or Janam Kundali, is a birth chart mapping the position of the planets, Sun and Moon across the twelve houses at your moment of birth. AstroTring generates it free using Swiss Ephemeris data, giving you your ascendant, planetary placements, Vimshottari Dasha periods and active yogas in seconds."
+          subtitle="A Kundli, or Janam Kundali, is a birth chart mapping the position of the planets, Sun and Moon across the twelve houses at your moment of birth. Japaika generates it free using Swiss Ephemeris data, giving you your ascendant, planetary placements, Vimshottari Dasha periods and active yogas in seconds."
           reviewerName="Dr. Vineeta Chandrashekhar Phatak"
-          reviewerTitle="CHIEF ASTROLOGER · ASTROTRING"
+          reviewerTitle="CHIEF ASTROLOGER · JAPAIKA"
         />
 
         {/* 2-Column Responsive Layout */}

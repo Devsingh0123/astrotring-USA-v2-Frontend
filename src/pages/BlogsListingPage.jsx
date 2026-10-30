@@ -156,17 +156,17 @@ export default function BlogsListingPage() {
   return (
     <div className="min-h-full flex flex-col justify-between bg-transparent text-foreground">
       <Helmet>
-        <title>Vedic Astrology Blogs, Transits & Ancient Upayas | AstroTring</title>
+        <title>Vedic Astrology Blogs, Transits & Ancient Upayas | Japaika</title>
         <meta
           name="description"
           content="Explore authentic Vedic astrology research, planetary transit forecasts, classical Kundli insights, and time-tested karmic remedies written by Jyotish scholars."
         />
-        <meta property="og:title" content="Vedic Astrology Publications | AstroTring" />
+        <meta property="og:title" content="Vedic Astrology Publications | Japaika" />
         <meta
           property="og:description"
           content="In-depth analysis of Saturn Sade Sati, Jupiter transits, Navamsa charts, and Vedic remedies."
         />
-        <link rel="canonical" href="https://astrotring.com/blogs" />
+        <link rel="canonical" href="https://japaika.com/blogs" />
       </Helmet>
 
       {/* Main Content Area */}
@@ -174,7 +174,7 @@ export default function BlogsListingPage() {
         {/* Monospace Breadcrumbs & Title */}
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 font-mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-muted-foreground">
-            <span>AstroTring</span>
+            <span>Japaika</span>
             <span>/</span>
             <span className="text-primary">Publications & Research</span>
           </div>
